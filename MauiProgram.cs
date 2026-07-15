@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Maui;
-using MauiHighFidelityDashboard.ViewModels;
-using MauiHighFidelityDashboard.Views;
+using MauiHighFidelityDashboard.Core.ViewModels;
+using MauiHighFidelityDashboard.Domain.Interfaces;
+using MauiHighFidelityDashboard.Infrastructure.Data;
+using MauiHighFidelityDashboard.Presentation.Views;
 using Microsoft.Extensions.Logging;
 
 namespace MauiHighFidelityDashboard;
@@ -19,6 +21,7 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        builder.Services.AddSingleton<IDashboardDataService, StaticDashboardDataService>();
         builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddSingleton<MainPage>();
 

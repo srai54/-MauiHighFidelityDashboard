@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiHighFidelityDashboard.Presentation.Components.RevenueCardView">
+    <Border Style="{StaticResource CardBorderStyle}"
+            BackgroundColor="{Binding CardBackground}">
+        <VerticalStackLayout Spacing="12">
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="{Binding CardTitle}"
+                       FontSize="15"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}" />
+                <Label Grid.Column="1"
+                       Text="{Binding DropdownLabel}"
+                       FontSize="11"
+                       TextColor="{StaticResource TextSecondary}" />
+            </Grid>
+            <Label Text="{Binding CardValue}"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextPrimary}" />
+            <Label Text="{Binding CardSubtitle}"
+                   FontSize="11"
+                   TextColor="{StaticResource TextSecondary}" />
+            <Border HeightRequest="60"
+                    BackgroundColor="{Binding ChartBackground}"
+                    StrokeShape="RoundRectangle 8"
+                    Stroke="Transparent" />
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

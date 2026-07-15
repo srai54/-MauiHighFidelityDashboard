@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Color x:Key="SidebarColor">#071A52</Color>
+    <Color x:Key="PrimaryOrange">#FF5B1F</Color>
+    <Color x:Key="BlueAccent">#4FC3F7</Color>
+    <Color x:Key="SuccessGreen">#4CAF50</Color>
+    <Color x:Key="PinkAccent">#EC407A</Color>
+    <Color x:Key="YellowAccent">#FFC107</Color>
+    <Color x:Key="PurpleAccent">#9C27B0</Color>
+    <Color x:Key="RedAccent">#F44336</Color>
+
+    <Color x:Key="PageBackground">#F7F8FC</Color>
+    <Color x:Key="CardBackground">#FFFFFF</Color>
+
+    <Color x:Key="TextPrimary">#2D3436</Color>
+    <Color x:Key="TextSecondary">#636E72</Color>
+    <Color x:Key="TextLight">#B2BEC3</Color>
+    <Color x:Key="TextWhite">#FFFFFF</Color>
+
+    <Color x:Key="ChartOnline">#4FC3F7</Color>
+    <Color x:Key="ChartStore">#FF5B1F</Color>
+
+    <Color x:Key="TrafficFacebook">#2196F3</Color>
+    <Color x:Key="TrafficYoutube">#FF5722</Color>
+    <Color x:Key="TrafficDirect">#FFC107</Color>
+
+    <Color x:Key="StatusProcess">#F44336</Color>
+    <Color x:Key="StatusOpen">#4CAF50</Color>
+    <Color x:Key="StatusOnHold">#2196F3</Color>
+</ResourceDictionary>

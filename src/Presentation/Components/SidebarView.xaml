@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiHighFidelityDashboard.Presentation.Components.SidebarView"
+             BackgroundColor="#071A52"
+             WidthRequest="220">
+    <ScrollView>
+        <VerticalStackLayout Padding="0">
+            <VerticalStackLayout Padding="20,24,20,20">
+                <Label Text="MAUI DASHBOARD"
+                       TextColor="White"
+                       FontSize="16"
+                       FontAttributes="Bold" />
+                <BoxView HeightRequest="1"
+                         Color="#1A3A6A"
+                         Margin="0,12,0,0" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="2" Padding="0,0,0,20">
+                <Label Text="&#9670; Dashboard" TextColor="White" FontSize="14" Padding="20,12" BackgroundColor="#1A3A6A" />
+                <Label Text="&#9671; Widgets" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; UI Elements" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Advanced UI" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Form Elements" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Editors" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Charts" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Tables" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Popups" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Notifications" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Icons" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Maps" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; User Pages" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Error Pages" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; General Pages" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; E-Commerce" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Email" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Calendar" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Todo List" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Gallery" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+                <Label Text="&#9671; Documentation" TextColor="#8A9BB5" FontSize="14" Padding="20,12" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>
