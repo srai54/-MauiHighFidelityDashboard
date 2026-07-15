@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiHighFidelityDashboard.Components.SummaryCardView">
+    <Border Style="{StaticResource CardBorderStyle}">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+            <Border WidthRequest="48"
+                    HeightRequest="48"
+                    StrokeShape="RoundRectangle 12"
+                    BackgroundColor="{Binding ThemeColor}"
+                    Stroke="Transparent"
+                    VerticalOptions="Center">
+                <Label Text="{Binding Icon}"
+                       TextColor="White"
+                       FontSize="20"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+            <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                <Label Text="{Binding Title}"
+                       FontSize="13"
+                       TextColor="{StaticResource TextSecondary}" />
+                <Label Text="{Binding Amount, StringFormat='{0:C}'}"
+                       FontSize="22"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}" />
+            </VerticalStackLayout>
+        </Grid>
+    </Border>
+</ContentView>

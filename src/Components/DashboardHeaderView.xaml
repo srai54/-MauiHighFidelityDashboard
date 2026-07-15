@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiHighFidelityDashboard.Components.DashboardHeaderView"
+             Padding="24,20">
+    <Grid ColumnDefinitions="*,Auto">
+        <VerticalStackLayout>
+            <Label Text="{Binding DashboardTitle}"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextPrimary}"
+                   Margin="0" />
+            <Label Text="{Binding DashboardSubtitle}"
+                   FontSize="13"
+                   TextColor="{StaticResource TextSecondary}"
+                   Margin="0,4,0,0" />
+        </VerticalStackLayout>
+        <HorizontalStackLayout Grid.Column="1" Spacing="24" VerticalOptions="Center">
+            <VerticalStackLayout Spacing="2">
+                <Label Text="{Binding CurrentMonthEarnings}"
+                       FontSize="22"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}" />
+                <Label Text="Current Month Earnings"
+                       FontSize="11"
+                       TextColor="{StaticResource TextSecondary}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="2">
+                <Label Text="{Binding CurrentMonthSales}"
+                       FontSize="22"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}" />
+                <Label Text="Current Month Sales"
+                       FontSize="11"
+                       TextColor="{StaticResource TextSecondary}" />
+            </VerticalStackLayout>
+            <Button Text="Last Month Summary"
+                    Style="{StaticResource PrimaryButton}"
+                    VerticalOptions="Center" />
+        </HorizontalStackLayout>
+    </Grid>
+</ContentView>
