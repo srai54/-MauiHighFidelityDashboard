@@ -59,6 +59,13 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task NavigateAsync(MenuItemModel? item)
+    {
+        if (item is null) return;
+        await Shell.Current.GoToAsync($"detail?title={item.Label}");
+    }
+
+    [RelayCommand]
     private async Task LastMonthSummaryAsync()
     {
         // Placeholder for last month summary action

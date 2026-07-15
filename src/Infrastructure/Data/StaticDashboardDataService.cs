@@ -46,10 +46,10 @@ public class StaticDashboardDataService : IDashboardDataService
         Task.FromResult(Result<IReadOnlyList<SalesData>>.Success(
         [
             new() { Day = 1, Online = 2, Store = 3 },
-            new() { Day = 2, Online = 12, Store = 11 },
+            new() { Day = 2, Online = 13, Store = 12 },
             new() { Day = 3, Online = 3, Store = 5 },
             new() { Day = 4, Online = 6, Store = 14 },
-            new() { Day = 5, Online = 10, Store = 12 },
-            new() { Day = 6, Online = 24, Store = 16 }
+            new() { Day = 5, Online = 12, Store = 10 },
+            new() { Day = 6, Online = 27, Store = 17 }
         ]));
 }

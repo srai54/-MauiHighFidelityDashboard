@@ -31,14 +31,14 @@ public class DonutDrawable : IDrawable
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
         var center = new PointF(dirtyRect.Width / 2, dirtyRect.Height / 2);
-        float radius = Math.Min(dirtyRect.Width, dirtyRect.Height) / 2f - 4f;
-        float innerRadius = radius * 0.55f;
+        float radius = Math.Min(dirtyRect.Width, dirtyRect.Height) / 2f - 6f;
+        float innerRadius = radius * 0.60f;
         float startAngle = -90;
 
         foreach (var segment in Segments)
         {
             float sweepAngle = segment.Percentage / 100f * 360f;
-            int steps = Math.Max(8, (int)(Math.Abs(sweepAngle) / 3));
+            int steps = Math.Max(12, (int)(Math.Abs(sweepAngle) / 2));
 
             var path = new PathF();
             float startRad = startAngle * MathF.PI / 180f;

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MauiHighFidelityDashboard.Domain.Models"
              x:Class="MauiHighFidelityDashboard.Presentation.Components.SidebarView"
+             x:Name="SidebarSelf"
              BackgroundColor="#071A52"
              WidthRequest="220">
     <ScrollView>
@@ -16,32 +18,31 @@
                          Margin="0,12,0,0" />
             </VerticalStackLayout>
             <CollectionView ItemsSource="{Binding MenuItems, Source={x:Reference SidebarSelf}}"
-                            x:Name="SidebarSelf">
+                            SelectionMode="Single"
+                            SelectionChanged="OnSelectionChanged">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Label Padding="20,12" FontSize="14">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="{Binding Icon}" TextColor="White" />
-                                    <Span Text=" " />
-                                    <Span Text="{Binding Label}" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                            <Label.Triggers>
-                                <DataTrigger TargetType="Label"
+                    <DataTemplate x:DataType="models:MenuItemModel">
+                        <Border Padding="20,12"
+                                BackgroundColor="Transparent"
+                                StrokeThickness="0">
+                            <Label FontSize="14"
+                                   TextColor="#8A9BB5">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="{Binding Icon}" TextColor="White" />
+                                        <Span Text=" " />
+                                        <Span Text="{Binding Label}" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
                                              Binding="{Binding IsActive}"
                                              Value="True">
-                                    <Setter Property="TextColor" Value="White" />
                                     <Setter Property="BackgroundColor" Value="#1A3A6A" />
                                 </DataTrigger>
-                                <DataTrigger TargetType="Label"
-                                             Binding="{Binding IsActive}"
-                                             Value="False">
-                                    <Setter Property="TextColor" Value="#8A9BB5" />
-                                    <Setter Property="BackgroundColor" Value="Transparent" />
-                                </DataTrigger>
-                            </Label.Triggers>
-                        </Label>
+                            </Border.Triggers>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
