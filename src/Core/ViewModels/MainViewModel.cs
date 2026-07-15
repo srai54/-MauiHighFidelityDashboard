@@ -19,12 +19,19 @@ public partial class MainViewModel : BaseViewModel
     public string CurrentMonthSales => "82";
     public string DashboardDisplayTitle => "Dashboard";
     public string DashboardSubtitle => "Overview of Latest Month";
+    public bool IsDataLoaded { get; private set; }
 
     public MainViewModel(IDashboardDataService dataService)
     {
         _dataService = dataService;
         Title = DashboardDisplayTitle;
-        LoadDataCommand.ExecuteAsync(null);
+    }
+
+    public async Task InitializeAsync()
+    {
+        if (IsDataLoaded) return;
+        await LoadDataCommand.ExecuteAsync(null);
+        IsDataLoaded = true;
     }
 
     [RelayCommand]
@@ -42,6 +49,20 @@ public partial class MainViewModel : BaseViewModel
         );
 
         IsBusy = false;
+    }
+
+    [RelayCommand]
+    private async Task RefreshAsync()
+    {
+        IsDataLoaded = false;
+        await InitializeAsync();
+    }
+
+    [RelayCommand]
+    private async Task LastMonthSummaryAsync()
+    {
+        // Placeholder for last month summary action
+        await Task.CompletedTask;
     }
 
     private async Task LoadDashboardCardsAsync()

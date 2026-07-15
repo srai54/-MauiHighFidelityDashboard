@@ -15,7 +15,7 @@
                                 <Border WidthRequest="12"
                                         HeightRequest="12"
                                         StrokeShape="RoundRectangle 6"
-                                        BackgroundColor="{Binding DotColor}"
+                                        BackgroundColor="{Binding DotColorHex, Converter={StaticResource HexToColorConverter}}"
                                         Stroke="Transparent"
                                         VerticalOptions="Start"
                                         Margin="0,4,0,0" />

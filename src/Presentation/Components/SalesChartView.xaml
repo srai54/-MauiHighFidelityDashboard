@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:MauiHighFidelityDashboard.Presentation.Components"
              x:Class="MauiHighFidelityDashboard.Presentation.Components.SalesChartView">
+    <ContentView.Resources>
+        <components:SalesBarHeightConverter x:Key="SalesBarConverter" />
+    </ContentView.Resources>
     <Border Style="{StaticResource CardBorderStyle}">
         <VerticalStackLayout Spacing="16">
             <Grid ColumnDefinitions="*,Auto">
@@ -34,31 +38,22 @@
                                            HorizontalOptions="End"
                                            VerticalOptions="End"
                                            Spacing="12"
-                                           HeightRequest="160">
-                        <VerticalStackLayout Spacing="4" VerticalOptions="End">
-                            <BoxView HeightRequest="30" WidthRequest="8" Color="{StaticResource ChartOnline}" CornerRadius="2" />
-                            <BoxView HeightRequest="45" WidthRequest="8" Color="{StaticResource ChartStore}" CornerRadius="2" />
-                        </VerticalStackLayout>
-                        <VerticalStackLayout Spacing="4" VerticalOptions="End">
-                            <BoxView HeightRequest="110" WidthRequest="8" Color="{StaticResource ChartOnline}" CornerRadius="2" />
-                            <BoxView HeightRequest="100" WidthRequest="8" Color="{StaticResource ChartStore}" CornerRadius="2" />
-                        </VerticalStackLayout>
-                        <VerticalStackLayout Spacing="4" VerticalOptions="End">
-                            <BoxView HeightRequest="35" WidthRequest="8" Color="{StaticResource ChartOnline}" CornerRadius="2" />
-                            <BoxView HeightRequest="55" WidthRequest="8" Color="{StaticResource ChartStore}" CornerRadius="2" />
-                        </VerticalStackLayout>
-                        <VerticalStackLayout Spacing="4" VerticalOptions="End">
-                            <BoxView HeightRequest="60" WidthRequest="8" Color="{StaticResource ChartOnline}" CornerRadius="2" />
-                            <BoxView HeightRequest="130" WidthRequest="8" Color="{StaticResource ChartStore}" CornerRadius="2" />
-                        </VerticalStackLayout>
-                        <VerticalStackLayout Spacing="4" VerticalOptions="End">
-                            <BoxView HeightRequest="95" WidthRequest="8" Color="{StaticResource ChartOnline}" CornerRadius="2" />
-                            <BoxView HeightRequest="110" WidthRequest="8" Color="{StaticResource ChartStore}" CornerRadius="2" />
-                        </VerticalStackLayout>
-                        <VerticalStackLayout Spacing="4" VerticalOptions="End">
-                            <BoxView HeightRequest="150" WidthRequest="8" Color="{StaticResource ChartOnline}" CornerRadius="2" />
-                            <BoxView HeightRequest="145" WidthRequest="8" Color="{StaticResource ChartStore}" CornerRadius="2" />
-                        </VerticalStackLayout>
+                                           HeightRequest="160"
+                                           BindableLayout.ItemsSource="{Binding SalesDataPoints}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <VerticalStackLayout Spacing="4" VerticalOptions="End">
+                                    <BoxView WidthRequest="8"
+                                             HeightRequest="{Binding Online, Converter={StaticResource SalesBarConverter}}"
+                                             Color="{StaticResource ChartOnline}"
+                                             CornerRadius="2" />
+                                    <BoxView WidthRequest="8"
+                                             HeightRequest="{Binding Store, Converter={StaticResource SalesBarConverter}}"
+                                             Color="{StaticResource ChartStore}"
+                                             CornerRadius="2" />
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
                     </HorizontalStackLayout>
                 </Grid>
             </Border>

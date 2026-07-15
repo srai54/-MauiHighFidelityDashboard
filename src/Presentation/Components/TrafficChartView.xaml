@@ -8,14 +8,11 @@
                    Style="{StaticResource SectionTitle}"
                    Margin="0" />
             <Grid HeightRequest="160" HorizontalOptions="Center">
-                <Border WidthRequest="140"
-                        HeightRequest="140"
-                        StrokeShape="RoundRectangle 70"
-                        BackgroundColor="{StaticResource PageBackground}"
-                        Stroke="{StaticResource TrafficFacebook}"
-                        StrokeThickness="20"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center" />
+                <GraphicsView x:Name="DonutCanvas"
+                              WidthRequest="140"
+                              HeightRequest="140"
+                              HorizontalOptions="Center"
+                              VerticalOptions="Center" />
             </Grid>
             <VerticalStackLayout Spacing="8">
                 <HorizontalStackLayout Spacing="8">

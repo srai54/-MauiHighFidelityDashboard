@@ -3,27 +3,58 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
+    <!-- Card with Shadow -->
     <Style x:Key="CardBorderStyle" TargetType="Border">
         <Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
-        <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
         <Setter Property="Padding" Value="16" />
         <Setter Property="Margin" Value="6" />
-        <Setter Property="Stroke" Value="Transparent" />
+        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+        <Setter Property="StrokeThickness" Value="0.5" />
     </Style>
 
+    <!-- Typography: Display Title (Dashboard title) -->
+    <Style x:Key="DisplayTitle" TargetType="Label">
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+    </Style>
+
+    <!-- Typography: Section Title (chart titles, card section headers) -->
     <Style x:Key="SectionTitle" TargetType="Label">
-        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontSize" Value="18" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
         <Setter Property="Margin" Value="0,0,0,4" />
     </Style>
 
+    <!-- Typography: Card Title (inside cards) -->
+    <Style x:Key="CardTitle" TargetType="Label">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+    </Style>
+
+    <!-- Typography: Metric Value (large numbers) -->
+    <Style x:Key="MetricValue" TargetType="Label">
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+    </Style>
+
+    <!-- Typography: Caption Text (small labels) -->
+    <Style x:Key="CaptionText" TargetType="Label">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+    </Style>
+
+    <!-- Section Subtitle -->
     <Style x:Key="SectionSubtitle" TargetType="Label">
         <Setter Property="FontSize" Value="13" />
         <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
         <Setter Property="Margin" Value="0,0,0,16" />
     </Style>
 
+    <!-- Primary Action Button -->
     <Style x:Key="PrimaryButton" TargetType="Button">
         <Setter Property="BackgroundColor" Value="{StaticResource PrimaryOrange}" />
         <Setter Property="TextColor" Value="{StaticResource TextWhite}" />

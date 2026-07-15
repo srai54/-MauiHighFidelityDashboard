@@ -5,5 +5,5 @@ public class ActivityModel
     public string Title { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
     public string Time { get; init; } = string.Empty;
-    public Color DotColor { get; init; } = Colors.Grey;
+    public string DotColorHex { get; init; } = "#808080";
 }

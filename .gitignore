@@ -25,3 +25,6 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+
+# oh-my-openagent plugin data
+.omo/

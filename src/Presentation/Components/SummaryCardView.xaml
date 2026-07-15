@@ -7,7 +7,7 @@
             <Border WidthRequest="48"
                     HeightRequest="48"
                     StrokeShape="RoundRectangle 12"
-                    BackgroundColor="{Binding ThemeColor}"
+                    BackgroundColor="{Binding ThemeColorHex, Converter={StaticResource HexToColorConverter}}"
                     Stroke="Transparent"
                     VerticalOptions="Center">
                 <Label Text="{Binding Icon}"
@@ -18,12 +18,9 @@
             </Border>
             <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
                 <Label Text="{Binding Title}"
-                       FontSize="13"
-                       TextColor="{StaticResource TextSecondary}" />
+                       Style="{StaticResource CardTitle}" />
                 <Label Text="{Binding Amount, StringFormat='{0:C}'}"
-                       FontSize="22"
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}" />
+                       Style="{StaticResource MetricValue}" />
             </VerticalStackLayout>
         </Grid>
     </Border>
