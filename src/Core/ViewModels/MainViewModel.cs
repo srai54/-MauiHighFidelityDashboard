@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using MauiHighFidelityDashboard.Domain.Interfaces;
 using MauiHighFidelityDashboard.Domain.Models;
 
@@ -23,29 +24,73 @@ public partial class MainViewModel : BaseViewModel
     {
         _dataService = dataService;
         Title = DashboardDisplayTitle;
-        LoadData();
+        LoadDataCommand.ExecuteAsync(null);
     }
 
-    private void LoadData()
+    [RelayCommand]
+    private async Task LoadDataAsync()
     {
+        if (IsBusy) return;
+        IsBusy = true;
+
+        await Task.WhenAll(
+            LoadDashboardCardsAsync(),
+            LoadActivitiesAsync(),
+            LoadOrdersAsync(),
+            LoadTrafficSourcesAsync(),
+            LoadSalesDataAsync()
+        );
+
+        IsBusy = false;
+    }
+
+    private async Task LoadDashboardCardsAsync()
+    {
+        var result = await _dataService.GetDashboardCardsAsync();
+        if (result.IsFailure) return;
+
         DashboardCards.Clear();
-        foreach (var card in _dataService.GetDashboardCards())
+        foreach (var card in result.Data!)
             DashboardCards.Add(card);
+    }
+
+    private async Task LoadActivitiesAsync()
+    {
+        var result = await _dataService.GetActivitiesAsync();
+        if (result.IsFailure) return;
 
         Activities.Clear();
-        foreach (var activity in _dataService.GetActivities())
+        foreach (var activity in result.Data!)
             Activities.Add(activity);
+    }
+
+    private async Task LoadOrdersAsync()
+    {
+        var result = await _dataService.GetOrdersAsync();
+        if (result.IsFailure) return;
 
         Orders.Clear();
-        foreach (var order in _dataService.GetOrders())
+        foreach (var order in result.Data!)
             Orders.Add(order);
+    }
+
+    private async Task LoadTrafficSourcesAsync()
+    {
+        var result = await _dataService.GetTrafficSourcesAsync();
+        if (result.IsFailure) return;
 
         TrafficSources.Clear();
-        foreach (var source in _dataService.GetTrafficSources())
+        foreach (var source in result.Data!)
             TrafficSources.Add(source);
+    }
+
+    private async Task LoadSalesDataAsync()
+    {
+        var result = await _dataService.GetSalesDataAsync();
+        if (result.IsFailure) return;
 
         SalesDataPoints.Clear();
-        foreach (var dataPoint in _dataService.GetSalesData())
+        foreach (var dataPoint in result.Data!)
             SalesDataPoints.Add(dataPoint);
     }
 }

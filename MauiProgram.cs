@@ -21,7 +21,15 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        // Data Services — swap StaticDashboardDataService for ApiDashboardDataService
+        // when a backend API is available
         builder.Services.AddSingleton<IDashboardDataService, StaticDashboardDataService>();
+        // builder.Services.AddSingleton<IDashboardDataService>(sp =>
+        // {
+        //     var client = new HttpClient { BaseAddress = new Uri("https://api.example.com/") };
+        //     return new ApiDashboardDataService(client);
+        // });
+
         builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddSingleton<MainPage>();
 

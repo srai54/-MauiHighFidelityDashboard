@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Windows",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-windows",
+      "program": "${workspaceFolder}/bin/Debug/net10.0-windows10.0.19041.0/win10-x64/MauiHighFidelityDashboard.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "requireExactSource": false
+    }
+  ]
+}
