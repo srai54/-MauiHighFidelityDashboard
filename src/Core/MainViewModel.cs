@@ -14,6 +14,7 @@ public partial class MainViewModel : BaseViewModel
     private readonly List<OrderModel> _allOrders = [];
 
     public ObservableCollection<DashboardCard> DashboardCards { get; } = [];
+    public ObservableCollection<RevenueCardItem> RevenueCards { get; } = [];
     public ObservableCollection<ActivityModel> Activities { get; } = [];
     public ObservableCollection<OrderModel> Orders { get; } = [];
     public ObservableCollection<PageItem> PageNumbers { get; } = [];
@@ -63,6 +64,7 @@ public partial class MainViewModel : BaseViewModel
 
         await Task.WhenAll(
             LoadDashboardCardsAsync(),
+            LoadRevenueCardsAsync(),
             LoadActivitiesAsync(),
             LoadOrdersAsync(),
             LoadTrafficSourcesAsync(),
@@ -300,6 +302,48 @@ public partial class MainViewModel : BaseViewModel
         OnPropertyChanged(nameof(ReferralCard));
         OnPropertyChanged(nameof(EstimateCard));
         OnPropertyChanged(nameof(EarningCard));
+    }
+
+    private Task LoadRevenueCardsAsync()
+    {
+        RevenueCards.Clear();
+
+        RevenueCards.Add(new RevenueCardItem
+        {
+            Title = "Revinue Status",
+            Value = "$432",
+            Subtitle = "Jan 01 - Jan 10",
+            ChartType = "Bar",
+            BackgroundHex = "#E1F0FF",
+            AccentHex = "#2196F3",
+        });
+        RevenueCards.Add(new RevenueCardItem
+        {
+            Title = "Page View",
+            Value = "$432",
+            ChartType = "Area",
+            BackgroundHex = "#FFF8E1",
+            AccentHex = "#FFB822",
+        });
+        RevenueCards.Add(new RevenueCardItem
+        {
+            Title = "Bounce Rate",
+            Value = "$432",
+            ChartType = "Line",
+            BackgroundHex = "#FDEADF",
+            AccentHex = "#FF7B43",
+        });
+        RevenueCards.Add(new RevenueCardItem
+        {
+            Title = "Revinue Status",
+            Value = "$432",
+            Subtitle = "Jan 01 - Jan 10",
+            ChartType = "Bar",
+            BackgroundHex = "#F3E8FD",
+            AccentHex = "#A461D8",
+        });
+
+        return Task.CompletedTask;
     }
 
     private async Task LoadActivitiesAsync()

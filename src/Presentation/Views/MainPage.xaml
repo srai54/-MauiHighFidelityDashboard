@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:components="clr-namespace:MauiHighFidelityDashboard.Presentation.Components"
              xmlns:vm="clr-namespace:MauiHighFidelityDashboard.Core"
+             xmlns:models="clr-namespace:MauiHighFidelityDashboard.Domain.Models"
              x:Class="MauiHighFidelityDashboard.Presentation.Views.MainPage"
              x:DataType="vm:MainViewModel"
              BackgroundColor="{StaticResource PageBackground}"
@@ -39,43 +40,28 @@
                     <components:TrafficChartView Grid.Column="1" />
                 </Grid>
 
-                <!-- Row 2: analytics cards -->
-                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="16">
-                    <components:RevenueCardView
-                        CardTitle="Revinue Status"
-                        CardValue="$432"
-                        CardSubtitle="Jan 01 - Jan 10"
-                        ChartType="Bar"
-                        CardBackground="{StaticResource RevenueBlueBg}"
-                        AccentColor="{StaticResource RevenueBlueAccent}" />
-                    <components:RevenueCardView
-                        Grid.Column="1"
-                        CardTitle="Page View"
-                        CardValue="$432"
-                        ChartType="Area"
-                        CardBackground="{StaticResource RevenueYellowBg}"
-                        AccentColor="{StaticResource RevenueYellowAccent}" />
-                    <components:RevenueCardView
-                        Grid.Column="2"
-                        CardTitle="Bounce Rate"
-                        CardValue="$432"
-                        ChartType="Line"
-                        CardBackground="{StaticResource RevenueOrangeBg}"
-                        AccentColor="{StaticResource RevenueOrangeAccent}" />
-                    <components:RevenueCardView
-                        Grid.Column="3"
-                        CardTitle="Revinue Status"
-                        CardValue="$432"
-                        CardSubtitle="Jan 01 - Jan 10"
-                        ChartType="Bar"
-                        CardBackground="{StaticResource RevenuePurpleBg}"
-                        AccentColor="{StaticResource RevenuePurpleAccent}" />
-                </Grid>
+                <!-- Row 2: analytics cards (data-driven via BindableLayout ~ add 5th, 6th... by appending to RevenueCards) -->
+                <FlexLayout Direction="Row" Wrap="NoWrap" AlignItems="Stretch"
+                            BindableLayout.ItemsSource="{Binding RevenueCards}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:RevenueCardItem">
+                            <components:RevenueCardView
+                                Margin="8,0"
+                                CardTitle="{Binding Title}"
+                                CardValue="{Binding Value}"
+                                CardSubtitle="{Binding Subtitle}"
+                                ChartType="{Binding ChartType}"
+                                CardBackground="{Binding BackgroundHex, Converter={StaticResource HexToColorConverter}}"
+                                AccentColor="{Binding AccentHex, Converter={StaticResource HexToColorConverter}}"
+                                FlexLayout.Grow="1" />
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
 
                 <!-- Row 3: Recent Activities + Order Status -->
                 <Grid ColumnDefinitions="2*,3*" ColumnSpacing="16">
-                    <components:ActivityTimelineView VerticalOptions="Start" />
-                    <components:OrderTableView Grid.Column="1" VerticalOptions="Start" />
+                    <components:ActivityTimelineView />
+                    <components:OrderTableView Grid.Column="1" />
                 </Grid>
             </VerticalStackLayout>
         </ScrollView>
