@@ -9,7 +9,7 @@
         <converters:StatusBackgroundConverter x:Key="StatusBackgroundConverter" />
     </ContentView.Resources>
     <Border Style="{StaticResource CardBorderStyle}">
-        <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="16">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="16">
             <!-- Title -->
             <VerticalStackLayout Spacing="3">
                 <Label Text="Order Status"
@@ -58,25 +58,29 @@
                         ToolTipProperties.Text="Print order list" />
             </Grid>
 
-            <!-- Table header -->
-            <Border Grid.Row="2"
-                    BackgroundColor="{StaticResource TableHeaderBg}"
-                    Stroke="Transparent"
-                    StrokeShape="RoundRectangle 4"
-                    Padding="14,11">
-                <Grid ColumnDefinitions="70,*,90,80,90">
-                    <Label Text="INVOICE" Style="{StaticResource TableHeaderLabel}" />
-                    <Label Grid.Column="1" Text="CUSTOMERS" Style="{StaticResource TableHeaderLabel}" />
-                    <Label Grid.Column="2" Text="FROM" Style="{StaticResource TableHeaderLabel}" />
-                    <Label Grid.Column="3" Text="PRICE" Style="{StaticResource TableHeaderLabel}" />
-                    <Label Grid.Column="4" Text="STATUS" Style="{StaticResource TableHeaderLabel}" />
-                </Grid>
-            </Border>
+            <!-- Table (pans horizontally on narrow screens; fills the card on wide ones) -->
+            <ScrollView x:Name="TableScroll"
+                        Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Never">
+                <VerticalStackLayout x:Name="TableContent" Spacing="16">
+                    <!-- Table header -->
+                    <Border BackgroundColor="{StaticResource TableHeaderBg}"
+                            Stroke="Transparent"
+                            StrokeShape="RoundRectangle 4"
+                            Padding="14,11">
+                        <Grid ColumnDefinitions="70,*,90,80,90">
+                            <Label Text="INVOICE" Style="{StaticResource TableHeaderLabel}" />
+                            <Label Grid.Column="1" Text="CUSTOMERS" Style="{StaticResource TableHeaderLabel}" />
+                            <Label Grid.Column="2" Text="FROM" Style="{StaticResource TableHeaderLabel}" />
+                            <Label Grid.Column="3" Text="PRICE" Style="{StaticResource TableHeaderLabel}" />
+                            <Label Grid.Column="4" Text="STATUS" Style="{StaticResource TableHeaderLabel}" />
+                        </Grid>
+                    </Border>
 
-            <!-- Rows (tap to select) -->
-            <VerticalStackLayout Grid.Row="3"
-                                 Spacing="0"
-                                 BindableLayout.ItemsSource="{Binding Orders}">
+                    <!-- Rows (tap to select) -->
+                    <VerticalStackLayout Spacing="0"
+                                         BindableLayout.ItemsSource="{Binding Orders}">
                 <BindableLayout.ItemTemplate>
                     <DataTemplate x:DataType="models:OrderModel">
                         <Grid RowDefinitions="*,1" Padding="14,0,14,0" BackgroundColor="Transparent">
@@ -114,10 +118,12 @@
                         </Grid>
                     </DataTemplate>
                 </BindableLayout.ItemTemplate>
-            </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </ScrollView>
 
             <!-- Footer: entries text + pagination -->
-            <Grid Grid.Row="4" ColumnDefinitions="*,Auto">
+            <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
                 <Label Text="{Binding OrdersFooterText}"
                        FontSize="11"
                        TextColor="{StaticResource TextLight}"

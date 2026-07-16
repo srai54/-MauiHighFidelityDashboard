@@ -30,12 +30,12 @@
                     <HorizontalStackLayout Spacing="6" HorizontalOptions="End">
                         <!-- Vector arrow: text "↑" ignores bold because the glyph comes from a fallback font -->
                         <Path x:Name="BarArrow"
-                              Data="M6.5,15 L6.5,2 M2,6.5 L6.5,2 L11,6.5"
-                              StrokeThickness="2.5"
+                              Data="M7,15.5 L7,2.2 M2.6,6.6 L7,2.2 L11.4,6.6"
+                              StrokeThickness="3.2"
                               StrokeLineCap="Round"
                               StrokeLineJoin="Round"
-                              WidthRequest="13"
-                              HeightRequest="17"
+                              WidthRequest="14"
+                              HeightRequest="18"
                               VerticalOptions="Center" />
                         <Label Text="{Binding CardValue, Source={x:Reference Root}}"
                                FontSize="20"
@@ -56,12 +56,12 @@
                   IsVisible="False">
                 <HorizontalStackLayout Spacing="6">
                     <Path x:Name="AreaArrow"
-                          Data="M6.5,15 L6.5,2 M2,6.5 L6.5,2 L11,6.5"
-                          StrokeThickness="2.5"
+                          Data="M7,15.5 L7,2.2 M2.6,6.6 L7,2.2 L11.4,6.6"
+                          StrokeThickness="3.2"
                           StrokeLineCap="Round"
                           StrokeLineJoin="Round"
-                          WidthRequest="13"
-                          HeightRequest="17"
+                          WidthRequest="14"
+                          HeightRequest="18"
                           VerticalOptions="Center" />
                     <Label Text="{Binding CardValue, Source={x:Reference Root}}"
                            FontSize="20"
@@ -84,12 +84,12 @@
                 <VerticalStackLayout Spacing="10" VerticalOptions="Center">
                     <HorizontalStackLayout Spacing="6">
                         <Path x:Name="LineArrow"
-                              Data="M6.5,15 L6.5,2 M2,6.5 L6.5,2 L11,6.5"
-                              StrokeThickness="2.5"
+                              Data="M7,15.5 L7,2.2 M2.6,6.6 L7,2.2 L11.4,6.6"
+                              StrokeThickness="3.2"
                               StrokeLineCap="Round"
                               StrokeLineJoin="Round"
-                              WidthRequest="13"
-                              HeightRequest="17"
+                              WidthRequest="14"
+                              HeightRequest="18"
                               VerticalOptions="Center" />
                         <Label Text="{Binding CardValue, Source={x:Reference Root}}"
                                FontSize="20"

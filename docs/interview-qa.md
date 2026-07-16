@@ -17,6 +17,7 @@
 9. [Component Design & Reusability](#9-component-design--reusability)
 10. [Responsiveness & Cross-Platform](#10-responsiveness--cross-platform)
 11. [Mock Interview — Walkthrough Script](#11-mock-interview--walkthrough-script)
+12. [New Design Features (Print, Popup, Arrows, Grid)](#12-new-design-features-print-popup-arrows-grid)
 
 ---
 
@@ -24,14 +25,14 @@
 
 ### Q: "Walk me through your project architecture."
 
-> It follows **Clean Architecture** with 4 layers:
+> It follows the assignment-mandated **MVVM structure**:
 >
-> - **Domain** — Contains business models (`DashboardCard`, `OrderModel`), interfaces (`IDashboardDataService`), and the `Result<T>` pattern. Zero dependencies on any other layer.
-> - **Infrastructure** — Data service implementations (`StaticDashboardDataService` for in-memory, `ApiDashboardDataService` for HTTP). Depends only on Domain.
-> - **Core** — ViewModels and value converters. Depends on Domain and Infrastructure interfaces.
-> - **Presentation** — XAML pages, reusable ContentView components, and style resources. Depends only on Core.
+> - **/Models** — POCOs (`DashboardCard`, `OrderModel`, `SummaryStat`) plus the `Result<T>` pattern. Zero dependencies.
+> - **/Services** — `StaticDashboardDataService` (in-memory), `ApiDashboardDataService` (HTTP), and `PrintService`; their contracts live in **/Services/Interfaces** (`IDashboardDataService`, `IPrintService`).
+> - **/ViewModels** — `BaseViewModel`, `MainViewModel`, `DetailViewModel`; depend only on service *interfaces*.
+> - **/Views** and **/Components** — XAML pages and 8 reusable ContentViews; **/Converters** and **/Resources/Styles** support them.
 >
-> The rule is: dependencies flow inward. Presentation → Core → Infrastructure → Domain. Domain knows nothing about UI or data access.
+> The rule: Views bind to ViewModels, ViewModels call interfaces, services return `Result<T>` of Models. Swapping the data source is one line in `MauiProgram.cs` — no ViewModel changes.
 
 ### Q: "Why did you choose Clean Architecture over a simpler structure?"
 
@@ -471,24 +472,17 @@
 
 ## 10. Responsiveness & Cross-Platform
 
-### Q: "How does your app handle different screen sizes?"
+### Q: "How does your app handle different screen sizes?" *(implemented)*
 
-> Currently the sidebar is fixed at 200px and the layout uses a `Grid` with `ColumnDefinitions="200,*"`. For responsiveness:
-> - `OnIdiom` in XAML adjusts sizes for Phone/Tablet/Desktop
-> - On narrow screens, the sidebar could collapse to an overlay (hamburger menu)
-> - The `ScrollView` ensures content scrolls vertically if too tall
+> `MainPage` applies a **980px logical-width breakpoint** in `ApplyResponsiveLayout()`, triggered by `SizeChanged`:
+> - **Wide:** 200px sidebar, chart card + traffic side by side, 4-card KPI strip, revenue cards 4-in-a-row, activities + orders side by side.
+> - **Narrow (phone / small window / high zoom):** sidebar hides behind a ☰ hamburger overlay, everything stacks into one column, the KPI strip becomes a 2×2 grid, revenue cards wrap (`FlexLayout` `Basis=240` + `Grow=1` → 4/2/1 per row), the chart's tab row wraps, and the order table pans horizontally with a 520px minimum content width.
+>
+> I chose a width breakpoint over `DeviceInfo.Idiom` because it also handles desktop window resizing and Windows display zoom (100%→400%) — zoom shrinks the *logical* width, so the same code path covers both.
 
-### Q: "How would you make it adaptive for mobile?"
+### Q: "Why is the responsive logic in code-behind — isn't that against MVVM?"
 
-> ```csharp
-> if (DeviceInfo.Idiom == DeviceIdiom.Phone)
-> {
->     SidebarWidth = 0;  // Hidden
->     ShowHamburger = true;
->     GridColumns = "*"; // Single column
-> }
-> ```
-> The ViewModel checks `DeviceInfo.Idiom` on init and sets `ColumnDefinitions` accordingly via binding.
+> MVVM says business logic belongs in ViewModels. Rearranging Grid rows/columns is **pure visual concern** — it has no state the ViewModel cares about and no behavior to unit test. Putting it in the View keeps the ViewModel platform-agnostic. The same reasoning applies to the chart `IDrawable` code and the platform print calls.
 
 ### Q: "What MAUI challenges did you encounter?"
 
@@ -544,3 +538,28 @@
 | Charts | "Custom GraphicsView + IDrawable — no third-party dependency" |
 | Performance | "Parallel fetch, compiled bindings, pagination, IsBusy guard" |
 | Testing | "Mock IDashboardDataService — unit test ViewModels without UI" |
+| Printing | "IPrintService → HTML report → WebView2 print dialog on Windows, PrintManager on Android" |
+| Responsive | "980px breakpoint restacks the grid; hamburger sidebar; FlexLayout wrap 4/2/1" |
+
+---
+
+## 12. New Design Features (Print, Popup, Arrows, Grid)
+
+### Q: "How does printing actually work?"
+
+> The 🖨 buttons invoke `PrintOrdersCommand`, which calls `IPrintService.PrintOrdersAsync(filteredOrders, jobName)`. `PrintService` renders the orders into a **styled HTML report** (status badges, totals, print timestamp) and pushes a modal `PrintPreviewPage` hosting a `WebView`. The Print button is enabled once the WebView's `Navigated` event fires, then:
+> - **Windows:** cast `Handler.PlatformView` to WinUI `WebView2` → `CoreWebView2.ShowPrintUI(Browser)` — the real OS dialog with printer selection and Print-to-PDF.
+> - **Android:** `PrintManager.Print(jobName, webView.CreatePrintDocumentAdapter(jobName), attrs)` — the standard Android print sheet.
+> The platform code is isolated in `PrintPreviewPage` code-behind behind `#if WINDOWS / #if ANDROID`.
+
+### Q: "Why is the Last Month Summary a custom Popup instead of DisplayAlert?"
+
+> `DisplayAlert` only takes a flat string — the stats came out misaligned and unstructured. The `LastMonthSummaryPopup` (CommunityToolkit.Maui `Popup`) renders a proper card: title + subtitle header, a `BindableLayout` of label/value rows from `SummaryStat` records, a green highlight on the growth metric, and a Close button. The ViewModel just builds the data and calls `ShowPopupAsync` — presentation stays in XAML.
+
+### Q: "Why are the card arrows drawn with Path instead of a bold '↑' character?"
+
+> `FontAttributes="Bold"` had **no visible effect** on `↑` — the glyph isn't in OpenSans, so the OS substitutes it from a fallback font that ignores the bold attribute. A stroked vector `Path` (StrokeThickness 3.2, round caps/joins) is guaranteed to look identically bold on every platform, and its `Stroke` is set from the card's accent color at the same place the mini-chart color is applied.
+
+### Q: "How is the sales chart drawn?"
+
+> A single `SplineDrawable : IDrawable` on a `GraphicsView`. It draws the **grid first** (horizontal line per y-tick, vertical line per x-tick — matching the design), then per series: a Catmull-Rom-style spline path via `CurveTo`, a translucent area fill down to the baseline, the stroke, and white-filled data-point circles. Switching Daily/Weekly/Monthly/Yearly just swaps the dataset and x-labels and invalidates the canvas.

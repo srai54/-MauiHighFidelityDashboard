@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MauiHighFidelityDashboard.Services.Interfaces;
 using MauiHighFidelityDashboard.Models;
+using MauiHighFidelityDashboard.Views;
 
 namespace MauiHighFidelityDashboard.ViewModels;
 
@@ -90,19 +92,23 @@ public partial class MainViewModel : BaseViewModel
         await Shell.Current.GoToAsync($"detail?title={item.Label}");
     }
 
+    private static readonly IReadOnlyList<SummaryStat> LastMonthStats =
+    [
+        new("Earnings", "$2,980.44"),
+        new("Sales", "74"),
+        new("New Orders", "61"),
+        new("Refunds", "3"),
+        new("Top Seller", "Wireless Headset"),
+        new("Best Region", "Italy"),
+        new("Growth vs May", "+16.4%", Highlight: true),
+    ];
+
     [RelayCommand]
     private async Task LastMonthSummaryAsync()
     {
-        await Shell.Current.DisplayAlertAsync(
-            "Last Month Summary",
-            "Earnings:        $2,980.44\n" +
-            "Sales:           74\n" +
-            "New Orders:      61\n" +
-            "Refunds:         3\n" +
-            "Top Seller:      Wireless Headset\n" +
-            "Best Region:     Italy\n" +
-            "Growth vs May:   +16.4%",
-            "Close");
+        var page = Shell.Current.CurrentPage;
+        if (page is null) return;
+        await page.ShowPopupAsync(new LastMonthSummaryPopup(LastMonthStats));
     }
 
     // ---------- Order Status: search / pagination / toolbar ----------

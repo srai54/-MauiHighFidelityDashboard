@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:models="clr-namespace:MauiHighFidelityDashboard.Models"
+               x:Class="MauiHighFidelityDashboard.Views.LastMonthSummaryPopup"
+               CanBeDismissedByTappingOutsideOfPopup="True"
+               Color="Transparent">
+    <Border BackgroundColor="White"
+            Stroke="#E4E8F0"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 10"
+            WidthRequest="340"
+            Padding="0">
+        <VerticalStackLayout>
+            <!-- Header -->
+            <VerticalStackLayout Padding="22,18,22,14" Spacing="3">
+                <Label Text="Last Month Summary"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}" />
+                <Label Text="June performance at a glance"
+                       FontSize="11"
+                       TextColor="{StaticResource TextLight}" />
+            </VerticalStackLayout>
+            <BoxView HeightRequest="1" Color="{StaticResource DividerColor}" />
+
+            <!-- Stat rows -->
+            <VerticalStackLayout x:Name="StatsHost" Padding="22,6">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="models:SummaryStat">
+                        <Grid ColumnDefinitions="*,Auto" Padding="0,9">
+                            <Label Text="{Binding Label}"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding Value}"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   VerticalOptions="Center">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Highlight}" Value="True">
+                                        <Setter Property="TextColor" Value="#2BC155" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="1" Color="{StaticResource DividerColor}" />
+            <!-- Footer -->
+            <Button Text="Close"
+                    Style="{StaticResource PrimaryButton}"
+                    FontSize="12"
+                    Padding="18,8"
+                    Margin="22,14,22,18"
+                    HorizontalOptions="End"
+                    Clicked="OnCloseClicked" />
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>

@@ -1,155 +1,91 @@
 # MauiHighFidelityDashboard
 
-A production-grade **.NET MAUI** dashboard application demonstrating **Clean Architecture**, **MVVM**, **Dependency Injection**, and enterprise design patterns. Built for interview discussion and real-world extensibility.
+A **.NET MAUI** dashboard that recreates the assignment screenshot with high visual fidelity, following the assignment's **MVVM folder structure**, with **Dependency Injection**, service interfaces, real cross-platform **printing**, and a **responsive layout** that adapts from desktop to phone (and 100%→400% zoom).
+
+Runs on **Windows** and **Android** (iOS/macCatalyst targets included).
 
 ---
 
-## Architecture
+## Project Structure (per assignment)
 
 ```
-src/
-├── Domain/                        # Core business objects & contracts
-│   ├── Common/                    # Result<T> — consistent error handling
-│   ├── Models/                    # DashboardCard, ActivityModel, TrafficModel, ...
-│   └── Interfaces/                # IDashboardDataService — async data contract
-├── Infrastructure/                # Data access implementations
-│   └── Data/                      # StaticDashboardDataService, ApiDashboardDataService
-├── Core/                          # Application logic
-│   ├── ViewModels/                # BaseViewModel, MainViewModel
-│   └── Converters/                # StatusColor, StatusBackground, AmountToCurrency
-└── Presentation/                  # UI layer
-    ├── Views/                     # MainPage
-    ├── Components/                # 8 reusable ContentViews
-    └── Resources/Styles/          # Colors.xaml, Styles.xaml, Fonts.xaml
+MauiHighFidelityDashboard/
+├── Views/                          # Pages
+│   ├── MainPage.xaml               # Dashboard + responsive breakpoint logic
+│   ├── DetailPage.xaml             # Sidebar navigation detail page
+│   ├── PrintPreviewPage.xaml       # Report preview + OS print dialog
+│   └── LastMonthSummaryPopup.xaml  # Structured stats popup
+├── Components/                     # 8 reusable ContentViews
+│   ├── SidebarView.xaml            # 200px dark navigation (hamburger overlay on phones)
+│   ├── DashboardHeaderView.xaml    # Title, earnings, sales, summary button
+│   ├── SalesChartView.xaml         # Spline chart + grid + period tabs (GraphicsView)
+│   ├── TrafficChartView.xaml       # Donut chart with legend
+│   ├── SummaryCardView.xaml        # KPI card (used 4x)
+│   ├── RevenueCardView.xaml        # Analytics card with bold vector arrow (used 4x)
+│   ├── ActivityTimelineView.xaml   # Vertical activity timeline
+│   └── OrderTableView.xaml         # Orders: search, pagination, add/delete/print
+├── ViewModels/
+│   ├── BaseViewModel.cs            # ObservableObject base (IsBusy, Title)
+│   ├── MainViewModel.cs            # Dashboard state + commands
+│   └── DetailViewModel.cs
+├── Models/                         # POCO models + Result<T> + SummaryStat
+├── Services/
+│   ├── Interfaces/                 # IDashboardDataService, IPrintService
+│   ├── StaticDashboardDataService.cs   # In-memory data (default)
+│   ├── ApiDashboardDataService.cs      # HttpClient implementation (swap-in ready)
+│   └── PrintService.cs             # HTML report + print preview flow
+├── Converters/                     # 4 IValueConverters
+├── Resources/Styles/               # Colors.xaml, Styles.xaml, Fonts.xaml
+├── MauiProgram.cs                  # DI registrations
+└── run.cmd                         # Interactive launcher: Windows or Android
 ```
 
-**Dependency flow:** `Domain` ← `Infrastructure` ← `Core` ← `Presentation`
-
----
-
-## Tech Stack
-
-| Technology | Purpose |
-|-----------|---------|
-| .NET 10 / MAUI | Cross-platform UI framework |
-| CommunityToolkit.Mvvm | Source-generated MVVM (ObservableProperty, RelayCommand) |
-| CommunityToolkit.Maui | UI helpers & behaviors |
-| Clean Architecture | Domain / Infrastructure / Core / Presentation layers |
-| Dependency Injection | Built-in Microsoft DI container |
-
----
-
-## Key Design Decisions
-
-### 1. Clean Architecture Layers
-Each layer has a single responsibility. `Domain` knows nothing about UI or data access. `Presentation` only depends on `Core` abstractions. Swapping the data source (static → API) requires zero UI changes.
-
-### 2. IDashboardDataService Interface
-All data access flows through this async contract. Two implementations ship with the project:
-- **StaticDashboardDataService** — in-memory sample data (current default)
-- **ApiDashboardDataService** — HttpClient-based, ready for backend integration
-
-Switch between them in `MauiProgram.cs` by toggling one line.
-
-### 3. Result\<T\> Pattern
-Every service method returns `Result<T>` — a discriminated union of `Success(data)` or `Failure(error)`. ViewModels check `result.IsSuccess` before using data, making error paths explicit without exceptions.
-
-### 4. Async Everything
-Data loading uses `Task.WhenAll` for parallel fetch, `[RelayCommand]` for bindable async commands, and `IsBusy` guard to prevent duplicate loads.
-
-### 5. Reusable Components
-All 8 dashboard sections are self-contained `ContentView` controls with bindable properties, registered as global styles in `ResourceDictionary`.
-
----
-
-## Prerequisites
-
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (or .NET 8+ with MAUI workload)
-- MAUI workload: `dotnet workload install maui`
-- Windows 10 19041+ (for Windows target)
+**MVVM:** Views bind to ViewModels (CommunityToolkit.Mvvm source generators); ViewModels depend on service **interfaces**; code-behind is reserved for visual concerns (chart drawing, responsive re-layout, platform print calls).
 
 ---
 
 ## How to Run
 
-### Command Line
+### Interactive picker (Windows or Android)
+```bat
+.\run.cmd
+```
+Choose `1` for Windows or `2` for Android. For Android it auto-starts the Pixel 7 emulator (software rendering) if no device is connected, waits for boot, then deploys.
+
+### Direct commands
 ```bash
-dotnet build -f net10.0-windows10.0.19041.0
-dotnet run -f net10.0-windows10.0.19041.0
+dotnet run -f net10.0-windows10.0.19041.0        # Windows
+dotnet build -t:Run -f net10.0-android            # Android (device/emulator required)
 ```
 
 ### Visual Studio
-Open `MauiHighFidelityDashboard.sln` and press **F5**.
+Open the solution, pick the **framework** (`net10.0-windows…` or `net10.0-android`) and the device from the debug-target dropdown, press **F5**.
 
-### VS Code
-Install the **C# Dev Kit** extension, then press **F5** (uses `.vscode/launch.json`).
-
----
-
-## Project Structure
-
-```
-MauiHighFidelityDashboard.sln
-MauiHighFidelityDashboard.csproj
-MauiProgram.cs                      # DI container setup
-App.xaml / App.xaml.cs               # Application entry, merged resource dictionaries
-AppShell.xaml                        # Shell navigation (hidden nav bar)
-
-src/
-├── Domain/
-│   ├── Common/Result.cs             # Success/Failure result type
-│   ├── Models/                      # 5 domain models (init-only properties)
-│   └── Interfaces/                  # IDashboardDataService contract
-├── Infrastructure/
-│   └── Data/                        # Static + API data service implementations
-├── Core/
-│   ├── ViewModels/                  # BaseViewModel, MainViewModel
-│   └── Converters/                  # 3 IValueConverters for XAML
-└── Presentation/
-    ├── Views/MainPage.xaml          # Full dashboard layout
-    ├── Components/                  # 8 ContentViews:
-    │   ├── SidebarView              # 220px sidebar navigation
-    │   ├── DashboardHeaderView      # Title, metrics, action button
-    │   ├── SalesChartView           # Bar chart + tabs
-    │   ├── TrafficChartView         # Donut chart with legend
-    │   ├── SummaryCardView          # Reusable KPI card (4 instances)
-    │   ├── RevenueCardView          # Reusable analytics card (4 instances)
-    │   ├── ActivityTimelineView     # Vertical timeline
-    │   └── OrderTableView           # Table with status badges
-    └── Resources/Styles/            # Colors.xaml, Styles.xaml, Fonts.xaml
-```
+> **Emulator tip:** if the Android emulator boots to a black/stuck screen on this machine, start it with software rendering:
+> `emulator -avd pixel_7_-_api_36_0 -gpu swiftshader_indirect` — `run.cmd` already does this. On first boot the emulator is slow; if an "isn't responding" dialog appears, choose **Wait**.
 
 ---
 
-## Dashboard Sections
+## Feature Highlights
 
-| Section | Component | Description |
-|---------|-----------|-------------|
-| Sidebar | `SidebarView` | 220px navigation, #071A52 background, 21 menu items |
-| Header | `DashboardHeaderView` | Title + $3,468.96 earnings + 82 sales + action button |
-| Sales Chart | `SalesChartView` | Bar chart with Daily/Weekly/Monthly/Yearly tabs |
-| Traffic | `TrafficChartView` | Donut chart: Facebook 34%, YouTube 55%, Direct 11% |
-| KPI Cards | `SummaryCardView` × 4 | Wallet Balance, Referral, Sales, Earning |
-| Analytics | `RevenueCardView` × 4 | Revenue Status, Page View, Bounce Rate, Revenue |
-| Timeline | `ActivityTimelineView` | 4 recent activity entries with colored dots |
-| Orders | `OrderTableView` | 5 orders with search, filter, status badges |
-
----
-
-## Interview Topics
-
-- **Why Clean Architecture?** Independent layers, testable in isolation, swap data sources without touching UI
-- **Why Service Interface?** `IDashboardDataService` enables unit testing with mocks, parallel async loading
-- **Why Result\<T\>?** Explicit error handling vs exceptions — predictable, composable, testable
-- **Why CommunityToolkit.Mvvm?** Source generators eliminate boilerplate (`[ObservableProperty]`, `[RelayCommand]`)
-- **Why ContentViews?** Encapsulated, reusable UI components with bindable properties
-- **Why ResourceDictionary?** Centralized styling, consistent theming, maintainable
+| Feature | Where | Notes |
+|---------|-------|-------|
+| High-fidelity dashboard | `Views/MainPage.xaml` + `Components/` | Pixel-matched to the assignment screenshot |
+| Custom charts | `SalesChartView`, `TrafficChartView`, `RevenueCardView` | `GraphicsView` + `IDrawable`, no chart library; full grid behind splines |
+| Bold trend arrows | `RevenueCardView` | Stroked vector `Path` (text `↑` ignores bold — fallback-font glyph) |
+| Real printing | `Services/PrintService`, `Views/PrintPreviewPage` | Windows: WebView2 print dialog (printers + PDF). Android: system `PrintManager` |
+| Structured summary popup | `Views/LastMonthSummaryPopup` | CommunityToolkit Popup, label/value rows, highlighted growth |
+| Responsive layout | `MainPage.xaml.cs` (`ApplyResponsiveLayout`) | <980px: sidebar → hamburger overlay, single-column stacking, 2×2 KPI grid, revenue cards wrap 4/2/1, order table pans horizontally |
+| Orders toolbar | `OrderTableView` + `MainViewModel` | Search, pagination, add (manual/quick), delete, info summary, print |
 
 ---
 
-## Switching to API Mode
+## Architecture Notes
 
-In `MauiProgram.cs`, comment out the static service and uncomment the API service:
+- **DI:** everything is registered in `MauiProgram.cs`; ViewModels/pages get dependencies via constructor.
+- **`Result<T>`:** every service call returns `Success(data)` or `Failure(error)` — explicit error handling, no exception-driven flow.
+- **Parallel loading:** `MainViewModel.InitializeAsync` fetches all five data sets with `Task.WhenAll`.
+- **Swappable data source:** switch `StaticDashboardDataService` → `ApiDashboardDataService` with one line in `MauiProgram.cs`:
 
 ```csharp
 // builder.Services.AddSingleton<IDashboardDataService, StaticDashboardDataService>();
@@ -160,19 +96,18 @@ builder.Services.AddSingleton<IDashboardDataService>(sp =>
 });
 ```
 
-The `ApiDashboardDataService` expects the following endpoints:
-- `GET /api/dashboard/cards`
-- `GET /api/dashboard/activities`
-- `GET /api/dashboard/orders`
-- `GET /api/dashboard/traffic`
-- `GET /api/dashboard/sales`
+Expected endpoints: `GET /api/dashboard/{cards|activities|orders|traffic|sales}`.
 
 ---
 
+## Docs
+
+- [docs/interview-architecture.md](docs/interview-architecture.md) — architecture walkthrough, data/print flow, design decisions
+- [docs/interview-qa.md](docs/interview-qa.md) — interview Q&A master guide
+
 ## Built With
 
-- .NET MAUI
-- CommunityToolkit.Mvvm
-- CommunityToolkit.Maui
-- Clean Architecture
-- MVVM Pattern
+- .NET 10 / MAUI
+- CommunityToolkit.Mvvm (source-generated MVVM)
+- CommunityToolkit.Maui (Popup)
+- GraphicsView + IDrawable custom charts
