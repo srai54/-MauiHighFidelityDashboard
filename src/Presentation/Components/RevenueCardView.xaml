@@ -27,11 +27,16 @@
                                      Spacing="3"
                                      HorizontalOptions="End"
                                      VerticalOptions="Center">
-                    <Label Text="{Binding CardValue, Source={x:Reference Root}, StringFormat='↑ {0}'}"
-                           FontSize="20"
-                           FontAttributes="Bold"
+                    <Label FontSize="20"
                            TextColor="{Binding AccentColor, Source={x:Reference Root}}"
-                           HorizontalTextAlignment="End" />
+                           HorizontalTextAlignment="End">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="↑ " FontAttributes="Bold" />
+                                <Span Text="{Binding CardValue, Source={x:Reference Root}}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
                     <Label Text="{Binding CardSubtitle, Source={x:Reference Root}}"
                            FontSize="10"
                            TextColor="#8B93A7"
@@ -44,10 +49,15 @@
                   Grid.Row="1"
                   RowDefinitions="Auto,*"
                   IsVisible="False">
-                <Label Text="{Binding CardValue, Source={x:Reference Root}, StringFormat='↑ {0}'}"
-                       FontSize="20"
-                       FontAttributes="Bold"
-                       TextColor="{Binding AccentColor, Source={x:Reference Root}}" />
+                <Label FontSize="20"
+                       TextColor="{Binding AccentColor, Source={x:Reference Root}}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="↑ " FontAttributes="Bold" />
+                            <Span Text="{Binding CardValue, Source={x:Reference Root}}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
                 <GraphicsView x:Name="AreaCanvas"
                               Grid.Row="1"
                               HeightRequest="44"
@@ -62,10 +72,15 @@
                   ColumnSpacing="12"
                   IsVisible="False">
                 <VerticalStackLayout Spacing="10" VerticalOptions="Center">
-                    <Label Text="{Binding CardValue, Source={x:Reference Root}, StringFormat='↑ {0}'}"
-                           FontSize="20"
-                           FontAttributes="Bold"
-                           TextColor="{Binding AccentColor, Source={x:Reference Root}}" />
+                    <Label FontSize="20"
+                           TextColor="{Binding AccentColor, Source={x:Reference Root}}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="↑ " FontAttributes="Bold" />
+                                <Span Text="{Binding CardValue, Source={x:Reference Root}}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
                     <Border BackgroundColor="White"
                             Stroke="#E4E8F0"
                             StrokeThickness="1"
