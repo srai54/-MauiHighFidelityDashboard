@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiHighFidelityDashboard.Components.DashboardHeaderView">
+    <VerticalStackLayout Spacing="0">
+        <Label Text="{Binding DashboardDisplayTitle}"
+               Style="{StaticResource SectionTitle}" />
+        <Label Text="{Binding DashboardSubtitle}"
+               Style="{StaticResource SectionSubtitle}"
+               Margin="0,3,0,0" />
+        <Label Text="{Binding CurrentMonthEarnings}"
+               FontSize="24"
+               FontAttributes="Bold"
+               TextColor="{StaticResource TextPrimary}"
+               Margin="0,26,0,0" />
+        <Label Text="Current Month Earnings"
+               Style="{StaticResource CaptionText}"
+               Margin="0,3,0,0" />
+        <Label Text="{Binding CurrentMonthSales}"
+               FontSize="24"
+               FontAttributes="Bold"
+               TextColor="{StaticResource TextPrimary}"
+               Margin="0,20,0,0" />
+        <Label Text="Current Month Sales"
+               Style="{StaticResource CaptionText}"
+               Margin="0,3,0,0" />
+        <Button Text="Last Month Summary"
+                Style="{StaticResource PrimaryButton}"
+                Command="{Binding LastMonthSummaryCommand}"
+                FontSize="11"
+                Padding="16,9"
+                Margin="0,26,0,0"
+                HorizontalOptions="Start" />
+    </VerticalStackLayout>
+</ContentView>

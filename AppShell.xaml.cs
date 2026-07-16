@@ -1,4 +1,4 @@
-﻿using MauiHighFidelityDashboard.Presentation.Views;
+﻿using MauiHighFidelityDashboard.Views;
 
 namespace MauiHighFidelityDashboard;
 

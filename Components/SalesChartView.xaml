@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiHighFidelityDashboard.Components.SalesChartView">
+    <Grid RowDefinitions="Auto,*" RowSpacing="6">
+        <!-- Row 0: Tabs + Legend (wraps on narrow screens instead of clipping) -->
+        <FlexLayout Wrap="Wrap" JustifyContent="SpaceBetween" AlignItems="Start">
+            <HorizontalStackLayout Spacing="22">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="DAILY" Style="{StaticResource TabActiveStyle}" x:Name="TabDaily" />
+                    <BoxView x:Name="UnderlineDaily" HeightRequest="2" WidthRequest="30" Color="{StaticResource PrimaryOrange}" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="WEEKLY" Style="{StaticResource TabInactiveStyle}" x:Name="TabWeekly" />
+                    <BoxView x:Name="UnderlineWeekly" HeightRequest="2" WidthRequest="30" Color="{StaticResource PrimaryOrange}" HorizontalOptions="Center" IsVisible="False" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="MONTHLY" Style="{StaticResource TabInactiveStyle}" x:Name="TabMonthly" />
+                    <BoxView x:Name="UnderlineMonthly" HeightRequest="2" WidthRequest="30" Color="{StaticResource PrimaryOrange}" HorizontalOptions="Center" IsVisible="False" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="YEARLY" Style="{StaticResource TabInactiveStyle}" x:Name="TabYearly" />
+                    <BoxView x:Name="UnderlineYearly" HeightRequest="2" WidthRequest="30" Color="{StaticResource PrimaryOrange}" HorizontalOptions="Center" IsVisible="False" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Spacing="14" VerticalOptions="Start">
+                <HorizontalStackLayout Spacing="5">
+                    <BoxView WidthRequest="8" HeightRequest="8" Color="{StaticResource ChartOnline}" CornerRadius="4" VerticalOptions="Center" />
+                    <Label Text="Online" FontSize="10" TextColor="{StaticResource TextLight}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="5">
+                    <BoxView WidthRequest="8" HeightRequest="8" Color="{StaticResource ChartStore}" CornerRadius="4" VerticalOptions="Center" />
+                    <Label Text="Store" FontSize="10" TextColor="{StaticResource TextLight}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </HorizontalStackLayout>
+        </FlexLayout>
+
+        <!-- Row 1: Spline Chart (axes drawn in-canvas) -->
+        <GraphicsView x:Name="ChartCanvas"
+                      Grid.Row="1"
+                      HeightRequest="225" />
+    </Grid>
+</ContentView>

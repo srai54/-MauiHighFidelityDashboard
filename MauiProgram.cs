@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Maui;
-using MauiHighFidelityDashboard.Core;
-using MauiHighFidelityDashboard.Domain.Interfaces;
-using MauiHighFidelityDashboard.Infrastructure;
-using MauiHighFidelityDashboard.Presentation.Views;
+using MauiHighFidelityDashboard.ViewModels;
+using MauiHighFidelityDashboard.Services.Interfaces;
+using MauiHighFidelityDashboard.Services;
+using MauiHighFidelityDashboard.Views;
 using Microsoft.Extensions.Logging;
 #if WINDOWS
 using Microsoft.Maui.LifecycleEvents;
@@ -42,6 +42,7 @@ public static class MauiProgram
         // Data Services — swap StaticDashboardDataService for ApiDashboardDataService
         // when a backend API is available
         builder.Services.AddSingleton<IDashboardDataService, StaticDashboardDataService>();
+        builder.Services.AddSingleton<IPrintService, PrintService>();
         // builder.Services.AddSingleton<IDashboardDataService>(sp =>
         // {
         //     var client = new HttpClient { BaseAddress = new Uri("https://api.example.com/") };

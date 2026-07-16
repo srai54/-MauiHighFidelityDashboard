@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiHighFidelityDashboard.Views.PrintPreviewPage"
+             BackgroundColor="{StaticResource PageBackground}"
+             Shell.NavBarIsVisible="False"
+             Title="Print Preview">
+    <Grid RowDefinitions="Auto,*">
+        <Grid ColumnDefinitions="*,Auto,Auto"
+              ColumnSpacing="8"
+              Padding="16,10"
+              BackgroundColor="White">
+            <Label Text="Print Preview"
+                   FontSize="15"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextPrimary}"
+                   VerticalOptions="Center" />
+            <Button x:Name="PrintButton"
+                    Grid.Column="1"
+                    Text="🖨  Print"
+                    Style="{StaticResource PrimaryButton}"
+                    FontSize="12"
+                    Padding="16,8"
+                    IsEnabled="False"
+                    Clicked="OnPrintClicked" />
+            <Button Grid.Column="2"
+                    Text="Close"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource TextSecondary}"
+                    FontSize="12"
+                    Padding="12,8"
+                    Clicked="OnCloseClicked" />
+        </Grid>
+        <WebView x:Name="ReportWebView" Grid.Row="1" />
+    </Grid>
+</ContentPage>

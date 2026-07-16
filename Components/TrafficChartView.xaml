@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MauiHighFidelityDashboard.Models"
+             x:Class="MauiHighFidelityDashboard.Components.TrafficChartView">
+    <Border Style="{StaticResource CardBorderStyle}">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <Label Text="Traffic"
+                   Style="{StaticResource SectionTitle}" />
+            <GraphicsView x:Name="DonutCanvas"
+                          Grid.Row="1"
+                          WidthRequest="190"
+                          HeightRequest="190"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center"
+                          Margin="0,12" />
+            <FlexLayout Grid.Row="2"
+                        JustifyContent="SpaceBetween"
+                        AlignItems="Center"
+                        BindableLayout.ItemsSource="{Binding TrafficSources}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="models:TrafficModel">
+                        <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                            <Label Text="{Binding Percentage, StringFormat='{0}%'}"
+                                   FontSize="17"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   HorizontalTextAlignment="Center" />
+                            <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+                                <BoxView WidthRequest="7"
+                                         HeightRequest="7"
+                                         CornerRadius="3.5"
+                                         Color="{Binding SegmentColorHex, Converter={StaticResource HexToColorConverter}}"
+                                         VerticalOptions="Center" />
+                                <Label Text="{Binding Source}"
+                                       FontSize="9"
+                                       TextColor="{StaticResource TextLight}"
+                                       VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+        </Grid>
+    </Border>
+</ContentView>
