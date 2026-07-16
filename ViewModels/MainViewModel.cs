@@ -29,6 +29,11 @@ public partial class MainViewModel : BaseViewModel
     public DashboardCard? EstimateCard => DashboardCards.ElementAtOrDefault(2);
     public DashboardCard? EarningCard => DashboardCards.ElementAtOrDefault(3);
 
+    public RevenueCardItem? RevenueStatusCard => RevenueCards.ElementAtOrDefault(0);
+    public RevenueCardItem? PageViewCard => RevenueCards.ElementAtOrDefault(1);
+    public RevenueCardItem? BounceRateCard => RevenueCards.ElementAtOrDefault(2);
+    public RevenueCardItem? RevenueStatusAltCard => RevenueCards.ElementAtOrDefault(3);
+
     public string CurrentMonthEarnings => "$3468.96";
     public string CurrentMonthSales => "82";
     public string DashboardDisplayTitle => "Dashboard";
@@ -180,69 +185,34 @@ public partial class MainViewModel : BaseViewModel
         _selectedOrder = select ? order : null;
     }
 
-    private static readonly (string Customer, string Country, string Status)[] NewOrderPool =
-    [
-        ("Nina Larsen", "Norway", "Open"),
-        ("Diego Fernandez", "Argentina", "Process"),
-        ("Zara Ahmed", "Pakistan", "On Hold"),
-        ("Felix Wagner", "Switzerland", "Open"),
-        ("Mei Lin", "Singapore", "Process"),
-    ];
-
-    private int _newOrderIndex;
-
     [RelayCommand]
     private async Task AddOrderAsync()
     {
-        var choice = await Shell.Current.DisplayActionSheetAsync(
-            "Add Order", "Cancel", null, "Enter manually", "Quick add (sample data)");
-
-        if (choice == "Enter manually")
+        var page = Shell.Current.CurrentPage;
+        if (page is null) return;
+        var result = await page.ShowPopupAsync(new AddOrderPopup());
+        if (result is (string customer, string country, decimal price, string status))
         {
-            var customer = await Shell.Current.DisplayPromptAsync(
-                "New Order", "Customer name:", "Next", "Cancel", placeholder: "e.g. John Smith");
-            if (string.IsNullOrWhiteSpace(customer)) return;
-
-            var country = await Shell.Current.DisplayPromptAsync(
-                "New Order", "Country:", "Next", "Cancel", placeholder: "e.g. India");
-            if (string.IsNullOrWhiteSpace(country)) return;
-
-            var priceText = await Shell.Current.DisplayPromptAsync(
-                "New Order", "Price (USD):", "Next", "Cancel", placeholder: "e.g. 499", keyboard: Keyboard.Numeric);
-            if (priceText is null) return;
-            if (!decimal.TryParse(priceText, out var price) || price <= 0)
-            {
-                await Shell.Current.DisplayAlertAsync("Invalid price", "Please enter a positive number.", "OK");
-                return;
-            }
-
-            var status = await Shell.Current.DisplayActionSheetAsync(
-                "Order status", "Cancel", null, "Open", "Process", "On Hold");
-            if (status is null or "Cancel") return;
-
-            InsertOrder(customer.Trim(), country.Trim(), price, status);
-        }
-        else if (choice == "Quick add (sample data)")
-        {
-            var (customer, country, status) = NewOrderPool[_newOrderIndex % NewOrderPool.Length];
-            InsertOrder(customer, country, 350m + (_newOrderIndex + 1) * 137m, status);
+            AppendOrder(customer, country, price, status);
         }
     }
 
-    private void InsertOrder(string customer, string country, decimal price, string status)
+    // Appends the new order at the end of the list and jumps to the last page,
+    // so the values the user just typed are visible immediately.
+    private void AppendOrder(string customer, string country, decimal price, string status)
     {
-        _allOrders.Insert(0, new OrderModel
+        int nextInvoice = _allOrders.Count == 0 ? 12412 : _allOrders.Max(o => o.Invoice) + 1;
+        _allOrders.Add(new OrderModel
         {
-            Invoice = 12412 + _newOrderIndex,
+            Invoice = nextInvoice,
             Customer = customer,
             Country = country,
             Price = price,
             Status = status
         });
-        _newOrderIndex++;
 
-        _currentPage = 1;
         SearchText = string.Empty;
+        _currentPage = int.MaxValue; // clamped to the last page by RefreshOrdersView
         RefreshOrdersView();
     }
 
@@ -255,11 +225,10 @@ public partial class MainViewModel : BaseViewModel
             return;
         }
 
-        bool confirmed = await Shell.Current.DisplayAlertAsync(
-            "Delete Order",
-            $"Delete invoice {_selectedOrder.Invoice} for {_selectedOrder.Customer}?",
-            "Delete", "Cancel");
-        if (!confirmed) return;
+        var page = Shell.Current.CurrentPage;
+        if (page is null) return;
+        var result = await page.ShowPopupAsync(new ConfirmDeletePopup(_selectedOrder));
+        if (result is not true) return;
 
         _allOrders.Remove(_selectedOrder);
         _selectedOrder = null;
@@ -347,6 +316,11 @@ public partial class MainViewModel : BaseViewModel
             BackgroundHex = "#F3E8FD",
             AccentHex = "#A461D8",
         });
+
+        OnPropertyChanged(nameof(RevenueStatusCard));
+        OnPropertyChanged(nameof(PageViewCard));
+        OnPropertyChanged(nameof(BounceRateCard));
+        OnPropertyChanged(nameof(RevenueStatusAltCard));
 
         return Task.CompletedTask;
     }

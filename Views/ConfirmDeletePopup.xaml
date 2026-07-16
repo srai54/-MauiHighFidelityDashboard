@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="MauiHighFidelityDashboard.Views.ConfirmDeletePopup"
+               CanBeDismissedByTappingOutsideOfPopup="True"
+               Color="Transparent">
+    <Border BackgroundColor="White"
+            Stroke="#E4E8F0"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 12"
+            WidthRequest="380"
+            Padding="0">
+        <Grid RowDefinitions="Auto,1,Auto,1,Auto">
+            <!-- Header -->
+            <Grid Padding="24,18,18,16" ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                <Border WidthRequest="38"
+                        HeightRequest="38"
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="Transparent"
+                        BackgroundColor="#FDE8EC"
+                        VerticalOptions="Center">
+                    <Label Text="&#xf1f8;"
+                           FontFamily="FontAwesome"
+                           FontSize="15"
+                           TextColor="{StaticResource StatusProcess}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                    <Label Text="Delete Order"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}" />
+                    <Label Text="This action cannot be undone"
+                           FontSize="11"
+                           TextColor="{StaticResource TextLight}" />
+                </VerticalStackLayout>
+            </Grid>
+            <BoxView Grid.Row="1" HeightRequest="1" Color="{StaticResource DividerColor}" />
+
+            <!-- Message -->
+            <Label x:Name="MessageLabel"
+                   Grid.Row="2"
+                   Padding="24,18"
+                   FontSize="13"
+                   LineHeight="1.3"
+                   TextColor="{StaticResource TextSecondary}" />
+
+            <BoxView Grid.Row="3" HeightRequest="1" Color="{StaticResource DividerColor}" />
+
+            <!-- Footer -->
+            <Grid Grid.Row="4" Padding="24,14,24,18" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                <Button Grid.Column="1"
+                        Text="Cancel"
+                        BackgroundColor="#F1F3F6"
+                        TextColor="{StaticResource TextSecondary}"
+                        FontSize="12"
+                        Padding="16,0"
+                        HeightRequest="36"
+                        CornerRadius="6"
+                        Clicked="OnCancelClicked" />
+                <Button Grid.Column="2"
+                        Text="Delete Order"
+                        BackgroundColor="{StaticResource StatusProcess}"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="12"
+                        Padding="18,0"
+                        HeightRequest="36"
+                        CornerRadius="6"
+                        Clicked="OnDeleteClicked" />
+            </Grid>
+        </Grid>
+    </Border>
+</toolkit:Popup>

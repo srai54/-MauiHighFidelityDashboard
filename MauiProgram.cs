@@ -26,6 +26,30 @@ public static class MauiProgram
             });
 
 #if WINDOWS
+        // WinUI paints an accent-blue underline on focused text boxes; the app-level
+        // theme overrides in Platforms/Windows/App.xaml don't reach it, so override the
+        // resource per control. Must run after Loaded — inserting into a ResourceDictionary
+        // before the control joins the visual tree crashes with COMException 0x800F0902.
+        Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("FlatFocusVisual", (handler, view) =>
+        {
+            var textBox = handler.PlatformView;
+            textBox.Loaded += (s, e) =>
+            {
+                try
+                {
+                    textBox.Resources["TextControlBorderThemeThicknessFocused"] = new Microsoft.UI.Xaml.Thickness(0);
+                    textBox.Resources["TextControlBorderBrushFocused"] =
+                        new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+                    textBox.Resources["TextControlBorderBrushPointerOver"] =
+                        new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+                }
+                catch
+                {
+                    // Purely cosmetic; never crash the app over a focus visual.
+                }
+            };
+        });
+
         // Launch maximized so the dashboard opens at its designed proportions.
         builder.ConfigureLifecycleEvents(events =>
         {

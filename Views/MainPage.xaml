@@ -13,10 +13,10 @@
         <components:SidebarView x:Name="Sidebar" SelectItemCommand="{Binding NavigateCommand}" />
 
         <ScrollView x:Name="MainScroll" Grid.Column="1">
-            <VerticalStackLayout x:Name="ContentStack" Padding="18" Spacing="16">
+            <VerticalStackLayout x:Name="ContentStack" Padding="12" Spacing="8">
 
                 <!-- Row 1: merged Dashboard card (header + spline chart + stat strip) and Traffic card -->
-                <Grid x:Name="TopRowGrid" ColumnDefinitions="2.55*,1*" ColumnSpacing="16" RowSpacing="16">
+                <Grid x:Name="TopRowGrid" ColumnDefinitions="2.55*,1*" ColumnSpacing="8">
                     <Border Style="{StaticResource CardBorderStyle}" Padding="0">
                         <Grid RowDefinitions="*,1,Auto">
                             <Grid x:Name="HeaderChartGrid" ColumnDefinitions="205,*" ColumnSpacing="24" RowSpacing="20" Padding="20,18,20,10">
@@ -42,27 +42,51 @@
                     <components:TrafficChartView x:Name="TrafficChart" Grid.Column="1" />
                 </Grid>
 
-                <!-- Row 2: analytics cards. Wrap + 240px basis reflows them 4 / 2 / 1 per row as width shrinks -->
-                <FlexLayout x:Name="RevenueFlex" Direction="Row" Wrap="Wrap" AlignItems="Stretch"
-                            BindableLayout.ItemsSource="{Binding RevenueCards}">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="models:RevenueCardItem">
-                            <components:RevenueCardView
-                                Margin="8,0"
-                                CardTitle="{Binding Title}"
-                                CardValue="{Binding Value}"
-                                CardSubtitle="{Binding Subtitle}"
-                                ChartType="{Binding ChartType}"
-                                CardBackground="{Binding BackgroundHex, Converter={StaticResource HexToColorConverter}}"
-                                AccentColor="{Binding AccentHex, Converter={StaticResource HexToColorConverter}}"
-                                FlexLayout.Basis="240"
-                                FlexLayout.Grow="1" />
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </FlexLayout>
+                <!-- Row 2: analytics cards. Columns mirror the top row (0.85*3 = 2.55) so the
+                     last card lines up exactly under the Traffic card. -->
+                <Grid x:Name="RevenueRowGrid"
+                      ColumnDefinitions="0.85*,0.85*,0.85*,*"
+                      ColumnSpacing="8"
+                      RowSpacing="8">
+                    <components:RevenueCardView
+                        x:Name="RevCard1"
+                        CardTitle="{Binding RevenueStatusCard.Title}"
+                        CardValue="{Binding RevenueStatusCard.Value}"
+                        CardSubtitle="{Binding RevenueStatusCard.Subtitle}"
+                        ChartType="{Binding RevenueStatusCard.ChartType}"
+                        CardBackground="{Binding RevenueStatusCard.BackgroundHex, Converter={StaticResource HexToColorConverter}}"
+                        AccentColor="{Binding RevenueStatusCard.AccentHex, Converter={StaticResource HexToColorConverter}}" />
+                    <components:RevenueCardView
+                        x:Name="RevCard2"
+                        Grid.Column="1"
+                        CardTitle="{Binding PageViewCard.Title}"
+                        CardValue="{Binding PageViewCard.Value}"
+                        CardSubtitle="{Binding PageViewCard.Subtitle}"
+                        ChartType="{Binding PageViewCard.ChartType}"
+                        CardBackground="{Binding PageViewCard.BackgroundHex, Converter={StaticResource HexToColorConverter}}"
+                        AccentColor="{Binding PageViewCard.AccentHex, Converter={StaticResource HexToColorConverter}}" />
+                    <components:RevenueCardView
+                        x:Name="RevCard3"
+                        Grid.Column="2"
+                        CardTitle="{Binding BounceRateCard.Title}"
+                        CardValue="{Binding BounceRateCard.Value}"
+                        CardSubtitle="{Binding BounceRateCard.Subtitle}"
+                        ChartType="{Binding BounceRateCard.ChartType}"
+                        CardBackground="{Binding BounceRateCard.BackgroundHex, Converter={StaticResource HexToColorConverter}}"
+                        AccentColor="{Binding BounceRateCard.AccentHex, Converter={StaticResource HexToColorConverter}}" />
+                    <components:RevenueCardView
+                        x:Name="RevCard4"
+                        Grid.Column="3"
+                        CardTitle="{Binding RevenueStatusAltCard.Title}"
+                        CardValue="{Binding RevenueStatusAltCard.Value}"
+                        CardSubtitle="{Binding RevenueStatusAltCard.Subtitle}"
+                        ChartType="{Binding RevenueStatusAltCard.ChartType}"
+                        CardBackground="{Binding RevenueStatusAltCard.BackgroundHex, Converter={StaticResource HexToColorConverter}}"
+                        AccentColor="{Binding RevenueStatusAltCard.AccentHex, Converter={StaticResource HexToColorConverter}}" />
+                </Grid>
 
                 <!-- Row 3: Recent Activities + Order Status -->
-                <Grid x:Name="BottomRowGrid" ColumnDefinitions="2*,3*" ColumnSpacing="16" RowSpacing="16">
+                <Grid x:Name="BottomRowGrid" ColumnDefinitions="2*,3*" ColumnSpacing="8">
                     <components:ActivityTimelineView />
                     <components:OrderTableView x:Name="OrderTable" Grid.Column="1" />
                 </Grid>

@@ -26,7 +26,7 @@
                 <VerticalStackLayout Grid.Column="1"
                                      Spacing="3"
                                      HorizontalOptions="End"
-                                     VerticalOptions="Center">
+                                     VerticalOptions="End">
                     <HorizontalStackLayout Spacing="6" HorizontalOptions="End">
                         <!-- Vector arrow: text "↑" ignores bold because the glyph comes from a fallback font -->
                         <Path x:Name="BarArrow"
@@ -50,7 +50,7 @@
                 </VerticalStackLayout>
             </Grid>
 
-            <!-- Area variant: value top-left, wave filling the bottom -->
+            <!-- Area variant: value right under the title, wave anchored at the bottom -->
             <Grid x:Name="AreaLayout"
                   Grid.Row="1"
                   RowDefinitions="Auto,*"
@@ -83,7 +83,7 @@
                   ColumnDefinitions="Auto,*"
                   ColumnSpacing="12"
                   IsVisible="False">
-                <VerticalStackLayout Spacing="10" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="10" VerticalOptions="End">
                     <HorizontalStackLayout Spacing="6">
                         <Path x:Name="LineArrow"
                               Data="M7,15.5 L7,2.2 M2.6,6.6 L7,2.2 L11.4,6.6"

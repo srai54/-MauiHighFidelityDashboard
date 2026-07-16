@@ -32,34 +32,28 @@
                         <FontImageSource FontFamily="FontAwesome" Glyph="&#xf067;" Color="White" Size="10" />
                     </Button.ImageSource>
                 </Button>
-                <Button Grid.Column="1" Text="&#xf05a;" Style="{StaticResource IconButton}"
+                <Button Grid.Column="1" Text="&#xf05a;" Style="{StaticResource IconButtonInfo}"
                         Command="{Binding ShowOrderInfoCommand}"
-                        ToolTipProperties.Text="Order summary info" />
-                <Button Grid.Column="2" Text="&#xf1f8;" Style="{StaticResource IconButton}" FontSize="12"
+                        ToolTipProperties.Text="View order summary" />
+                <Button Grid.Column="2" Text="&#xf1f8;" Style="{StaticResource IconButtonDanger}" FontSize="12"
                         Command="{Binding DeleteOrderCommand}"
                         ToolTipProperties.Text="Delete selected order (tap a row first)" />
-                <Button Grid.Column="3" Text="&#xf02f;" Style="{StaticResource IconButton}" FontSize="12"
+                <Button Grid.Column="3" Text="&#xf02f;" Style="{StaticResource IconButtonPrint}" FontSize="12"
                         Command="{Binding PrintOrdersCommand}"
                         ToolTipProperties.Text="Print order list" />
-                <!-- Search field is a light-gray filled input in the reference -->
-                <Border Grid.Column="5"
-                        BackgroundColor="#F1F3F6"
-                        Stroke="#E4E8F0"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 4"
-                        WidthRequest="150"
-                        HeightRequest="32"
-                        Padding="10,0">
-                    <Entry Placeholder="Search"
-                           Text="{Binding SearchText}"
-                           PlaceholderColor="{StaticResource TextLight}"
-                           TextColor="{StaticResource TextPrimary}"
-                           FontSize="11"
-                           BackgroundColor="Transparent"
-                           VerticalOptions="Center"
-                           ToolTipProperties.Text="Filter by invoice, customer, country or status" />
-                </Border>
-                <Button Grid.Column="6" Text="&#xf02f;" Style="{StaticResource IconButton}" FontSize="12" CornerRadius="4"
+                <!-- Search field -->
+                <Entry Grid.Column="5"
+                       Placeholder="Search"
+                       Text="{Binding SearchText}"
+                       PlaceholderColor="{StaticResource TextLight}"
+                       TextColor="{StaticResource TextPrimary}"
+                       FontSize="11"
+                       BackgroundColor="#F1F3F6"
+                       WidthRequest="150"
+                       HeightRequest="32"
+                       VerticalOptions="Center"
+                       ToolTipProperties.Text="Filter by invoice, customer, country or status" />
+                <Button Grid.Column="6" Text="&#xf02f;" Style="{StaticResource IconButtonPrint}" FontSize="12"
                         Command="{Binding PrintOrdersCommand}"
                         ToolTipProperties.Text="Print order list" />
             </Grid>

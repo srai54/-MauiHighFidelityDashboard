@@ -158,11 +158,15 @@ public class MiniLineChartDrawable : IDrawable
         for (int i = 1; i < _values.Length; i++)
             if (_values[i] > _values[peak]) peak = i;
 
+        // Circular dots at every data point
         canvas.FillColor = _color;
-        canvas.FillCircle(points[peak], 4f);
         canvas.StrokeColor = Colors.White;
         canvas.StrokeSize = 1.5f;
-        canvas.DrawCircle(points[peak], 4f);
+        foreach (var p in points)
+        {
+            canvas.FillCircle(p.X, p.Y, 3f);
+            canvas.DrawCircle(p.X, p.Y, 3f);
+        }
     }
 }
 

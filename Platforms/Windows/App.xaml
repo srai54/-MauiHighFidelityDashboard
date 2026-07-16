@@ -1,8 +1,32 @@
-﻿<maui:MauiWinUIApplication
+<maui:MauiWinUIApplication
     x:Class="MauiHighFidelityDashboard.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
     xmlns:local="using:MauiHighFidelityDashboard.WinUI">
+
+    <maui:MauiWinUIApplication.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- WinUI swaps text boxes to the accent-blue background/underline on hover
+                     and focus, which makes inputs "turn blue" while typing. Keep them flat
+                     and light gray to match the dashboard design. -->
+                <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="#F1F3F6" />
+                    <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="#F1F3F6" />
+                    <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="Transparent" />
+                    <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="Transparent" />
+                    <Thickness x:Key="TextControlBorderThemeThicknessFocused">0</Thickness>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="#F1F3F6" />
+                    <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="#F1F3F6" />
+                    <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="Transparent" />
+                    <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="Transparent" />
+                    <Thickness x:Key="TextControlBorderThemeThicknessFocused">0</Thickness>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </maui:MauiWinUIApplication.Resources>
 
 </maui:MauiWinUIApplication>

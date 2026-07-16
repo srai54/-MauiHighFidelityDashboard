@@ -23,17 +23,26 @@ public partial class SalesChartView : ContentView
             ["2020", "2021", "2022", "2023", "2024", "2025"]),
     };
 
+    private bool _showOnline = true;
+    private bool _showStore = true;
+    private string _currentPeriod = "DAILY";
+
     public SalesChartView()
     {
         InitializeComponent();
         ApplyPeriod("DAILY");
         SetupTabTaps();
+        SetupLegendTaps();
     }
 
     private void ApplyPeriod(string period)
     {
+        _currentPeriod = period;
         var (online, store, labels) = Series[period];
-        ChartCanvas.Drawable = new SplineDrawable(online, store, labels);
+        ChartCanvas.Drawable = new SplineDrawable(
+            _showOnline ? online : null,
+            _showStore ? store : null,
+            labels);
         ChartCanvas.Invalidate();
     }
 
@@ -58,17 +67,62 @@ public partial class SalesChartView : ContentView
                     t.Label.Style = (Style)Application.Current!.Resources[active ? "TabActiveStyle" : "TabInactiveStyle"];
                     t.Underline.IsVisible = active;
                 }
+                // Switching period always returns to the original two-series chart.
+                ResetSeriesFilter();
                 ApplyPeriod(tab.Label.Text);
             };
             tab.Label.GestureRecognizers.Add(tap);
         }
     }
+
+    private void SetupLegendTaps()
+    {
+        AddLegendTap(LegendOnlineRow, "Online");
+        AddLegendTap(LegendStoreRow, "Store");
+    }
+
+    private void ResetSeriesFilter()
+    {
+        _showOnline = _showStore = true;
+        LegendOnlineRow.Opacity = 1;
+        LegendStoreRow.Opacity = 1;
+    }
+
+    private void AddLegendTap(View row, string series)
+    {
+        var tap = new TapGestureRecognizer();
+        tap.Tapped += (s, e) => ToggleSeries(series);
+        row.GestureRecognizers.Add(tap);
+    }
+
+    // Tapping a legend dot solos that series (single chart); tapping it again restores both.
+    // The choice sticks while switching Daily/Weekly/Monthly/Yearly tabs.
+    private void ToggleSeries(string series)
+    {
+        bool soloOnline = _showOnline && !_showStore;
+        bool soloStore = _showStore && !_showOnline;
+
+        if (series == "Online")
+        {
+            if (soloOnline) _showStore = true;
+            else { _showOnline = true; _showStore = false; }
+        }
+        else
+        {
+            if (soloStore) _showOnline = true;
+            else { _showStore = true; _showOnline = false; }
+        }
+
+        LegendOnlineRow.Opacity = _showOnline ? 1 : 0.35;
+        LegendStoreRow.Opacity = _showStore ? 1 : 0.35;
+        ApplyPeriod(_currentPeriod);
+    }
 }
 
 public class SplineDrawable : IDrawable
 {
-    private readonly float[] _online;
-    private readonly float[] _store;
+    private readonly float[]? _online;
+    private readonly float[]? _store;
     private readonly string[] _xLabels;
 
     private const float YMax = 35f;
@@ -78,7 +132,7 @@ public class SplineDrawable : IDrawable
     private static readonly Color GridColor = Color.FromArgb("#EDF0F5");
     private static readonly Color AxisTextColor = Color.FromArgb("#9AA3B7");
 
-    public SplineDrawable(float[] online, float[] store, string[] xLabels)
+    public SplineDrawable(float[]? online, float[]? store, string[] xLabels)
     {
         _online = online;
         _store = store;
@@ -112,8 +166,10 @@ public class SplineDrawable : IDrawable
             canvas.DrawString(_xLabels[i], x - 16, bottom + 5, 32, 12, HorizontalAlignment.Center, VerticalAlignment.Top);
         }
 
-        DrawSeries(canvas, _store, StoreColor, 0.20f, left, bottom, width, height);
-        DrawSeries(canvas, _online, OnlineColor, 0.14f, left, bottom, width, height);
+        if (_store is not null)
+            DrawSeries(canvas, _store, StoreColor, 0.20f, left, bottom, width, height);
+        if (_online is not null)
+            DrawSeries(canvas, _online, OnlineColor, 0.14f, left, bottom, width, height);
     }
 
     private static void DrawSeries(ICanvas canvas, float[] values, Color color, float fillAlpha,
@@ -146,13 +202,7 @@ public class SplineDrawable : IDrawable
         canvas.StrokeLineJoin = LineJoin.Round;
         canvas.DrawPath(curve);
 
-        canvas.FillColor = Colors.White;
-        canvas.StrokeSize = 1.6f;
-        foreach (var p in points)
-        {
-            canvas.FillCircle(p.X, p.Y, 2.6f);
-            canvas.DrawCircle(p.X, p.Y, 2.6f);
-        }
+        // Data point dots removed per design - moved to Bounce Rate card
     }
 
     private static PathF BuildSpline(PointF[] points)

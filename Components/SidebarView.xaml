@@ -6,7 +6,8 @@
              x:Name="SidebarSelf"
              BackgroundColor="{StaticResource SidebarColor}">
     <ScrollView VerticalScrollBarVisibility="Never">
-        <VerticalStackLayout Padding="0,10"
+        <VerticalStackLayout x:Name="MenuStack"
+                             Padding="0,10"
                              Spacing="0"
                              BindableLayout.ItemsSource="{Binding MenuItems, Source={x:Reference SidebarSelf}}">
             <BindableLayout.ItemTemplate>

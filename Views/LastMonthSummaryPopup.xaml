@@ -52,14 +52,18 @@
             </VerticalStackLayout>
 
             <BoxView HeightRequest="1" Color="{StaticResource DividerColor}" />
-            <!-- Footer -->
-            <Button Text="Close"
-                    Style="{StaticResource PrimaryButton}"
-                    FontSize="12"
-                    Padding="18,8"
-                    Margin="22,14,22,18"
-                    HorizontalOptions="End"
-                    Clicked="OnCloseClicked" />
+            <!-- Footer: padded grid keeps the button clear of the card edges -->
+            <Grid Padding="22,14,22,20">
+                <Button Text="Close"
+                        Style="{StaticResource PrimaryButton}"
+                        FontSize="12"
+                        Padding="20,0"
+                        HeightRequest="36"
+                        CornerRadius="6"
+                        MinimumWidthRequest="96"
+                        HorizontalOptions="End"
+                        Clicked="OnCloseClicked" />
+            </Grid>
         </VerticalStackLayout>
     </Border>
 </toolkit:Popup>

@@ -25,10 +25,11 @@
         <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
     </Style>
 
-    <!-- Typography: Section Title (chart titles, card section headers) -->
+    <!-- Typography: Section Title (chart titles, card section headers).
+         Semibold face: heavier than regular, lighter than full bold. -->
     <Style x:Key="SectionTitle" TargetType="Label">
         <Setter Property="FontSize" Value="15" />
-        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
         <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
     </Style>
 
@@ -93,28 +94,130 @@
         <Setter Property="TextColor" Value="#4B5574" />
     </Style>
 
-    <!-- Pagination number -->
+    <!-- Pagination number: plain text at rest, circle appears on hover.
+         The current page keeps its orange circle via a DataTrigger. -->
     <Style x:Key="PaginationButton" TargetType="Button">
         <Setter Property="FontSize" Value="11" />
         <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="BorderColor" Value="Transparent" />
+        <Setter Property="BorderWidth" Value="0" />
         <Setter Property="WidthRequest" Value="24" />
         <Setter Property="HeightRequest" Value="24" />
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="MinimumWidthRequest" Value="24" />
         <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="#E9EDF4" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="#DCE2EC" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
     </Style>
 
-    <!-- Round toolbar icon button (Order Status card) -->
+    <!-- Rectangular toolbar icon button (Order Status card) -->
     <Style x:Key="IconButton" TargetType="Button">
         <Setter Property="BackgroundColor" Value="{StaticResource IconButtonBg}" />
         <Setter Property="TextColor" Value="{StaticResource IconButtonText}" />
-        <Setter Property="WidthRequest" Value="32" />
+        <Setter Property="WidthRequest" Value="44" />
         <Setter Property="HeightRequest" Value="32" />
-        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="CornerRadius" Value="4" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="FontFamily" Value="FontAwesome" />
+    </Style>
+
+    <!-- Toolbar icon variants: each action gets its own hover/pressed accent -->
+    <Style x:Key="IconButtonInfo" TargetType="Button" BasedOn="{StaticResource IconButton}">
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource IconButtonBg}" />
+                            <Setter Property="TextColor" Value="{StaticResource IconButtonText}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource InfoColor}" />
+                            <Setter Property="TextColor" Value="White" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="#1976D2" />
+                            <Setter Property="TextColor" Value="White" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style x:Key="IconButtonDanger" TargetType="Button" BasedOn="{StaticResource IconButton}">
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource IconButtonBg}" />
+                            <Setter Property="TextColor" Value="{StaticResource IconButtonText}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource StatusProcess}" />
+                            <Setter Property="TextColor" Value="White" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="#D01F3C" />
+                            <Setter Property="TextColor" Value="White" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style x:Key="IconButtonPrint" TargetType="Button" BasedOn="{StaticResource IconButton}">
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource IconButtonBg}" />
+                            <Setter Property="TextColor" Value="{StaticResource IconButtonText}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="#3E4954" />
+                            <Setter Property="TextColor" Value="White" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="#2A323B" />
+                            <Setter Property="TextColor" Value="White" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
     </Style>
 </ResourceDictionary>

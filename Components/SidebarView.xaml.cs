@@ -44,4 +44,11 @@ public partial class SidebarView : ContentView
     {
         InitializeComponent();
     }
+
+    /// <summary>
+    /// Pushes the menu items down so the floating hamburger button sits above
+    /// the first item (used when the sidebar overlays content on narrow screens).
+    /// </summary>
+    public void SetTopInset(double inset)
+        => MenuStack.Padding = new Thickness(0, 10 + inset, 0, 10);
 }

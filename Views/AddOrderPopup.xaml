@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="MauiHighFidelityDashboard.Views.AddOrderPopup"
+               CanBeDismissedByTappingOutsideOfPopup="False"
+               Color="Transparent">
+    <Border BackgroundColor="White"
+            Stroke="#E4E8F0"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 12"
+            WidthRequest="400"
+            Padding="0">
+        <Grid RowDefinitions="Auto,1,Auto,1,Auto">
+            <!-- Header -->
+            <Grid Padding="24,18,18,16" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Border WidthRequest="38"
+                        HeightRequest="38"
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="Transparent"
+                        BackgroundColor="#FFF1E9"
+                        VerticalOptions="Center">
+                    <Label Text="&#xf07a;"
+                           FontFamily="FontAwesome"
+                           FontSize="15"
+                           TextColor="{StaticResource PrimaryOrange}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                    <Label Text="Add New Order"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}" />
+                    <Label Text="It will be appended at the end of the order list"
+                           FontSize="11"
+                           TextColor="{StaticResource TextLight}" />
+                </VerticalStackLayout>
+                <Button Grid.Column="2"
+                        Text="&#xf00d;"
+                        FontFamily="FontAwesome"
+                        FontSize="13"
+                        TextColor="{StaticResource TextLight}"
+                        BackgroundColor="Transparent"
+                        WidthRequest="32"
+                        HeightRequest="32"
+                        Padding="0"
+                        VerticalOptions="Start"
+                        Clicked="OnCancelClicked"
+                        ToolTipProperties.Text="Close" />
+            </Grid>
+            <BoxView Grid.Row="1" HeightRequest="1" Color="{StaticResource DividerColor}" />
+
+            <!-- Form fields -->
+            <VerticalStackLayout Grid.Row="2" Padding="24,16,24,16" Spacing="13">
+                <!-- Customer Name -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Customer Name"
+                           FontSize="11"
+                           FontAttributes="Bold"
+                           TextColor="#4B5574" />
+                    <Border BackgroundColor="#F8F9FB"
+                            Stroke="#E4E8F0"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 6"
+                            Padding="12,7">
+                        <Entry x:Name="CustomerEntry"
+                               Placeholder="e.g. John Smith"
+                               PlaceholderColor="{StaticResource TextLight}"
+                               TextColor="{StaticResource TextPrimary}"
+                               FontSize="13"
+                               BackgroundColor="Transparent" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Country -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Country"
+                           FontSize="11"
+                           FontAttributes="Bold"
+                           TextColor="#4B5574" />
+                    <Border BackgroundColor="#F8F9FB"
+                            Stroke="#E4E8F0"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 6"
+                            Padding="12,7">
+                        <Entry x:Name="CountryEntry"
+                               Placeholder="e.g. India"
+                               PlaceholderColor="{StaticResource TextLight}"
+                               TextColor="{StaticResource TextPrimary}"
+                               FontSize="13"
+                               BackgroundColor="Transparent" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Price and Status side by side -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Price (USD)"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               TextColor="#4B5574" />
+                        <Border BackgroundColor="#F8F9FB"
+                                Stroke="#E4E8F0"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 6"
+                                Padding="12,7">
+                            <Entry x:Name="PriceEntry"
+                                   Placeholder="e.g. 499"
+                                   PlaceholderColor="{StaticResource TextLight}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="13"
+                                   Keyboard="Numeric"
+                                   BackgroundColor="Transparent" />
+                        </Border>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" Spacing="5">
+                        <Label Text="Status"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               TextColor="#4B5574" />
+                        <Border BackgroundColor="#F8F9FB"
+                                Stroke="#E4E8F0"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 6"
+                                Padding="12,2">
+                            <Picker x:Name="StatusPicker"
+                                    FontSize="13"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    BackgroundColor="Transparent"
+                                    Title="Select status">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>Open</x:String>
+                                        <x:String>Process</x:String>
+                                        <x:String>On Hold</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </Border>
+                    </VerticalStackLayout>
+                </Grid>
+            </VerticalStackLayout>
+
+            <BoxView Grid.Row="3" HeightRequest="1" Color="{StaticResource DividerColor}" />
+
+            <!-- Footer: grid keeps both buttons inside the card -->
+            <Grid Grid.Row="4" Padding="24,14,24,18" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                <Button Grid.Column="1"
+                        Text="Cancel"
+                        BackgroundColor="#F1F3F6"
+                        TextColor="{StaticResource TextSecondary}"
+                        FontSize="12"
+                        Padding="16,0"
+                        HeightRequest="36"
+                        CornerRadius="6"
+                        Clicked="OnCancelClicked" />
+                <Button x:Name="AddButton"
+                        Grid.Column="2"
+                        Text="Save Order"
+                        Style="{StaticResource PrimaryButton}"
+                        FontSize="12"
+                        Padding="18,0"
+                        HeightRequest="36"
+                        CornerRadius="6"
+                        Clicked="OnAddClicked" />
+            </Grid>
+        </Grid>
+    </Border>
+</toolkit:Popup>

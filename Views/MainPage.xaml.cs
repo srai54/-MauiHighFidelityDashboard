@@ -49,18 +49,21 @@ public partial class MainPage : ContentPage
         if (narrow == _isNarrow) return;
         _isNarrow = narrow;
 
+        // The hamburger drawer only exists on narrow (mobile-style) layouts.
         ContentStack.Padding = narrow ? new Thickness(12, 56, 12, 12) : new Thickness(18);
         MenuButton.IsVisible = narrow;
 
         if (narrow)
         {
             // Sidebar becomes a hidden overlay toggled by the hamburger button.
+            // Menu items start below the floating hamburger so it never covers "Dashboard".
             RootGrid.ColumnDefinitions[0].Width = new GridLength(0);
             Grid.SetColumn(Sidebar, 1);
             Sidebar.WidthRequest = 200;
             Sidebar.HorizontalOptions = LayoutOptions.Start;
             Sidebar.ZIndex = 10;
             Sidebar.IsVisible = false;
+            Sidebar.SetTopInset(50);
 
             // Traffic card drops below the main card.
             SetGridShape(TopRowGrid, columns: [GridLength.Star], rows: [GridLength.Auto, GridLength.Auto]);
@@ -83,6 +86,15 @@ public partial class MainPage : ContentPage
             PlaceInGrid(SummaryEarning, 1, 1);
             SummaryEstimate.Margin = new Thickness(0);
 
+            // Analytics cards reflow to a 2x2 grid.
+            SetGridShape(RevenueRowGrid,
+                columns: [GridLength.Star, GridLength.Star],
+                rows: [GridLength.Auto, GridLength.Auto]);
+            PlaceInGrid(RevCard1, 0, 0);
+            PlaceInGrid(RevCard2, 0, 1);
+            PlaceInGrid(RevCard3, 1, 0);
+            PlaceInGrid(RevCard4, 1, 1);
+
             // Activities and Orders stack.
             SetGridShape(BottomRowGrid, columns: [GridLength.Star], rows: [GridLength.Auto, GridLength.Auto]);
             Grid.SetColumn(OrderTable, 0);
@@ -96,6 +108,7 @@ public partial class MainPage : ContentPage
             Sidebar.HorizontalOptions = LayoutOptions.Fill;
             Sidebar.ZIndex = 0;
             Sidebar.IsVisible = true;
+            Sidebar.SetTopInset(0);
 
             SetGridShape(TopRowGrid,
                 columns: [new GridLength(2.55, GridUnitType.Star), GridLength.Star],
@@ -122,6 +135,19 @@ public partial class MainPage : ContentPage
             PlaceInGrid(SummaryEstimate, 0, 4);
             PlaceInGrid(SummaryEarning, 0, 6);
             SummaryEstimate.Margin = new Thickness(18, 0, 0, 0);
+
+            // Analytics cards: 3 equal columns under the main card + 1 under Traffic.
+            SetGridShape(RevenueRowGrid,
+                columns:
+                [
+                    new GridLength(0.85, GridUnitType.Star), new GridLength(0.85, GridUnitType.Star),
+                    new GridLength(0.85, GridUnitType.Star), GridLength.Star
+                ],
+                rows: [GridLength.Auto]);
+            PlaceInGrid(RevCard1, 0, 0);
+            PlaceInGrid(RevCard2, 0, 1);
+            PlaceInGrid(RevCard3, 0, 2);
+            PlaceInGrid(RevCard4, 0, 3);
 
             SetGridShape(BottomRowGrid,
                 columns: [new GridLength(2, GridUnitType.Star), new GridLength(3, GridUnitType.Star)],

@@ -23,14 +23,17 @@
                     <BoxView x:Name="UnderlineYearly" HeightRequest="2" WidthRequest="30" Color="{StaticResource PrimaryOrange}" HorizontalOptions="Center" IsVisible="False" />
                 </VerticalStackLayout>
             </HorizontalStackLayout>
+            <!-- Clickable legend: tap a dot to show only that series, tap again for both -->
             <HorizontalStackLayout Spacing="14" VerticalOptions="Start">
-                <HorizontalStackLayout Spacing="5">
+                <HorizontalStackLayout x:Name="LegendOnlineRow" Spacing="5"
+                                       ToolTipProperties.Text="Show only Online sales">
                     <BoxView WidthRequest="8" HeightRequest="8" Color="{StaticResource ChartOnline}" CornerRadius="4" VerticalOptions="Center" />
-                    <Label Text="Online" FontSize="10" TextColor="{StaticResource TextLight}" VerticalOptions="Center" />
+                    <Label Text="Online" FontSize="10" TextColor="{StaticResource TextLight}" VerticalOptions="Center" x:Name="LegendOnline" />
                 </HorizontalStackLayout>
-                <HorizontalStackLayout Spacing="5">
+                <HorizontalStackLayout x:Name="LegendStoreRow" Spacing="5"
+                                       ToolTipProperties.Text="Show only Store sales">
                     <BoxView WidthRequest="8" HeightRequest="8" Color="{StaticResource ChartStore}" CornerRadius="4" VerticalOptions="Center" />
-                    <Label Text="Store" FontSize="10" TextColor="{StaticResource TextLight}" VerticalOptions="Center" />
+                    <Label Text="Store" FontSize="10" TextColor="{StaticResource TextLight}" VerticalOptions="Center" x:Name="LegendStore" />
                 </HorizontalStackLayout>
             </HorizontalStackLayout>
         </FlexLayout>
