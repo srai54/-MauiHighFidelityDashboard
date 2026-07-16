@@ -3,85 +3,88 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:components="clr-namespace:MauiHighFidelityDashboard.Presentation.Components"
              xmlns:vm="clr-namespace:MauiHighFidelityDashboard.Core.ViewModels"
-             xmlns:models="clr-namespace:MauiHighFidelityDashboard.Domain.Models"
              x:Class="MauiHighFidelityDashboard.Presentation.Views.MainPage"
              x:DataType="vm:MainViewModel"
              BackgroundColor="{StaticResource PageBackground}"
              Shell.NavBarIsVisible="False"
              Title="Dashboard">
-    <Grid ColumnDefinitions="220,*">
+    <Grid ColumnDefinitions="200,*">
         <components:SidebarView SelectItemCommand="{Binding NavigateCommand}" />
-        <ScrollView Grid.Column="1">
-            <Grid RowDefinitions="Auto,*">
-                <!-- Loading Indicator -->
-                <ActivityIndicator IsRunning="{Binding IsBusy}"
-                                   IsVisible="{Binding IsBusy}"
-                                   Color="{StaticResource PrimaryOrange}"
-                                   HeightRequest="4"
-                                   HorizontalOptions="Fill"
-                                   VerticalOptions="Start" />
 
-                <VerticalStackLayout Grid.Row="1" Spacing="0" Padding="20">
-                    <!-- Row 1: Dashboard Header + Sales Chart + Traffic Chart (3-column) -->
-                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12" Margin="0,0,0,12">
-                        <components:DashboardHeaderView />
-                        <components:SalesChartView Grid.Column="1" />
-                        <components:TrafficChartView Grid.Column="2" />
-                    </Grid>
+        <ScrollView x:Name="MainScroll" Grid.Column="1">
+            <VerticalStackLayout Padding="18" Spacing="16">
 
-                    <!-- Row 2: KPI Cards (responsive FlexLayout) -->
-                    <FlexLayout Wrap="Wrap"
-                                JustifyContent="Start"
-                                AlignItems="Start"
-                                Margin="0,0,0,12"
-                                BindableLayout.ItemsSource="{Binding DashboardCards}">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate x:DataType="models:DashboardCard">
-                                <components:SummaryCardView WidthRequest="220" Margin="6" />
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </FlexLayout>
+                <!-- Row 1: merged Dashboard card (header + spline chart + stat strip) and Traffic card -->
+                <Grid ColumnDefinitions="2.55*,1*" ColumnSpacing="16">
+                    <Border Style="{StaticResource CardBorderStyle}" Padding="0">
+                        <Grid RowDefinitions="*,1,Auto">
+                            <Grid ColumnDefinitions="205,*" ColumnSpacing="24" Padding="20,18,20,10">
+                                <components:DashboardHeaderView />
+                                <components:SalesChartView Grid.Column="1" />
+                            </Grid>
+                            <BoxView Grid.Row="1" HeightRequest="1" Color="{StaticResource DividerColor}" />
+                            <Grid Grid.Row="2"
+                                  ColumnDefinitions="*,1,*,1,*,1,*"
+                                  Padding="20,16">
+                                <components:SummaryCardView BindingContext="{Binding WalletCard}" />
+                                <BoxView Grid.Column="1" WidthRequest="1" Color="{StaticResource DividerColor}" />
+                                <components:SummaryCardView Grid.Column="2" Margin="18,0,0,0" BindingContext="{Binding ReferralCard}" />
+                                <BoxView Grid.Column="3" WidthRequest="1" Color="{StaticResource DividerColor}" />
+                                <components:SummaryCardView Grid.Column="4" Margin="18,0,0,0" BindingContext="{Binding EstimateCard}" />
+                                <BoxView Grid.Column="5" WidthRequest="1" Color="{StaticResource DividerColor}" />
+                                <components:SummaryCardView Grid.Column="6" Margin="18,0,0,0" BindingContext="{Binding EarningCard}" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <components:TrafficChartView Grid.Column="1" />
+                </Grid>
 
-                    <!-- Row 3: Analytics Cards (responsive FlexLayout) -->
-                    <FlexLayout Wrap="Wrap"
-                                JustifyContent="Start"
-                                AlignItems="Start"
-                                Margin="0,0,0,12">
-                        <components:RevenueCardView
-                            CardTitle="Revenue Status"
-                            CardValue="$432"
-                            CardSubtitle="Jan 01 - Jan 10"
-                            WidthRequest="220" Margin="6"
-                            CardBackground="{StaticResource RevenueBlueBg}"
-                            ChartBackground="{StaticResource RevenueBlueChart}" />
-                        <components:RevenueCardView
-                            CardTitle="Page View"
-                            CardValue="$432"
-                            WidthRequest="220" Margin="6"
-                            CardBackground="{StaticResource RevenueYellowBg}"
-                            ChartBackground="{StaticResource RevenueYellowChart}" />
-                        <components:RevenueCardView
-                            CardTitle="Bounce Rate"
-                            CardValue="$432"
-                            CardSubtitle="Monthly"
-                            WidthRequest="220" Margin="6"
-                            CardBackground="{StaticResource RevenueOrangeBg}"
-                            ChartBackground="{StaticResource RevenueOrangeChart}" />
-                        <components:RevenueCardView
-                            CardTitle="Revenue Status"
-                            CardValue="$432"
-                            WidthRequest="220" Margin="6"
-                            CardBackground="{StaticResource RevenuePurpleBg}"
-                            ChartBackground="{StaticResource RevenuePurpleChart}" />
-                    </FlexLayout>
+                <!-- Row 2: analytics cards -->
+                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="16">
+                    <components:RevenueCardView
+                        CardTitle="Revinue Status"
+                        CardValue="$432"
+                        CardSubtitle="Jan 01 - Jan 10"
+                        ChartType="Bar"
+                        CardBackground="{StaticResource RevenueBlueBg}"
+                        AccentColor="{StaticResource RevenueBlueAccent}" />
+                    <components:RevenueCardView
+                        Grid.Column="1"
+                        CardTitle="Page View"
+                        CardValue="$432"
+                        ChartType="Area"
+                        CardBackground="{StaticResource RevenueYellowBg}"
+                        AccentColor="{StaticResource RevenueYellowAccent}" />
+                    <components:RevenueCardView
+                        Grid.Column="2"
+                        CardTitle="Bounce Rate"
+                        CardValue="$432"
+                        ChartType="Line"
+                        CardBackground="{StaticResource RevenueOrangeBg}"
+                        AccentColor="{StaticResource RevenueOrangeAccent}" />
+                    <components:RevenueCardView
+                        Grid.Column="3"
+                        CardTitle="Revinue Status"
+                        CardValue="$432"
+                        CardSubtitle="Jan 01 - Jan 10"
+                        ChartType="Bar"
+                        CardBackground="{StaticResource RevenuePurpleBg}"
+                        AccentColor="{StaticResource RevenuePurpleAccent}" />
+                </Grid>
 
-                    <!-- Row 4: Activities (35%) + Orders (65%) -->
-                    <Grid ColumnDefinitions="2*,3*" ColumnSpacing="12" Margin="0,0,0,0">
-                        <components:ActivityTimelineView />
-                        <components:OrderTableView Grid.Column="1" />
-                    </Grid>
-                </VerticalStackLayout>
-            </Grid>
+                <!-- Row 3: Recent Activities + Order Status -->
+                <Grid ColumnDefinitions="2*,3*" ColumnSpacing="16">
+                    <components:ActivityTimelineView VerticalOptions="Start" />
+                    <components:OrderTableView Grid.Column="1" VerticalOptions="Start" />
+                </Grid>
+            </VerticalStackLayout>
         </ScrollView>
+
+        <ActivityIndicator Grid.Column="1"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           Color="{StaticResource PrimaryOrange}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
     </Grid>
 </ContentPage>

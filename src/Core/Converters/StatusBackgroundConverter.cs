@@ -8,10 +8,10 @@ public class StatusBackgroundConverter : IValueConverter
     {
         return value?.ToString() switch
         {
-            "Process" => Color.FromArgb("#FFF0F0"),
-            "Open" => Color.FromArgb("#F0FFF0"),
-            "On Hold" => Color.FromArgb("#F0F5FF"),
-            _ => Colors.Transparent
+            "Process" => Color.FromArgb("#F7284A"),
+            "Open" => Color.FromArgb("#2BC155"),
+            "On Hold" => Color.FromArgb("#6259CE"),
+            _ => Colors.Grey
         };
     }
 

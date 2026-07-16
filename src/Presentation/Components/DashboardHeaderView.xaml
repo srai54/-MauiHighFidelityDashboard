@@ -2,33 +2,34 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MauiHighFidelityDashboard.Presentation.Components.DashboardHeaderView">
-    <Border Style="{StaticResource CardBorderStyle}" Padding="20">
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
-            <Label Text="{Binding DashboardDisplayTitle}"
-                   Style="{StaticResource DisplayTitle}" />
-            <Label Grid.Row="1"
-                   Text="{Binding DashboardSubtitle}"
-                   Style="{StaticResource SectionSubtitle}"
-                   Margin="0" />
-            <HorizontalStackLayout Grid.Row="2" Spacing="32">
-                <VerticalStackLayout Spacing="4">
-                    <Label Text="{Binding CurrentMonthEarnings}"
-                           Style="{StaticResource MetricValue}" />
-                    <Label Text="Current Month Earnings"
-                           Style="{StaticResource CaptionText}" />
-                </VerticalStackLayout>
-                <VerticalStackLayout Spacing="4">
-                    <Label Text="{Binding CurrentMonthSales}"
-                           Style="{StaticResource MetricValue}" />
-                    <Label Text="Current Month Sales"
-                           Style="{StaticResource CaptionText}" />
-                </VerticalStackLayout>
-            </HorizontalStackLayout>
-            <Button Grid.Row="3"
-                    Text="Last Month Summary"
-                    Style="{StaticResource PrimaryButton}"
-                    Command="{Binding LastMonthSummaryCommand}"
-                    HorizontalOptions="Start" />
-        </Grid>
-    </Border>
+    <VerticalStackLayout Spacing="0">
+        <Label Text="{Binding DashboardDisplayTitle}"
+               Style="{StaticResource SectionTitle}" />
+        <Label Text="{Binding DashboardSubtitle}"
+               Style="{StaticResource SectionSubtitle}"
+               Margin="0,3,0,0" />
+        <Label Text="{Binding CurrentMonthEarnings}"
+               FontSize="24"
+               FontAttributes="Bold"
+               TextColor="{StaticResource TextPrimary}"
+               Margin="0,26,0,0" />
+        <Label Text="Current Month Earnings"
+               Style="{StaticResource CaptionText}"
+               Margin="0,3,0,0" />
+        <Label Text="{Binding CurrentMonthSales}"
+               FontSize="24"
+               FontAttributes="Bold"
+               TextColor="{StaticResource TextPrimary}"
+               Margin="0,20,0,0" />
+        <Label Text="Current Month Sales"
+               Style="{StaticResource CaptionText}"
+               Margin="0,3,0,0" />
+        <Button Text="Last Month Summary"
+                Style="{StaticResource PrimaryButton}"
+                Command="{Binding LastMonthSummaryCommand}"
+                FontSize="11"
+                Padding="16,9"
+                Margin="0,26,0,0"
+                HorizontalOptions="Start" />
+    </VerticalStackLayout>
 </ContentView>

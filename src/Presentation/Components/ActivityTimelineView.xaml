@@ -1,45 +1,74 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MauiHighFidelityDashboard.Domain.Models"
              x:Class="MauiHighFidelityDashboard.Presentation.Components.ActivityTimelineView">
     <Border Style="{StaticResource CardBorderStyle}">
-        <VerticalStackLayout Spacing="16">
-            <Label Text="Recent Activities"
-                   Style="{StaticResource SectionTitle}"
-                   Margin="0" />
-            <CollectionView ItemsSource="{Binding Activities}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid ColumnDefinitions="20,*" ColumnSpacing="12" Padding="0,0,0,16">
-                            <VerticalStackLayout HorizontalOptions="Center">
-                                <Border WidthRequest="12"
-                                        HeightRequest="12"
-                                        StrokeShape="RoundRectangle 6"
-                                        BackgroundColor="{Binding DotColorHex, Converter={StaticResource HexToColorConverter}}"
-                                        Stroke="Transparent"
-                                        VerticalOptions="Start"
-                                        Margin="0,4,0,0" />
-                                <BoxView WidthRequest="2"
-                                         HeightRequest="40"
-                                         Color="{StaticResource PageBackground}"
-                                         HorizontalOptions="Center" />
-                            </VerticalStackLayout>
-                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+        <Grid RowDefinitions="Auto,*" RowSpacing="20">
+            <Grid>
+                <Label Text="Recent Activities"
+                       Style="{StaticResource SectionTitle}" />
+                <Ellipse WidthRequest="46"
+                         HeightRequest="26"
+                         Fill="#E8DFF8"
+                         HorizontalOptions="End"
+                         VerticalOptions="Start"
+                         Margin="0,2,2,0" />
+            </Grid>
+            <Grid Grid.Row="1">
+                <!-- timeline rail: aligned with the icon-column centre (62 + 8 + 22) -->
+                <BoxView WidthRequest="2"
+                         Color="#EEF1F7"
+                         HorizontalOptions="Start"
+                         VerticalOptions="Fill"
+                         Margin="91,18,0,40" />
+                <VerticalStackLayout Spacing="0"
+                                     BindableLayout.ItemsSource="{Binding Activities}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:ActivityModel">
+                            <Grid ColumnDefinitions="62,44,*" ColumnSpacing="8" Padding="0,0,0,24">
                                 <Label Text="{Binding Time}"
-                                       FontSize="11"
-                                       TextColor="{StaticResource TextSecondary}" />
-                                <Label Text="{Binding Title}"
-                                       FontSize="14"
-                                       FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}" />
-                                <Label Text="{Binding Description}"
-                                       FontSize="12"
-                                       TextColor="{StaticResource TextSecondary}" />
-                            </VerticalStackLayout>
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </VerticalStackLayout>
+                                       FontSize="9"
+                                       TextColor="{StaticResource TextLight}"
+                                       LineBreakMode="NoWrap"
+                                       Margin="0,11,0,0" />
+                                <Border Grid.Column="1"
+                                        WidthRequest="34"
+                                        HeightRequest="34"
+                                        StrokeShape="RoundRectangle 17"
+                                        Stroke="Transparent"
+                                        BackgroundColor="{Binding IconColorHex, Converter={StaticResource HexToColorConverter}}"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Start">
+                                    <Label Text="{Binding Icon}"
+                                           TextColor="White"
+                                           FontSize="12"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="2" Spacing="3" Margin="4,1,0,0">
+                                    <Label Text="{Binding Title}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Label FontSize="10">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding Actor}"
+                                                      FontAttributes="Bold"
+                                                      TextColor="#566073" />
+                                                <Span Text=" " />
+                                                <Span Text="{Binding Action}"
+                                                      TextColor="{StaticResource TextLight}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Grid>
+        </Grid>
     </Border>
 </ContentView>

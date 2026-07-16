@@ -2,75 +2,155 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:MauiHighFidelityDashboard.Core.Converters"
+             xmlns:models="clr-namespace:MauiHighFidelityDashboard.Domain.Models"
+             xmlns:vm="clr-namespace:MauiHighFidelityDashboard.Core.ViewModels"
              x:Class="MauiHighFidelityDashboard.Presentation.Components.OrderTableView">
     <ContentView.Resources>
-        <converters:StatusColorConverter x:Key="StatusColorConverter" />
         <converters:StatusBackgroundConverter x:Key="StatusBackgroundConverter" />
     </ContentView.Resources>
     <Border Style="{StaticResource CardBorderStyle}">
-        <VerticalStackLayout Spacing="16">
-            <Grid ColumnDefinitions="*,Auto,Auto">
-                <VerticalStackLayout>
-                    <Label Text="Order Status"
-                           Style="{StaticResource SectionTitle}"
-                           Margin="0" />
-                    <Label Text="Overview of Latest Month"
-                           Style="{StaticResource SectionSubtitle}"
-                           Margin="0" />
-                </VerticalStackLayout>
-                <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
-                    <Button Text="+" WidthRequest="36" HeightRequest="36" CornerRadius="8"
-                            BackgroundColor="{StaticResource PageBackground}" TextColor="{StaticResource TextPrimary}" FontSize="16" />
-                    <Button Text="&#9776;" WidthRequest="36" HeightRequest="36" CornerRadius="8"
-                            BackgroundColor="{StaticResource PageBackground}" TextColor="{StaticResource TextPrimary}" FontSize="14" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout Grid.Column="2" Spacing="8" VerticalOptions="Center" Margin="8,0,0,0">
-                    <Button Text="&#128276;" WidthRequest="36" HeightRequest="36" CornerRadius="8"
-                            BackgroundColor="{StaticResource PageBackground}" TextColor="{StaticResource TextPrimary}" FontSize="14" />
-                    <Button Text="&#9881;" WidthRequest="36" HeightRequest="36" CornerRadius="8"
-                            BackgroundColor="{StaticResource PageBackground}" TextColor="{StaticResource TextPrimary}" FontSize="16" />
-                </HorizontalStackLayout>
+        <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="16">
+            <!-- Title -->
+            <VerticalStackLayout Spacing="3">
+                <Label Text="Order Status"
+                       Style="{StaticResource SectionTitle}" />
+                <Label Text="Overview of Latest Month"
+                       Style="{StaticResource SectionSubtitle}" />
+            </VerticalStackLayout>
+
+            <!-- Toolbar -->
+            <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto" ColumnSpacing="8">
+                <Button Text="＋ Add"
+                        Style="{StaticResource PrimaryButton}"
+                        FontSize="11"
+                        Padding="12,0"
+                        HeightRequest="32"
+                        Command="{Binding AddOrderCommand}"
+                        ToolTipProperties.Text="Add a new order" />
+                <Button Grid.Column="1" Text="ⓘ" Style="{StaticResource IconButton}"
+                        Command="{Binding ShowOrderInfoCommand}"
+                        ToolTipProperties.Text="Order summary info" />
+                <Button Grid.Column="2" Text="🗑" Style="{StaticResource IconButton}" FontSize="11"
+                        Command="{Binding DeleteOrderCommand}"
+                        ToolTipProperties.Text="Delete selected order (tap a row first)" />
+                <Button Grid.Column="3" Text="🖨" Style="{StaticResource IconButton}" FontSize="11"
+                        Command="{Binding PrintOrdersCommand}"
+                        ToolTipProperties.Text="Print order list" />
+                <Border Grid.Column="5"
+                        BackgroundColor="White"
+                        Stroke="#E4E8F0"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 4"
+                        WidthRequest="150"
+                        HeightRequest="32"
+                        Padding="10,0">
+                    <Entry Placeholder="Search"
+                           Text="{Binding SearchText}"
+                           PlaceholderColor="{StaticResource TextLight}"
+                           TextColor="{StaticResource TextPrimary}"
+                           FontSize="11"
+                           BackgroundColor="Transparent"
+                           VerticalOptions="Center"
+                           ToolTipProperties.Text="Filter by invoice, customer, country or status" />
+                </Border>
+                <Button Grid.Column="6" Text="🖨" Style="{StaticResource IconButton}" FontSize="11" CornerRadius="4"
+                        Command="{Binding PrintOrdersCommand}"
+                        ToolTipProperties.Text="Print order list" />
             </Grid>
-            <Border BackgroundColor="{StaticResource PageBackground}"
-                    StrokeShape="RoundRectangle 8"
+
+            <!-- Table header -->
+            <Border Grid.Row="2"
+                    BackgroundColor="{StaticResource TableHeaderBg}"
                     Stroke="Transparent"
-                    Padding="12,8">
-                <Label Text="Search Invoice..."
-                       TextColor="{StaticResource TextLight}"
-                       FontSize="13" />
+                    StrokeShape="RoundRectangle 4"
+                    Padding="14,11">
+                <Grid ColumnDefinitions="70,*,90,80,90">
+                    <Label Text="INVOICE" Style="{StaticResource TableHeaderLabel}" />
+                    <Label Grid.Column="1" Text="CUSTOMERS" Style="{StaticResource TableHeaderLabel}" />
+                    <Label Grid.Column="2" Text="FROM" Style="{StaticResource TableHeaderLabel}" />
+                    <Label Grid.Column="3" Text="PRICE" Style="{StaticResource TableHeaderLabel}" />
+                    <Label Grid.Column="4" Text="STATUS" Style="{StaticResource TableHeaderLabel}" />
+                </Grid>
             </Border>
-            <Grid ColumnDefinitions="80,*,80,80,80" Padding="0,8" ColumnSpacing="8">
-                <Label Text="Invoice" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextSecondary}" />
-                <Label Grid.Column="1" Text="Customers" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextSecondary}" />
-                <Label Grid.Column="2" Text="From" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextSecondary}" />
-                <Label Grid.Column="3" Text="Price" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextSecondary}" HorizontalOptions="End" />
-                <Label Grid.Column="4" Text="Status" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextSecondary}" HorizontalOptions="Center" />
-            </Grid>
-            <CollectionView ItemsSource="{Binding Orders}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid ColumnDefinitions="80,*,80,80,80"
-                              ColumnSpacing="8"
-                              Padding="0,10"
-                              HeightRequest="44">
-                            <Label Text="{Binding Invoice}" FontSize="13" TextColor="{StaticResource TextPrimary}" />
-                            <Label Grid.Column="1" Text="{Binding Customer}" FontSize="13" TextColor="{StaticResource TextPrimary}" />
-                            <Label Grid.Column="2" Text="{Binding Country}" FontSize="13" TextColor="{StaticResource TextSecondary}" />
-                            <Label Grid.Column="3" Text="{Binding Price, StringFormat='${0:N0}'}" FontSize="13" TextColor="{StaticResource TextPrimary}" HorizontalOptions="End" />
-                            <Border Grid.Column="4"
-                                    HorizontalOptions="Center"
-                                    Padding="8,4"
-                                    StrokeShape="RoundRectangle 4"
-                                    Stroke="Transparent"
-                                    BackgroundColor="{Binding Status, Converter={StaticResource StatusBackgroundConverter}}">
-                                <Label Text="{Binding Status}"
-                                       FontSize="11"
-                                       TextColor="{Binding Status, Converter={StaticResource StatusColorConverter}}" />
-                            </Border>
+
+            <!-- Rows (tap to select) -->
+            <VerticalStackLayout Grid.Row="3"
+                                 Spacing="0"
+                                 BindableLayout.ItemsSource="{Binding Orders}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="models:OrderModel">
+                        <Grid RowDefinitions="*,1" Padding="14,0,14,0" BackgroundColor="Transparent">
+                            <Grid.Triggers>
+                                <DataTrigger TargetType="Grid" Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="#FFF1E9" />
+                                </DataTrigger>
+                            </Grid.Triggers>
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectOrderCommand, Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}}"
+                                                      CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <Grid ColumnDefinitions="70,*,90,80,90" HeightRequest="43">
+                                <Label Text="{Binding Invoice}" FontSize="12" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding Customer}" FontSize="12" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="{Binding Country}" FontSize="12" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+                                <Label Grid.Column="3" Text="{Binding Price, StringFormat='${0:F0}'}" FontSize="12" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                                <Border Grid.Column="4"
+                                        BackgroundColor="{Binding Status, Converter={StaticResource StatusBackgroundConverter}}"
+                                        Stroke="Transparent"
+                                        StrokeShape="RoundRectangle 3"
+                                        WidthRequest="64"
+                                        HeightRequest="23"
+                                        HorizontalOptions="Start"
+                                        VerticalOptions="Center">
+                                    <Label Text="{Binding Status}"
+                                           FontSize="10"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                            </Grid>
+                            <BoxView Grid.Row="1" HeightRequest="1" Color="{StaticResource DividerColor}" />
                         </Grid>
                     </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </VerticalStackLayout>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <!-- Footer: entries text + pagination -->
+            <Grid Grid.Row="4" ColumnDefinitions="*,Auto">
+                <Label Text="{Binding OrdersFooterText}"
+                       FontSize="11"
+                       TextColor="{StaticResource TextLight}"
+                       VerticalOptions="Center" />
+                <HorizontalStackLayout Grid.Column="1" Spacing="4">
+                    <Button Text="‹"
+                            Style="{StaticResource PaginationButton}"
+                            Command="{Binding PreviousPageCommand}"
+                            ToolTipProperties.Text="Previous page" />
+                    <HorizontalStackLayout Spacing="4"
+                                           BindableLayout.ItemsSource="{Binding PageNumbers}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:PageItem">
+                                <Button Text="{Binding Number}"
+                                        Style="{StaticResource PaginationButton}"
+                                        Command="{Binding GoToPageCommand, Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}}"
+                                        CommandParameter="{Binding .}">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding IsCurrent}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{StaticResource PrimaryOrange}" />
+                                            <Setter Property="TextColor" Value="White" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                    <Button Text="›"
+                            Style="{StaticResource PaginationButton}"
+                            Command="{Binding NextPageCommand}"
+                            ToolTipProperties.Text="Next page" />
+                </HorizontalStackLayout>
+            </Grid>
+        </Grid>
     </Border>
 </ContentView>

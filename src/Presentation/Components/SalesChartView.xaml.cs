@@ -1,36 +1,52 @@
-using MauiHighFidelityDashboard.Domain.Models;
-
 namespace MauiHighFidelityDashboard.Presentation.Components;
 
 public partial class SalesChartView : ContentView
 {
+    // Dummy series per period — swapping tabs swaps the dataset and x-axis labels.
+    private static readonly Dictionary<string, (float[] Online, float[] Store, string[] XLabels)> Series = new()
+    {
+        ["DAILY"] = (
+            [2, 6, 18, 22, 12, 7, 12, 15, 9, 6, 24, 4],
+            [3, 8, 12, 16, 13, 10, 13, 16, 12, 16, 28, 17],
+            ["1", "2", "3", "4", "5", "6"]),
+        ["WEEKLY"] = (
+            [5, 12, 8, 20, 26, 14, 10, 18, 22, 12, 16, 9],
+            [8, 6, 14, 11, 18, 22, 16, 12, 26, 20, 12, 15],
+            ["W1", "W2", "W3", "W4", "W5", "W6"]),
+        ["MONTHLY"] = (
+            [10, 14, 22, 18, 26, 20, 30, 24, 16, 21, 27, 19],
+            [6, 10, 15, 21, 17, 25, 20, 28, 23, 18, 24, 30],
+            ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]),
+        ["YEARLY"] = (
+            [8, 11, 15, 13, 20, 24, 22, 28, 25, 30, 27, 32],
+            [5, 9, 12, 16, 14, 19, 23, 21, 26, 24, 29, 26],
+            ["2020", "2021", "2022", "2023", "2024", "2025"]),
+    };
+
     public SalesChartView()
     {
         InitializeComponent();
-        Loaded += OnLoaded;
+        ApplyPeriod("DAILY");
         SetupTabTaps();
     }
 
-    private void OnLoaded(object? sender, EventArgs e)
+    private void ApplyPeriod(string period)
     {
-        ChartCanvas.HeightRequest = 200;
-        ChartCanvas.Drawable = new SplineDrawable(GetSampleData());
+        var (online, store, labels) = Series[period];
+        ChartCanvas.Drawable = new SplineDrawable(online, store, labels);
         ChartCanvas.Invalidate();
     }
 
-    private static List<SalesDataPoint> GetSampleData() =>
-    [
-        new(1, 2, 3),
-        new(2, 13, 12),
-        new(3, 3, 5),
-        new(4, 6, 14),
-        new(5, 12, 10),
-        new(6, 27, 17),
-    ];
-
     private void SetupTabTaps()
     {
-        var tabs = new[] { (Label)TabDaily, (Label)TabWeekly, (Label)TabMonthly, (Label)TabYearly };
+        var tabs = new (Label Label, BoxView Underline)[]
+        {
+            (TabDaily, UnderlineDaily),
+            (TabWeekly, UnderlineWeekly),
+            (TabMonthly, UnderlineMonthly),
+            (TabYearly, UnderlineYearly),
+        };
+
         foreach (var tab in tabs)
         {
             var tap = new TapGestureRecognizer();
@@ -38,113 +54,115 @@ public partial class SalesChartView : ContentView
             {
                 foreach (var t in tabs)
                 {
-                    t.Style = t == tab
-                        ? (Style)Application.Current!.Resources["TabActiveStyle"]
-                        : (Style)Application.Current!.Resources["TabInactiveStyle"];
+                    bool active = t.Label == tab.Label;
+                    t.Label.Style = (Style)Application.Current!.Resources[active ? "TabActiveStyle" : "TabInactiveStyle"];
+                    t.Underline.IsVisible = active;
                 }
+                ApplyPeriod(tab.Label.Text);
             };
-            tab.GestureRecognizers.Add(tap);
+            tab.Label.GestureRecognizers.Add(tap);
         }
     }
 }
 
-public readonly record struct SalesDataPoint(int Day, double Online, double Store);
-
 public class SplineDrawable : IDrawable
 {
-    private readonly List<SalesDataPoint> _data;
+    private readonly float[] _online;
+    private readonly float[] _store;
+    private readonly string[] _xLabels;
 
-    public SplineDrawable(List<SalesDataPoint> data) => _data = data;
+    private const float YMax = 35f;
+
+    private static readonly Color OnlineColor = Color.FromArgb("#4FC3F7");
+    private static readonly Color StoreColor = Color.FromArgb("#FFA726");
+    private static readonly Color GridColor = Color.FromArgb("#EDF0F5");
+    private static readonly Color AxisTextColor = Color.FromArgb("#9AA3B7");
+
+    public SplineDrawable(float[] online, float[] store, string[] xLabels)
+    {
+        _online = online;
+        _store = store;
+        _xLabels = xLabels;
+    }
 
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
-        if (_data.Count == 0) return;
+        float left = 30, right = dirtyRect.Width - 8, top = 8, bottom = dirtyRect.Height - 20;
+        float width = right - left, height = bottom - top;
+        if (width <= 0 || height <= 0) return;
 
-        float yLabelWidth = 28;
-        float padding = 6;
-        float chartLeft = yLabelWidth + padding;
-        float chartRight = dirtyRect.Width - padding;
-        float chartTop = padding;
-        float chartBottom = dirtyRect.Height - padding;
-        float chartWidth = chartRight - chartLeft;
-        float chartHeight = chartBottom - chartTop;
-
-        float yMax = 35;
-        float yMin = 0;
-
-        // Draw horizontal grid lines and Y-axis labels
-        canvas.FontColor = Color.FromArgb("#B2BEC3");
         canvas.FontSize = 9;
-        canvas.StrokeColor = Color.FromArgb("#E8ECF0");
-        canvas.StrokeSize = 0.5f;
+        canvas.FontColor = AxisTextColor;
+        canvas.StrokeColor = GridColor;
+        canvas.StrokeSize = 1;
 
-        for (int v = 0; v <= 35; v += 5)
+        for (int v = 0; v <= (int)YMax; v += 5)
         {
-            float y = chartBottom - (v - yMin) / (yMax - yMin) * chartHeight;
-            canvas.DrawLine(chartLeft, y, chartRight, y);
-            canvas.DrawString(v.ToString(), 2, y - 5, yLabelWidth, 12, HorizontalAlignment.Left, VerticalAlignment.Center);
+            float y = bottom - v / YMax * height;
+            canvas.DrawLine(left, y, right, y);
+            canvas.DrawString(v.ToString(), 0, y - 6, 24, 12, HorizontalAlignment.Right, VerticalAlignment.Center);
         }
 
-        // Draw spline for Online (Blue)
-        DrawSpline(canvas, _data.Select(d => (float)d.Online).ToList(),
-                   chartLeft, chartBottom, chartWidth, chartHeight, yMin, yMax,
-                   Color.FromArgb("#4FC3F7"));
+        for (int i = 0; i < _xLabels.Length; i++)
+        {
+            float x = left + i / (float)(_xLabels.Length - 1) * width;
+            canvas.DrawString(_xLabels[i], x - 16, bottom + 5, 32, 12, HorizontalAlignment.Center, VerticalAlignment.Top);
+        }
 
-        // Draw spline for Store (Orange)
-        DrawSpline(canvas, _data.Select(d => (float)d.Store).ToList(),
-                   chartLeft, chartBottom, chartWidth, chartHeight, yMin, yMax,
-                   Color.FromArgb("#FF5B1F"));
+        DrawSeries(canvas, _store, StoreColor, 0.20f, left, bottom, width, height);
+        DrawSeries(canvas, _online, OnlineColor, 0.14f, left, bottom, width, height);
     }
 
-    private static void DrawSpline(ICanvas canvas, List<float> values,
-        float chartLeft, float chartBottom, float chartWidth, float chartHeight,
-        float yMin, float yMax, Color color)
+    private static void DrawSeries(ICanvas canvas, float[] values, Color color, float fillAlpha,
+        float left, float bottom, float width, float height)
     {
-        int n = values.Count;
+        int n = values.Length;
         if (n < 2) return;
 
-        float stepX = chartWidth / (n - 1);
         var points = new PointF[n];
         for (int i = 0; i < n; i++)
         {
-            float x = chartLeft + i * stepX;
-            float y = chartBottom - (values[i] - yMin) / (yMax - yMin) * chartHeight;
-            points[i] = new PointF(x, y);
+            points[i] = new PointF(
+                left + i * width / (n - 1),
+                bottom - values[i] / YMax * height);
         }
 
-        canvas.StrokeColor = color;
-        canvas.StrokeSize = 2.5f;
-        canvas.StrokeLineCap = LineCap.Round;
-        canvas.StrokeLineJoin = LineJoin.Round;
+        var curve = BuildSpline(points);
 
-        var path = new PathF();
-        path.MoveTo(points[0]);
+        // Soft area fill under the curve
+        var fill = BuildSpline(points);
+        fill.LineTo(points[^1].X, bottom);
+        fill.LineTo(points[0].X, bottom);
+        fill.Close();
+        canvas.FillColor = color.WithAlpha(fillAlpha);
+        canvas.FillPath(fill);
 
-        for (int i = 0; i < n - 1; i++)
-        {
-            float x1 = points[i].X;
-            float y1 = points[i].Y;
-            float x2 = points[i + 1].X;
-            float y2 = points[i + 1].Y;
-
-            float cpx1 = x1 + (x2 - x1) / 3;
-            float cpy1 = y1;
-            float cpx2 = x2 - (x2 - x1) / 3;
-            float cpy2 = y2;
-
-            path.CurveTo(cpx1, cpy1, cpx2, cpy2, x2, y2);
-        }
-
-        canvas.DrawPath(path);
-
-        // Draw dots on data points
-        canvas.FillColor = Colors.White;
         canvas.StrokeColor = color;
         canvas.StrokeSize = 2;
+        canvas.StrokeLineCap = LineCap.Round;
+        canvas.StrokeLineJoin = LineJoin.Round;
+        canvas.DrawPath(curve);
+
+        canvas.FillColor = Colors.White;
+        canvas.StrokeSize = 1.6f;
         foreach (var p in points)
         {
-            canvas.FillCircle(p.X, p.Y, 3.5f);
-            canvas.DrawCircle(p.X, p.Y, 3.5f);
+            canvas.FillCircle(p.X, p.Y, 2.6f);
+            canvas.DrawCircle(p.X, p.Y, 2.6f);
         }
+    }
+
+    private static PathF BuildSpline(PointF[] points)
+    {
+        var path = new PathF();
+        path.MoveTo(points[0]);
+        for (int i = 0; i < points.Length - 1; i++)
+        {
+            float x1 = points[i].X, y1 = points[i].Y;
+            float x2 = points[i + 1].X, y2 = points[i + 1].Y;
+            float dx = (x2 - x1) / 2.2f;
+            path.CurveTo(x1 + dx, y1, x2 - dx, y2, x2, y2);
+        }
+        return path;
     }
 }

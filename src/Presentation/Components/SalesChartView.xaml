@@ -2,65 +2,42 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MauiHighFidelityDashboard.Presentation.Components.SalesChartView">
-    <Border Style="{StaticResource CardBorderStyle}" Padding="16">
-        <Grid RowDefinitions="Auto,*,Auto,Auto" RowSpacing="12">
-            <!-- Row 0: Tabs + Legend -->
-            <Grid ColumnDefinitions="*,Auto">
-                <HorizontalStackLayout Spacing="16" x:Name="TabsPanel">
+    <Grid RowDefinitions="Auto,*" RowSpacing="6">
+        <!-- Row 0: Tabs + Legend -->
+        <Grid ColumnDefinitions="*,Auto">
+            <HorizontalStackLayout Spacing="22">
+                <VerticalStackLayout Spacing="5">
                     <Label Text="DAILY" Style="{StaticResource TabActiveStyle}" x:Name="TabDaily" />
+                    <BoxView x:Name="UnderlineDaily" HeightRequest="2" WidthRequest="30" Color="{StaticResource PrimaryOrange}" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="5">
                     <Label Text="WEEKLY" Style="{StaticResource TabInactiveStyle}" x:Name="TabWeekly" />
+                    <BoxView x:Name="UnderlineWeekly" HeightRequest="2" WidthRequest="30" Color="{StaticResource PrimaryOrange}" HorizontalOptions="Center" IsVisible="False" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="5">
                     <Label Text="MONTHLY" Style="{StaticResource TabInactiveStyle}" x:Name="TabMonthly" />
+                    <BoxView x:Name="UnderlineMonthly" HeightRequest="2" WidthRequest="30" Color="{StaticResource PrimaryOrange}" HorizontalOptions="Center" IsVisible="False" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="5">
                     <Label Text="YEARLY" Style="{StaticResource TabInactiveStyle}" x:Name="TabYearly" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout Grid.Column="1" Spacing="12">
-                    <HorizontalStackLayout Spacing="4">
-                        <BoxView WidthRequest="10" HeightRequest="10" Color="{StaticResource ChartOnline}" CornerRadius="5" VerticalOptions="Center" />
-                        <Label Text="Online" FontSize="11" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout Spacing="4">
-                        <BoxView WidthRequest="10" HeightRequest="10" Color="{StaticResource ChartStore}" CornerRadius="5" VerticalOptions="Center" />
-                        <Label Text="Store" FontSize="11" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-                </HorizontalStackLayout>
-            </Grid>
-
-            <!-- Row 1: Spline Chart -->
-            <GraphicsView x:Name="ChartCanvas"
-                          Grid.Row="1"
-                          BackgroundColor="{StaticResource PageBackground}"
-                          HeightRequest="200" />
-
-            <!-- Row 2: X-Axis labels -->
-            <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center" Spacing="0" Margin="0,0,0,0">
-                <Label Text="1" FontSize="10" TextColor="{StaticResource TextLight}" WidthRequest="40" HorizontalTextAlignment="Center" />
-                <Label Text="2" FontSize="10" TextColor="{StaticResource TextLight}" WidthRequest="40" HorizontalTextAlignment="Center" />
-                <Label Text="3" FontSize="10" TextColor="{StaticResource TextLight}" WidthRequest="40" HorizontalTextAlignment="Center" />
-                <Label Text="4" FontSize="10" TextColor="{StaticResource TextLight}" WidthRequest="40" HorizontalTextAlignment="Center" />
-                <Label Text="5" FontSize="10" TextColor="{StaticResource TextLight}" WidthRequest="40" HorizontalTextAlignment="Center" />
-                <Label Text="6" FontSize="10" TextColor="{StaticResource TextLight}" WidthRequest="40" HorizontalTextAlignment="Center" />
+                    <BoxView x:Name="UnderlineYearly" HeightRequest="2" WidthRequest="30" Color="{StaticResource PrimaryOrange}" HorizontalOptions="Center" IsVisible="False" />
+                </VerticalStackLayout>
             </HorizontalStackLayout>
-
-            <!-- Row 3: KPI Cards -->
-            <Grid Grid.Row="3" ColumnDefinitions="*,*,*" ColumnSpacing="12">
-                <Border BackgroundColor="#FFF3E0" StrokeShape="RoundRectangle 8" Padding="12" Stroke="Transparent">
-                    <VerticalStackLayout Spacing="4">
-                        <Label Text="Referral Earning" Style="{StaticResource CaptionText}" />
-                        <Label Text="$1,689.53" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
-                    </VerticalStackLayout>
-                </Border>
-                <Border Grid.Column="1" BackgroundColor="#E8F5E9" StrokeShape="RoundRectangle 8" Padding="12" Stroke="Transparent">
-                    <VerticalStackLayout Spacing="4">
-                        <Label Text="Estimate Sales" Style="{StaticResource CaptionText}" />
-                        <Label Text="$2,851.53" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
-                    </VerticalStackLayout>
-                </Border>
-                <Border Grid.Column="2" BackgroundColor="#F3E5F5" StrokeShape="RoundRectangle 8" Padding="12" Stroke="Transparent">
-                    <VerticalStackLayout Spacing="4">
-                        <Label Text="Earning" Style="{StaticResource CaptionText}" />
-                        <Label Text="$52,567.53" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
-                    </VerticalStackLayout>
-                </Border>
-            </Grid>
+            <HorizontalStackLayout Grid.Column="1" Spacing="14" VerticalOptions="Start">
+                <HorizontalStackLayout Spacing="5">
+                    <BoxView WidthRequest="8" HeightRequest="8" Color="{StaticResource ChartOnline}" CornerRadius="4" VerticalOptions="Center" />
+                    <Label Text="Online" FontSize="10" TextColor="{StaticResource TextLight}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="5">
+                    <BoxView WidthRequest="8" HeightRequest="8" Color="{StaticResource ChartStore}" CornerRadius="4" VerticalOptions="Center" />
+                    <Label Text="Store" FontSize="10" TextColor="{StaticResource TextLight}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </HorizontalStackLayout>
         </Grid>
-    </Border>
+
+        <!-- Row 1: Spline Chart (axes drawn in-canvas) -->
+        <GraphicsView x:Name="ChartCanvas"
+                      Grid.Row="1"
+                      HeightRequest="225" />
+    </Grid>
 </ContentView>

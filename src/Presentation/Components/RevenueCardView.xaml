@@ -1,31 +1,92 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MauiHighFidelityDashboard.Presentation.Components.RevenueCardView">
-    <Border Style="{StaticResource CardBorderStyle}"
-            BackgroundColor="{Binding CardBackground}">
-        <VerticalStackLayout Spacing="12">
-            <Grid ColumnDefinitions="*,Auto">
-                <Label Text="{Binding CardTitle}"
-                       FontSize="15"
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}" />
-                <Label Grid.Column="1"
-                       Text="{Binding DropdownLabel}"
-                       FontSize="11"
-                       TextColor="{StaticResource TextSecondary}" />
-            </Grid>
-            <Label Text="{Binding CardValue}"
-                   FontSize="28"
+             x:Class="MauiHighFidelityDashboard.Presentation.Components.RevenueCardView"
+             x:Name="Root">
+    <Border StrokeShape="RoundRectangle 6"
+            Stroke="Transparent"
+            BackgroundColor="{Binding CardBackground, Source={x:Reference Root}}"
+            Padding="18,16"
+            MinimumHeightRequest="132">
+        <Grid RowDefinitions="Auto,*" RowSpacing="10">
+            <Label Text="{Binding CardTitle, Source={x:Reference Root}}"
+                   FontSize="13"
                    FontAttributes="Bold"
-                   TextColor="{StaticResource TextPrimary}" />
-            <Label Text="{Binding CardSubtitle}"
-                   FontSize="11"
-                   TextColor="{StaticResource TextSecondary}" />
-            <Border HeightRequest="60"
-                    BackgroundColor="{Binding ChartBackground}"
-                    StrokeShape="RoundRectangle 8"
-                    Stroke="Transparent" />
-        </VerticalStackLayout>
+                   TextColor="#4B5574" />
+
+            <!-- Bar variant: mini bars left, value + date range right -->
+            <Grid x:Name="BarLayout"
+                  Grid.Row="1"
+                  ColumnDefinitions="Auto,*"
+                  IsVisible="False">
+                <GraphicsView x:Name="BarCanvas"
+                              WidthRequest="74"
+                              HeightRequest="52"
+                              VerticalOptions="End" />
+                <VerticalStackLayout Grid.Column="1"
+                                     Spacing="3"
+                                     HorizontalOptions="End"
+                                     VerticalOptions="Center">
+                    <Label Text="{Binding CardValue, Source={x:Reference Root}, StringFormat='↑ {0}'}"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="{Binding AccentColor, Source={x:Reference Root}}"
+                           HorizontalTextAlignment="End" />
+                    <Label Text="{Binding CardSubtitle, Source={x:Reference Root}}"
+                           FontSize="10"
+                           TextColor="#8B93A7"
+                           HorizontalTextAlignment="End" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- Area variant: value top-left, wave filling the bottom -->
+            <Grid x:Name="AreaLayout"
+                  Grid.Row="1"
+                  RowDefinitions="Auto,*"
+                  IsVisible="False">
+                <Label Text="{Binding CardValue, Source={x:Reference Root}, StringFormat='↑ {0}'}"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="{Binding AccentColor, Source={x:Reference Root}}" />
+                <GraphicsView x:Name="AreaCanvas"
+                              Grid.Row="1"
+                              HeightRequest="44"
+                              Margin="-4,8,-4,0"
+                              VerticalOptions="End" />
+            </Grid>
+
+            <!-- Line variant: value + Monthly dropdown left, squiggle right -->
+            <Grid x:Name="LineLayout"
+                  Grid.Row="1"
+                  ColumnDefinitions="Auto,*"
+                  ColumnSpacing="12"
+                  IsVisible="False">
+                <VerticalStackLayout Spacing="10" VerticalOptions="Center">
+                    <Label Text="{Binding CardValue, Source={x:Reference Root}, StringFormat='↑ {0}'}"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="{Binding AccentColor, Source={x:Reference Root}}" />
+                    <Border BackgroundColor="White"
+                            Stroke="#E4E8F0"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 3"
+                            Padding="9,5"
+                            HorizontalOptions="Start"
+                            ToolTipProperties.Text="Change period">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnPeriodChipTapped" />
+                        </Border.GestureRecognizers>
+                        <Label x:Name="PeriodLabel"
+                               Text="Monthly ▾"
+                               FontSize="10"
+                               TextColor="#6B7694" />
+                    </Border>
+                </VerticalStackLayout>
+                <GraphicsView x:Name="LineCanvas"
+                              Grid.Column="1"
+                              HeightRequest="56"
+                              VerticalOptions="End" />
+            </Grid>
+        </Grid>
     </Border>
 </ContentView>

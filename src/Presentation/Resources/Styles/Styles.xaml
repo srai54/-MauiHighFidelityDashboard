@@ -6,65 +6,71 @@
     <!-- Card with Shadow -->
     <Style x:Key="CardBorderStyle" TargetType="Border">
         <Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
-        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
-        <Setter Property="Padding" Value="16" />
-        <Setter Property="Margin" Value="6" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 6" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="Margin" Value="0" />
         <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
-        <Setter Property="StrokeThickness" Value="0.5" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow Brush="#000000" Opacity="0.04" Radius="12" Offset="0,3" />
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- Typography: Display Title (Dashboard title) -->
     <Style x:Key="DisplayTitle" TargetType="Label">
-        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontSize" Value="24" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
     </Style>
 
     <!-- Typography: Section Title (chart titles, card section headers) -->
     <Style x:Key="SectionTitle" TargetType="Label">
-        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontSize" Value="15" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
-        <Setter Property="Margin" Value="0,0,0,4" />
     </Style>
 
     <!-- Typography: Card Title (inside cards) -->
     <Style x:Key="CardTitle" TargetType="Label">
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="TextColor" Value="{StaticResource TextLight}" />
     </Style>
 
     <!-- Typography: Metric Value (large numbers) -->
     <Style x:Key="MetricValue" TargetType="Label">
-        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontSize" Value="15" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="LineBreakMode" Value="NoWrap" />
     </Style>
 
     <!-- Typography: Caption Text (small labels) -->
     <Style x:Key="CaptionText" TargetType="Label">
-        <Setter Property="FontSize" Value="11" />
-        <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="TextColor" Value="{StaticResource TextLight}" />
     </Style>
 
     <!-- Section Subtitle -->
     <Style x:Key="SectionSubtitle" TargetType="Label">
-        <Setter Property="FontSize" Value="13" />
-        <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
-        <Setter Property="Margin" Value="0,0,0,16" />
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="TextColor" Value="{StaticResource TextLight}" />
     </Style>
 
     <!-- Tab Active Style -->
     <Style x:Key="TabActiveStyle" TargetType="Label">
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="11" />
         <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CharacterSpacing" Value="0.5" />
         <Setter Property="TextColor" Value="{StaticResource PrimaryOrange}" />
         <Setter Property="VerticalOptions" Value="Center" />
     </Style>
 
     <!-- Tab Inactive Style -->
     <Style x:Key="TabInactiveStyle" TargetType="Label">
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="CharacterSpacing" Value="0.5" />
         <Setter Property="TextColor" Value="{StaticResource TextLight}" />
         <Setter Property="VerticalOptions" Value="Center" />
     </Style>
@@ -73,9 +79,41 @@
     <Style x:Key="PrimaryButton" TargetType="Button">
         <Setter Property="BackgroundColor" Value="{StaticResource PrimaryOrange}" />
         <Setter Property="TextColor" Value="{StaticResource TextWhite}" />
-        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="CornerRadius" Value="4" />
         <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="14,8" />
+    </Style>
+
+    <!-- Table column header -->
+    <Style x:Key="TableHeaderLabel" TargetType="Label">
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CharacterSpacing" Value="0.6" />
+        <Setter Property="TextColor" Value="#4B5574" />
+    </Style>
+
+    <!-- Pagination number -->
+    <Style x:Key="PaginationButton" TargetType="Button">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="WidthRequest" Value="24" />
+        <Setter Property="HeightRequest" Value="24" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinimumWidthRequest" Value="24" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <!-- Round toolbar icon button (Order Status card) -->
+    <Style x:Key="IconButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource IconButtonBg}" />
+        <Setter Property="TextColor" Value="{StaticResource IconButtonText}" />
+        <Setter Property="WidthRequest" Value="32" />
+        <Setter Property="HeightRequest" Value="32" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="FontSize" Value="13" />
-        <Setter Property="Padding" Value="16,8" />
     </Style>
 </ResourceDictionary>

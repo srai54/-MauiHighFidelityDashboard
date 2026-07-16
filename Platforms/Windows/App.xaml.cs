@@ -17,6 +17,14 @@ public partial class App : MauiWinUIApplication
 	public App()
 	{
 		this.InitializeComponent();
+
+		// TEMP crash diagnostics
+		UnhandledException += (s, e) =>
+		{
+			System.IO.File.AppendAllText(
+				System.IO.Path.Combine(System.IO.Path.GetTempPath(), "maui-dashboard-crash.log"),
+				$"[{DateTime.Now:O}] WinUI UnhandledException: {e.Exception}\n\n");
+		};
 	}
 
 	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();

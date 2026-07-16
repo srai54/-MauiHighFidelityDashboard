@@ -16,38 +16,31 @@ public partial class SidebarView : ContentView
 
     public List<MenuItemModel> MenuItems { get; } =
     [
-        new() { Label = "Dashboard",      Icon = "\u25C6", IsActive = true,  Route = "dashboard" },
-        new() { Label = "Widgets",         Icon = "\u25C7",                    Route = "widgets" },
-        new() { Label = "UI Elements",     Icon = "\u25C7",                    Route = "uielements" },
-        new() { Label = "Advanced UI",     Icon = "\u25C7",                    Route = "advancedui" },
-        new() { Label = "Form Elements",   Icon = "\u25C7",                    Route = "formelements" },
-        new() { Label = "Editors",         Icon = "\u25C7",                    Route = "editors" },
-        new() { Label = "Charts",          Icon = "\u25C7",                    Route = "charts" },
-        new() { Label = "Tables",          Icon = "\u25C7",                    Route = "tables" },
-        new() { Label = "Popups",          Icon = "\u25C7",                    Route = "popups" },
-        new() { Label = "Notifications",   Icon = "\u25C7",                    Route = "notifications" },
-        new() { Label = "Icons",           Icon = "\u25C7",                    Route = "icons" },
-        new() { Label = "Maps",            Icon = "\u25C7",                    Route = "maps" },
-        new() { Label = "User Pages",      Icon = "\u25C7",                    Route = "userpages" },
-        new() { Label = "Error Pages",     Icon = "\u25C7",                    Route = "errorpages" },
-        new() { Label = "General Pages",   Icon = "\u25C7",                    Route = "generalpages" },
-        new() { Label = "E-Commerce",      Icon = "\u25C7",                    Route = "ecommerce" },
-        new() { Label = "Email",           Icon = "\u25C7",                    Route = "email" },
-        new() { Label = "Calendar",        Icon = "\u25C7",                    Route = "calendar" },
-        new() { Label = "Todo List",       Icon = "\u25C7",                    Route = "todolist" },
-        new() { Label = "Gallery",         Icon = "\u25C7",                    Route = "gallery" },
-        new() { Label = "Documentation",   Icon = "\u25C7",                    Route = "documentation" },
+        new() { Label = "Dashboard",      Icon = "⌂", IsActive = true, Route = "dashboard" },
+        new() { Label = "Widgets",        Icon = "❖", Route = "widgets" },
+        new() { Label = "UI Elements",    Icon = "▤", Route = "uielements" },
+        new() { Label = "Advanced UI",    Icon = "✦", Route = "advancedui" },
+        new() { Label = "Form Elements",  Icon = "✎", Route = "formelements" },
+        new() { Label = "Editors",        Icon = "✑", Route = "editors" },
+        new() { Label = "Charts",         Icon = "◔", Route = "charts" },
+        new() { Label = "Tables",         Icon = "▦", Route = "tables" },
+        new() { Label = "Popups",         Icon = "❏", Route = "popups" },
+        new() { Label = "Notifications",  Icon = "◉", Route = "notifications" },
+        new() { Label = "Icons",          Icon = "★", Route = "icons" },
+        new() { Label = "Maps",           Icon = "◎", Route = "maps" },
+        new() { Label = "User Pages",     Icon = "❍", Route = "userpages" },
+        new() { Label = "Error Pages",    Icon = "⚠", Route = "errorpages" },
+        new() { Label = "General Pages",  Icon = "❒", Route = "generalpages" },
+        new() { Label = "E-Commerce",     Icon = "✤", Route = "ecommerce" },
+        new() { Label = "E-mail",         Icon = "✉", Route = "email" },
+        new() { Label = "Calendar",       Icon = "▧", Route = "calendar" },
+        new() { Label = "Todo List",      Icon = "☑", Route = "todolist" },
+        new() { Label = "Gallery",        Icon = "▩", Route = "gallery" },
+        new() { Label = "Documentation",  Icon = "❑", Route = "documentation" },
     ];
 
     public SidebarView()
     {
         InitializeComponent();
-    }
-
-    private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
-    {
-        if (e.CurrentSelection.FirstOrDefault() is not MenuItemModel item) return;
-        if (SelectItemCommand?.CanExecute(item) == true)
-            SelectItemCommand.Execute(item);
     }
 }

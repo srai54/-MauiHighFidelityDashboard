@@ -6,13 +6,14 @@ public partial class TrafficChartView : ContentView
     {
         InitializeComponent();
 
+        // Clockwise from 12 o'clock: yellow sliver, large orange arc, blue arc — as in the reference.
         DonutCanvas.Drawable = new DonutDrawable
         {
             Segments =
             [
-                new DonutSegment { Percentage = 34, Color = Color.FromArgb("#2196F3") },
-                new DonutSegment { Percentage = 55, Color = Color.FromArgb("#FF5722") },
                 new DonutSegment { Percentage = 11, Color = Color.FromArgb("#FFC107") },
+                new DonutSegment { Percentage = 55, Color = Color.FromArgb("#FF5722") },
+                new DonutSegment { Percentage = 34, Color = Color.FromArgb("#2196F3") },
             ]
         };
     }
