@@ -15,6 +15,7 @@
                           Padding="22,11"
                           BackgroundColor="Transparent">
                         <Label Text="{Binding Icon}"
+                               FontFamily="FontAwesome"
                                FontSize="11"
                                TextColor="{StaticResource SidebarIcon}"
                                VerticalOptions="Center">

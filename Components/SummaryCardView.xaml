@@ -10,8 +10,9 @@
                 Stroke="Transparent"
                 VerticalOptions="Center">
             <Label Text="{Binding Icon}"
+                   FontFamily="FontAwesome"
                    TextColor="White"
-                   FontSize="16"
+                   FontSize="15"
                    HorizontalOptions="Center"
                    VerticalOptions="Center" />
         </Border>

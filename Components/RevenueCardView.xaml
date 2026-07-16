@@ -39,6 +39,7 @@
                               VerticalOptions="Center" />
                         <Label Text="{Binding CardValue, Source={x:Reference Root}}"
                                FontSize="20"
+                               FontAttributes="Bold"
                                TextColor="{Binding AccentColor, Source={x:Reference Root}}"
                                VerticalOptions="Center" />
                     </HorizontalStackLayout>
@@ -65,6 +66,7 @@
                           VerticalOptions="Center" />
                     <Label Text="{Binding CardValue, Source={x:Reference Root}}"
                            FontSize="20"
+                           FontAttributes="Bold"
                            TextColor="{Binding AccentColor, Source={x:Reference Root}}"
                            VerticalOptions="Center" />
                 </HorizontalStackLayout>
@@ -93,6 +95,7 @@
                               VerticalOptions="Center" />
                         <Label Text="{Binding CardValue, Source={x:Reference Root}}"
                                FontSize="20"
+                               FontAttributes="Bold"
                                TextColor="{Binding AccentColor, Source={x:Reference Root}}"
                                VerticalOptions="Center" />
                     </HorizontalStackLayout>

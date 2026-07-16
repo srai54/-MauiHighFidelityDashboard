@@ -115,5 +115,6 @@
         <Setter Property="CornerRadius" Value="16" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontFamily" Value="FontAwesome" />
     </Style>
 </ResourceDictionary>

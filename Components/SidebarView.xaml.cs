@@ -14,29 +14,30 @@ public partial class SidebarView : ContentView
         set => SetValue(SelectItemCommandProperty, value);
     }
 
+    // Font Awesome solid glyphs (fa-solid-900.ttf, family "FontAwesome")
     public List<MenuItemModel> MenuItems { get; } =
     [
-        new() { Label = "Dashboard",      Icon = "⌂", IsActive = true, Route = "dashboard" },
-        new() { Label = "Widgets",        Icon = "❖", Route = "widgets" },
-        new() { Label = "UI Elements",    Icon = "▤", Route = "uielements" },
-        new() { Label = "Advanced UI",    Icon = "✦", Route = "advancedui" },
-        new() { Label = "Form Elements",  Icon = "✎", Route = "formelements" },
-        new() { Label = "Editors",        Icon = "✑", Route = "editors" },
-        new() { Label = "Charts",         Icon = "◔", Route = "charts" },
-        new() { Label = "Tables",         Icon = "▦", Route = "tables" },
-        new() { Label = "Popups",         Icon = "❏", Route = "popups" },
-        new() { Label = "Notifications",  Icon = "◉", Route = "notifications" },
-        new() { Label = "Icons",          Icon = "★", Route = "icons" },
-        new() { Label = "Maps",           Icon = "◎", Route = "maps" },
-        new() { Label = "User Pages",     Icon = "❍", Route = "userpages" },
-        new() { Label = "Error Pages",    Icon = "⚠", Route = "errorpages" },
-        new() { Label = "General Pages",  Icon = "❒", Route = "generalpages" },
-        new() { Label = "E-Commerce",     Icon = "✤", Route = "ecommerce" },
-        new() { Label = "E-mail",         Icon = "✉", Route = "email" },
-        new() { Label = "Calendar",       Icon = "▧", Route = "calendar" },
-        new() { Label = "Todo List",      Icon = "☑", Route = "todolist" },
-        new() { Label = "Gallery",        Icon = "▩", Route = "gallery" },
-        new() { Label = "Documentation",  Icon = "❑", Route = "documentation" },
+        new() { Label = "Dashboard",      Icon = "", IsActive = true, Route = "dashboard" }, // house
+        new() { Label = "Widgets",        Icon = "", Route = "widgets" },        // table-cells-large
+        new() { Label = "UI Elements",    Icon = "", Route = "uielements" },     // layer-group
+        new() { Label = "Advanced UI",    Icon = "", Route = "advancedui" },     // wand-magic-sparkles
+        new() { Label = "Form Elements",  Icon = "", Route = "formelements" },   // pen-to-square
+        new() { Label = "Editors",        Icon = "", Route = "editors" },        // pen-nib
+        new() { Label = "Charts",         Icon = "", Route = "charts" },         // chart-pie
+        new() { Label = "Tables",         Icon = "", Route = "tables" },         // table
+        new() { Label = "Popups",         Icon = "", Route = "popups" },         // window-restore
+        new() { Label = "Notifications",  Icon = "", Route = "notifications" },  // bell
+        new() { Label = "Icons",          Icon = "", Route = "icons" },          // star
+        new() { Label = "Maps",           Icon = "", Route = "maps" },           // location-dot
+        new() { Label = "User Pages",     Icon = "", Route = "userpages" },      // user
+        new() { Label = "Error Pages",    Icon = "", Route = "errorpages" },     // triangle-exclamation
+        new() { Label = "General Pages",  Icon = "", Route = "generalpages" },   // file-lines
+        new() { Label = "E-Commerce",     Icon = "", Route = "ecommerce" },      // cart-shopping
+        new() { Label = "E-mail",         Icon = "", Route = "email" },          // envelope
+        new() { Label = "Calendar",       Icon = "", Route = "calendar" },       // calendar-days
+        new() { Label = "Todo List",      Icon = "", Route = "todolist" },       // list-check
+        new() { Label = "Gallery",        Icon = "", Route = "gallery" },        // images
+        new() { Label = "Documentation",  Icon = "", Route = "documentation" },  // book
     ];
 
     public SidebarView()

@@ -41,6 +41,7 @@
                                         HorizontalOptions="Center"
                                         VerticalOptions="Start">
                                     <Label Text="{Binding Icon}"
+                                           FontFamily="FontAwesome"
                                            TextColor="White"
                                            FontSize="12"
                                            HorizontalOptions="Center"

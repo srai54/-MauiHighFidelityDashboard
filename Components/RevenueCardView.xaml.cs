@@ -109,7 +109,9 @@ public class MiniBarChartDrawable : IDrawable
 
 public class MiniAreaChartDrawable : IDrawable
 {
-    private static readonly float[] Values = [0.25f, 0.6f, 0.35f, 0.8f, 0.45f, 0.9f, 0.4f, 0.65f];
+    // Angular peaks-and-valleys profile matching the reference Page View card,
+    // drawn with straight segments (not a smooth spline).
+    private static readonly float[] Values = [0.30f, 0.62f, 0.38f, 0.88f, 0.42f, 0.60f, 0.28f, 0.48f];
     private readonly Color _color;
 
     public MiniAreaChartDrawable(Color color) => _color = color;
@@ -117,7 +119,7 @@ public class MiniAreaChartDrawable : IDrawable
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
         var points = MiniChartGeometry.ToPoints(Values, dirtyRect, 4);
-        var path = MiniChartGeometry.BuildSpline(points);
+        var path = MiniChartGeometry.BuildPolyline(points);
         path.LineTo(points[^1].X, dirtyRect.Height);
         path.LineTo(points[0].X, dirtyRect.Height);
         path.Close();
@@ -127,7 +129,8 @@ public class MiniAreaChartDrawable : IDrawable
 
         canvas.StrokeColor = _color;
         canvas.StrokeSize = 2;
-        canvas.DrawPath(MiniChartGeometry.BuildSpline(points));
+        canvas.StrokeLineJoin = LineJoin.Round;
+        canvas.DrawPath(MiniChartGeometry.BuildPolyline(points));
     }
 }
 
@@ -149,6 +152,17 @@ public class MiniLineChartDrawable : IDrawable
         canvas.StrokeSize = 2;
         canvas.StrokeLineCap = LineCap.Round;
         canvas.DrawPath(MiniChartGeometry.BuildSpline(points));
+
+        // Marker dot on the highest peak, like the reference chart.
+        int peak = 0;
+        for (int i = 1; i < _values.Length; i++)
+            if (_values[i] > _values[peak]) peak = i;
+
+        canvas.FillColor = _color;
+        canvas.FillCircle(points[peak], 4f);
+        canvas.StrokeColor = Colors.White;
+        canvas.StrokeSize = 1.5f;
+        canvas.DrawCircle(points[peak], 4f);
     }
 }
 
@@ -165,6 +179,15 @@ internal static class MiniChartGeometry
                 verticalPadding + (1 - values[i]) * usable);
         }
         return points;
+    }
+
+    public static PathF BuildPolyline(PointF[] points)
+    {
+        var path = new PathF();
+        path.MoveTo(points[0]);
+        for (int i = 1; i < points.Length; i++)
+            path.LineTo(points[i]);
+        return path;
     }
 
     public static PathF BuildSpline(PointF[] points)

@@ -72,7 +72,8 @@
         <!-- Hamburger: only on narrow screens, toggles the sidebar overlay -->
         <Button x:Name="MenuButton"
                 Grid.Column="1"
-                Text="☰"
+                Text="&#xf0c9;"
+                FontFamily="FontAwesome"
                 FontSize="16"
                 TextColor="{StaticResource TextPrimary}"
                 BackgroundColor="White"

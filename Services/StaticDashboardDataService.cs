@@ -8,20 +8,21 @@ public class StaticDashboardDataService : IDashboardDataService
     public Task<Result<IReadOnlyList<DashboardCard>>> GetDashboardCardsAsync() =>
         Task.FromResult(Result<IReadOnlyList<DashboardCard>>.Success(
         [
-            new() { Title = "Wallet Ballance", Amount = 4567.53m, AmountDisplay = "$4,567.53", Icon = "♛", ThemeColorHex = "#F7284A" },
-            new() { Title = "Referral Earning", Amount = 1689.53m, AmountDisplay = "$1689.53", Icon = "♥", ThemeColorHex = "#7C60FA" },
-            new() { Title = "Estimate Sales", Amount = 2851.53m, AmountDisplay = "$2851.53", Icon = "◎", ThemeColorHex = "#2BC155" },
-            new() { Title = "Earning", Amount = 52567.53m, AmountDisplay = "$52,567.53", Icon = "$", ThemeColorHex = "#FF5E9D" }
+            // Icons are Font Awesome solid glyphs (family "FontAwesome")
+            new() { Title = "Wallet Ballance", Amount = 4567.53m, AmountDisplay = "$4,567.53", Icon = "", ThemeColorHex = "#F7284A" },  // crown
+            new() { Title = "Referral Earning", Amount = 1689.53m, AmountDisplay = "$1689.53", Icon = "", ThemeColorHex = "#7C60FA" },  // heart
+            new() { Title = "Estimate Sales", Amount = 2851.53m, AmountDisplay = "$2851.53", Icon = "", ThemeColorHex = "#2BC155" },    // bullseye
+            new() { Title = "Earning", Amount = 52567.53m, AmountDisplay = "$52,567.53", Icon = "", ThemeColorHex = "#FF5E9D" }         // dollar-sign
         ]));
 
     public Task<Result<IReadOnlyList<ActivityModel>>> GetActivitiesAsync() =>
         Task.FromResult(Result<IReadOnlyList<ActivityModel>>.Success(
         [
-            new() { Title = "Task Updated", Actor = "Nikolai", Action = "Updated a Task", Time = "42 Mins Ago", Icon = "☰", IconColorHex = "#6259CE" },
-            new() { Title = "Deal Added", Actor = "Panshi", Action = "Updated a Task", Time = "1 Day Ago", Icon = "＋", IconColorHex = "#EC407A" },
-            new() { Title = "Published Article", Actor = "Rasel", Action = "Published a Article", Time = "42 Mins Ago", Icon = "▤", IconColorHex = "#29B6F6" },
-            new() { Title = "Dock Updated", Actor = "Reshmi", Action = "Updated a Dock", Time = "1 Day Ago", Icon = "✎", IconColorHex = "#FFB822" },
-            new() { Title = "Replyed Comment", Actor = "Jenathon", Action = "Added a Comment", Time = "1 Day Ago", Icon = "↩", IconColorHex = "#2BC155" }
+            new() { Title = "Task Updated", Actor = "Nikolai", Action = "Updated a Task", Time = "42 Mins Ago", Icon = "", IconColorHex = "#6259CE" },        // list
+            new() { Title = "Deal Added", Actor = "Panshi", Action = "Updated a Task", Time = "1 Day Ago", Icon = "", IconColorHex = "#EC407A" },            // plus
+            new() { Title = "Published Article", Actor = "Rasel", Action = "Published a Article", Time = "42 Mins Ago", Icon = "", IconColorHex = "#29B6F6" }, // file-lines
+            new() { Title = "Dock Updated", Actor = "Reshmi", Action = "Updated a Dock", Time = "1 Day Ago", Icon = "", IconColorHex = "#FFB822" },          // pen
+            new() { Title = "Replyed Comment", Actor = "Jenathon", Action = "Added a Comment", Time = "1 Day Ago", Icon = "", IconColorHex = "#2BC155" }     // reply
         ]));
 
     public Task<Result<IReadOnlyList<OrderModel>>> GetOrdersAsync() =>
