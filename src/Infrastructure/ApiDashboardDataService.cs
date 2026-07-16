@@ -3,7 +3,7 @@ using MauiHighFidelityDashboard.Domain.Common;
 using MauiHighFidelityDashboard.Domain.Interfaces;
 using MauiHighFidelityDashboard.Domain.Models;
 
-namespace MauiHighFidelityDashboard.Infrastructure.Data;
+namespace MauiHighFidelityDashboard.Infrastructure;
 
 public class ApiDashboardDataService : IDashboardDataService
 {

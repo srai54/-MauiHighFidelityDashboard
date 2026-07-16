@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Maui;
-using MauiHighFidelityDashboard.Core.ViewModels;
+using MauiHighFidelityDashboard.Core;
 using MauiHighFidelityDashboard.Domain.Interfaces;
-using MauiHighFidelityDashboard.Infrastructure.Data;
+using MauiHighFidelityDashboard.Infrastructure;
 using MauiHighFidelityDashboard.Presentation.Views;
 using Microsoft.Extensions.Logging;
 #if WINDOWS

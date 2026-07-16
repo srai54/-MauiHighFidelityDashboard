@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using MauiHighFidelityDashboard.Domain.Models;
 
-namespace MauiHighFidelityDashboard.Core.ViewModels;
+namespace MauiHighFidelityDashboard.Core;
 
 public partial class DetailViewModel : BaseViewModel
 {

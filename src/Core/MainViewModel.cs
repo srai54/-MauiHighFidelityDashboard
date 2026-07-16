@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using MauiHighFidelityDashboard.Domain.Interfaces;
 using MauiHighFidelityDashboard.Domain.Models;
 
-namespace MauiHighFidelityDashboard.Core.ViewModels;
+namespace MauiHighFidelityDashboard.Core;
 
 public partial class MainViewModel : BaseViewModel
 {

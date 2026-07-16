@@ -1,14 +1,14 @@
 using System.Globalization;
 
-namespace MauiHighFidelityDashboard.Presentation.Converters;
+namespace MauiHighFidelityDashboard.Core;
 
-public class HexToColorConverter : IValueConverter
+public class AmountToCurrencyConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is string hex && !string.IsNullOrEmpty(hex))
-            return Color.FromArgb(hex);
-        return Colors.Grey;
+        if (value is decimal amount)
+            return string.Format(culture, "{0:C}", amount);
+        return "$0.00";
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

@@ -1,4 +1,4 @@
-using MauiHighFidelityDashboard.Core.ViewModels;
+using MauiHighFidelityDashboard.Core;
 
 namespace MauiHighFidelityDashboard.Presentation.Views;
 
