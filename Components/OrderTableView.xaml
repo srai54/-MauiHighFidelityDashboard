@@ -9,7 +9,7 @@
         <converters:StatusBackgroundConverter x:Key="StatusBackgroundConverter" />
     </ContentView.Resources>
     <Border Style="{StaticResource CardBorderStyle}">
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="16">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="16">
             <!-- Title -->
             <VerticalStackLayout Spacing="3">
                 <Label Text="Order Status"
@@ -64,11 +64,28 @@
                         ToolTipProperties.Text="Print order list" />
             </Grid>
 
+            <!-- Swipe hint: only shown when the table is wider than the screen -->
+            <HorizontalStackLayout x:Name="PanHint"
+                                   Grid.Row="2"
+                                   Spacing="6"
+                                   IsVisible="False"
+                                   Margin="0,-6,0,-6">
+                <Label Text="&#xf07e;"
+                       FontFamily="FontAwesome"
+                       FontSize="10"
+                       TextColor="{StaticResource PrimaryOrange}"
+                       VerticalOptions="Center" />
+                <Label Text="Swipe the table sideways to see all columns"
+                       FontSize="10"
+                       TextColor="{StaticResource TextLight}"
+                       VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
             <!-- Table (pans horizontally on narrow screens; fills the card on wide ones) -->
             <ScrollView x:Name="TableScroll"
-                        Grid.Row="2"
+                        Grid.Row="3"
                         Orientation="Horizontal"
-                        HorizontalScrollBarVisibility="Never">
+                        HorizontalScrollBarVisibility="Default">
                 <VerticalStackLayout x:Name="TableContent" Spacing="16">
                     <!-- Table header -->
                     <Border BackgroundColor="{StaticResource TableHeaderBg}"
@@ -129,7 +146,7 @@
             </ScrollView>
 
             <!-- Footer: entries text + pagination -->
-            <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+            <Grid Grid.Row="4" ColumnDefinitions="*,Auto">
                 <Label Text="{Binding OrdersFooterText}"
                        FontSize="11"
                        TextColor="{StaticResource TextLight}"

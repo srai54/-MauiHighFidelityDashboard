@@ -7,14 +7,38 @@ public partial class OrderTableView : ContentView
     private const double MinTableWidth = 520;
 
     private bool _toolbarNarrow;
+    private bool _nudged;
 
     public OrderTableView()
     {
         InitializeComponent();
         TableScroll.SizeChanged += (_, _) =>
         {
-            if (TableScroll.Width > 0)
-                TableContent.WidthRequest = Math.Max(TableScroll.Width, MinTableWidth);
+            if (TableScroll.Width <= 0) return;
+            TableContent.WidthRequest = Math.Max(TableScroll.Width, MinTableWidth);
+
+            // The table only pans when it is wider than its viewport; surface
+            // that with a hint plus a one-time nudge so the scroll is discoverable.
+            bool pannable = TableScroll.Width < MinTableWidth;
+            PanHint.IsVisible = pannable;
+            if (pannable && !_nudged)
+            {
+                _nudged = true;
+                Dispatcher.Dispatch(async () =>
+                {
+                    try
+                    {
+                        await Task.Delay(600);
+                        await TableScroll.ScrollToAsync(70, 0, true);
+                        await Task.Delay(150);
+                        await TableScroll.ScrollToAsync(0, 0, true);
+                    }
+                    catch
+                    {
+                        // Purely cosmetic; never crash over a hint animation.
+                    }
+                });
+            }
         };
         OrdersToolbar.SizeChanged += (_, _) => ApplyToolbarLayout();
     }

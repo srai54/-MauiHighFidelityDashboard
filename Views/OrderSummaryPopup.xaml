@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="MauiHighFidelityDashboard.Views.OrderSummaryPopup"
+               CanBeDismissedByTappingOutsideOfPopup="True"
+               Color="Transparent">
+    <Border BackgroundColor="White"
+            Stroke="#E4E8F0"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 12"
+            WidthRequest="360"
+            Padding="0">
+        <VerticalStackLayout>
+            <!-- Header -->
+            <Grid Padding="22,18,16,14" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Border WidthRequest="38"
+                        HeightRequest="38"
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="Transparent"
+                        BackgroundColor="#E3EDFD"
+                        VerticalOptions="Center">
+                    <Label Text="&#xf0ca;"
+                           FontFamily="FontAwesome"
+                           FontSize="14"
+                           TextColor="#2E7CF6"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                    <Label Text="Order Summary"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}" />
+                    <Label x:Name="SubtitleLabel"
+                           Text="Overview of the latest month"
+                           FontSize="11"
+                           TextColor="{StaticResource TextLight}" />
+                </VerticalStackLayout>
+                <Button Grid.Column="2"
+                        Text="&#xf00d;"
+                        FontFamily="FontAwesome"
+                        FontSize="13"
+                        TextColor="{StaticResource TextLight}"
+                        BackgroundColor="Transparent"
+                        WidthRequest="32"
+                        HeightRequest="32"
+                        Padding="0"
+                        VerticalOptions="Start"
+                        Clicked="OnCloseClicked"
+                        ToolTipProperties.Text="Close" />
+            </Grid>
+            <BoxView HeightRequest="1" Color="{StaticResource DividerColor}" />
+
+            <!-- Hero tiles: totals -->
+            <Grid Padding="22,16,22,6" ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Border BackgroundColor="#F8F9FB"
+                        Stroke="#EDF0F5"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="14,12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="TOTAL ORDERS"
+                               FontSize="9"
+                               FontAttributes="Bold"
+                               CharacterSpacing="0.8"
+                               TextColor="{StaticResource TextLight}" />
+                        <Label x:Name="TotalOrdersLabel"
+                               Text="0"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource TextPrimary}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1"
+                        BackgroundColor="#FFFAF6"
+                        Stroke="#F6D9C8"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="14,12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="TOTAL VALUE"
+                               FontSize="9"
+                               FontAttributes="Bold"
+                               CharacterSpacing="0.8"
+                               TextColor="{StaticResource TextLight}" />
+                        <Label x:Name="TotalValueLabel"
+                               Text="$0"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource PrimaryOrange}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Status breakdown with share bars -->
+            <VerticalStackLayout Padding="22,8,22,12" Spacing="2">
+                <Label Text="BY STATUS"
+                       FontSize="9"
+                       FontAttributes="Bold"
+                       CharacterSpacing="0.8"
+                       TextColor="{StaticResource TextLight}"
+                       Margin="0,0,0,4" />
+
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="7" Padding="0,7">
+                    <BoxView WidthRequest="9" HeightRequest="9" CornerRadius="4.5" Color="#2BC155" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="Open" FontSize="12" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+                    <Label Grid.Column="2" x:Name="OpenCountLabel" Text="0" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                    <ProgressBar Grid.Row="1" Grid.ColumnSpan="3" x:Name="OpenBar" ProgressColor="#2BC155" ScaleY="1.4" />
+                </Grid>
+
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="7" Padding="0,7">
+                    <BoxView WidthRequest="9" HeightRequest="9" CornerRadius="4.5" Color="#F7284A" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="Process" FontSize="12" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+                    <Label Grid.Column="2" x:Name="ProcessCountLabel" Text="0" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                    <ProgressBar Grid.Row="1" Grid.ColumnSpan="3" x:Name="ProcessBar" ProgressColor="#F7284A" ScaleY="1.4" />
+                </Grid>
+
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="7" Padding="0,7">
+                    <BoxView WidthRequest="9" HeightRequest="9" CornerRadius="4.5" Color="#6259CE" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="On Hold" FontSize="12" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+                    <Label Grid.Column="2" x:Name="OnHoldCountLabel" Text="0" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                    <ProgressBar Grid.Row="1" Grid.ColumnSpan="3" x:Name="OnHoldBar" ProgressColor="#6259CE" ScaleY="1.4" />
+                </Grid>
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="1" Color="{StaticResource DividerColor}" />
+            <!-- Footer -->
+            <Grid Padding="22,14,22,18">
+                <Button Text="Close"
+                        Style="{StaticResource PrimaryButton}"
+                        FontSize="12"
+                        Padding="20,0"
+                        HeightRequest="36"
+                        CornerRadius="8"
+                        MinimumWidthRequest="96"
+                        HorizontalOptions="End"
+                        Clicked="OnCloseClicked" />
+            </Grid>
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>

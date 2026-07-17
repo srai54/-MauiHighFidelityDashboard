@@ -238,20 +238,18 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private async Task ShowOrderInfoAsync()
     {
+        var page = Shell.Current.CurrentPage;
+        if (page is null) return;
+
         var filtered = FilteredOrders.ToList();
         int open = filtered.Count(o => o.Status == "Open");
         int process = filtered.Count(o => o.Status == "Process");
         int onHold = filtered.Count(o => o.Status == "On Hold");
         decimal totalValue = filtered.Sum(o => o.Price);
 
-        await Shell.Current.DisplayAlertAsync(
-            "Order Summary",
-            $"Total orders:  {filtered.Count}\n" +
-            $"Open:          {open}\n" +
-            $"Process:       {process}\n" +
-            $"On Hold:       {onHold}\n" +
-            $"Total value:   ${totalValue:N2}",
-            "Close");
+        await page.ShowPopupAsync(new OrderSummaryPopup(
+            filtered.Count, open, process, onHold, totalValue,
+            SearchText, _allOrders.Count));
     }
 
     [RelayCommand]
