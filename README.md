@@ -103,7 +103,7 @@ Expected endpoints: `GET /api/dashboard/{cards|activities|orders|traffic|sales}`
 ## Docs
 
 - [docs/interview-architecture.md](docs/interview-architecture.md) — architecture walkthrough, data/print flow, design decisions
-- [docs/interview-qa.md](docs/interview-qa.md) — interview Q&A master guide
+- [docs/explanation-video-detailed.md](docs/explanation-video-detailed.md) — detailed explanation video script: intro → all UI features → code flow
 
 ## Built With
 
