@@ -304,8 +304,8 @@ public partial class MainViewModel : BaseViewModel
             Title = "Bounce Rate",
             Value = "$432",
             ChartType = "Line",
-            BackgroundHex = "#FDEADF",
-            AccentHex = "#FF7B43",
+            BackgroundHex = "#FBE4D7",
+            AccentHex = "#ED5520",
         });
         RevenueCards.Add(new RevenueCardItem
         {
@@ -313,8 +313,8 @@ public partial class MainViewModel : BaseViewModel
             Value = "$432",
             Subtitle = "Jan 01 - Jan 10",
             ChartType = "Bar",
-            BackgroundHex = "#F3E8FD",
-            AccentHex = "#A461D8",
+            BackgroundHex = "#F0DEFE",
+            AccentHex = "#8214E8",
         });
 
         OnPropertyChanged(nameof(RevenueStatusCard));

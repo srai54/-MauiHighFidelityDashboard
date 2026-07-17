@@ -8,26 +8,27 @@
             BackgroundColor="{Binding CardBackground, Source={x:Reference Root}}"
             Padding="18,16"
             MinimumHeightRequest="132">
-        <Grid RowDefinitions="Auto,*" RowSpacing="10">
+        <Grid RowDefinitions="Auto,*" RowSpacing="8">
             <Label Text="{Binding CardTitle, Source={x:Reference Root}}"
-                   FontSize="13"
+                   FontSize="14"
                    FontAttributes="Bold"
-                   TextColor="#4B5574" />
+                   TextColor="#26325C" />
 
-            <!-- Bar variant: mini bars left, value + date range right -->
+            <!-- Bar variant: mini bars bottom-left, value + date range centered at the right
+                 (matches the reference card: valley-shaped bars ending on the tallest bar) -->
             <Grid x:Name="BarLayout"
                   Grid.Row="1"
                   ColumnDefinitions="Auto,*"
                   IsVisible="False">
                 <GraphicsView x:Name="BarCanvas"
-                              WidthRequest="74"
-                              HeightRequest="52"
+                              WidthRequest="78"
+                              HeightRequest="56"
                               VerticalOptions="End" />
                 <VerticalStackLayout Grid.Column="1"
                                      Spacing="3"
                                      HorizontalOptions="End"
-                                     VerticalOptions="End">
-                    <HorizontalStackLayout Spacing="6" HorizontalOptions="End">
+                                     VerticalOptions="Center">
+                    <HorizontalStackLayout Spacing="5" HorizontalOptions="End">
                         <!-- Vector arrow: text "↑" ignores bold because the glyph comes from a fallback font -->
                         <Path x:Name="BarArrow"
                               Data="M7,15.5 L7,2.2 M2.6,6.6 L7,2.2 L11.4,6.6"
@@ -38,24 +39,25 @@
                               HeightRequest="18"
                               VerticalOptions="Center" />
                         <Label Text="{Binding CardValue, Source={x:Reference Root}}"
-                               FontSize="20"
+                               FontSize="21"
                                FontAttributes="Bold"
                                TextColor="{Binding AccentColor, Source={x:Reference Root}}"
                                VerticalOptions="Center" />
                     </HorizontalStackLayout>
                     <Label Text="{Binding CardSubtitle, Source={x:Reference Root}}"
-                           FontSize="10"
+                           FontSize="11"
                            TextColor="#8B93A7"
-                           HorizontalTextAlignment="End" />
+                           HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </Grid>
 
-            <!-- Area variant: value right under the title, wave anchored at the bottom -->
+            <!-- Area variant: value right under the title, wave bleeding to the card edges
+                 like the reference (negative margins cancel the card padding; the Border clips) -->
             <Grid x:Name="AreaLayout"
                   Grid.Row="1"
                   RowDefinitions="Auto,*"
                   IsVisible="False">
-                <HorizontalStackLayout Spacing="6">
+                <HorizontalStackLayout Spacing="5">
                     <Path x:Name="AreaArrow"
                           Data="M7,15.5 L7,2.2 M2.6,6.6 L7,2.2 L11.4,6.6"
                           StrokeThickness="3.2"
@@ -65,15 +67,15 @@
                           HeightRequest="18"
                           VerticalOptions="Center" />
                     <Label Text="{Binding CardValue, Source={x:Reference Root}}"
-                           FontSize="20"
+                           FontSize="21"
                            FontAttributes="Bold"
                            TextColor="{Binding AccentColor, Source={x:Reference Root}}"
                            VerticalOptions="Center" />
                 </HorizontalStackLayout>
                 <GraphicsView x:Name="AreaCanvas"
                               Grid.Row="1"
-                              HeightRequest="44"
-                              Margin="-4,8,-4,0"
+                              HeightRequest="62"
+                              Margin="-18,6,-18,-16"
                               VerticalOptions="End" />
             </Grid>
 
@@ -83,8 +85,8 @@
                   ColumnDefinitions="Auto,*"
                   ColumnSpacing="12"
                   IsVisible="False">
-                <VerticalStackLayout Spacing="10" VerticalOptions="End">
-                    <HorizontalStackLayout Spacing="6">
+                <VerticalStackLayout Spacing="12" VerticalOptions="End">
+                    <HorizontalStackLayout Spacing="5">
                         <Path x:Name="LineArrow"
                               Data="M7,15.5 L7,2.2 M2.6,6.6 L7,2.2 L11.4,6.6"
                               StrokeThickness="3.2"
@@ -94,30 +96,39 @@
                               HeightRequest="18"
                               VerticalOptions="Center" />
                         <Label Text="{Binding CardValue, Source={x:Reference Root}}"
-                               FontSize="20"
+                               FontSize="21"
                                FontAttributes="Bold"
                                TextColor="{Binding AccentColor, Source={x:Reference Root}}"
                                VerticalOptions="Center" />
                     </HorizontalStackLayout>
-                    <Border BackgroundColor="White"
+                    <Border x:Name="PeriodChip"
+                            BackgroundColor="White"
                             Stroke="#E4E8F0"
                             StrokeThickness="1"
-                            StrokeShape="RoundRectangle 3"
-                            Padding="9,5"
+                            StrokeShape="RoundRectangle 4"
+                            Padding="12,7"
                             HorizontalOptions="Start"
-                            ToolTipProperties.Text="Change period">
+                            ToolTipProperties.Text="Bounce rate for the monthly period — click to change">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnPeriodChipTapped" />
                         </Border.GestureRecognizers>
-                        <Label x:Name="PeriodLabel"
-                               Text="Monthly ▾"
-                               FontSize="10"
-                               TextColor="#6B7694" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Label x:Name="PeriodLabel"
+                                   Text="Monthly"
+                                   FontSize="11"
+                                   TextColor="#6B7694"
+                                   VerticalOptions="Center" />
+                            <Label Text="&#xf078;"
+                                   FontFamily="FontAwesome"
+                                   FontSize="8"
+                                   TextColor="#8B93A7"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
                     </Border>
                 </VerticalStackLayout>
                 <GraphicsView x:Name="LineCanvas"
                               Grid.Column="1"
-                              HeightRequest="56"
+                              HeightRequest="60"
                               VerticalOptions="End" />
             </Grid>
         </Grid>

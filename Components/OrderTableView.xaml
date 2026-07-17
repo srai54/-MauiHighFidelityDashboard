@@ -18,8 +18,13 @@
                        Style="{StaticResource SectionSubtitle}" />
             </VerticalStackLayout>
 
-            <!-- Toolbar -->
-            <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto" ColumnSpacing="8">
+            <!-- Toolbar (search drops to its own row on narrow screens; see code-behind) -->
+            <Grid x:Name="OrdersToolbar"
+                  Grid.Row="1"
+                  ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto"
+                  RowDefinitions="Auto,Auto"
+                  ColumnSpacing="8"
+                  RowSpacing="10">
                 <Button Text="Add"
                         Style="{StaticResource PrimaryButton}"
                         FontSize="11"
@@ -27,7 +32,7 @@
                         HeightRequest="32"
                         ContentLayout="Left, 6"
                         Command="{Binding AddOrderCommand}"
-                        ToolTipProperties.Text="Add a new order">
+                        ToolTipProperties.Text="Add a new order — quick sample or manual entry">
                     <Button.ImageSource>
                         <FontImageSource FontFamily="FontAwesome" Glyph="&#xf067;" Color="White" Size="10" />
                     </Button.ImageSource>
@@ -42,7 +47,8 @@
                         Command="{Binding PrintOrdersCommand}"
                         ToolTipProperties.Text="Print order list" />
                 <!-- Search field -->
-                <Entry Grid.Column="5"
+                <Entry x:Name="SearchEntry"
+                       Grid.Column="5"
                        Placeholder="Search"
                        Text="{Binding SearchText}"
                        PlaceholderColor="{StaticResource TextLight}"
@@ -53,7 +59,7 @@
                        HeightRequest="32"
                        VerticalOptions="Center"
                        ToolTipProperties.Text="Filter by invoice, customer, country or status" />
-                <Button Grid.Column="6" Text="&#xf02f;" Style="{StaticResource IconButtonPrint}" FontSize="12"
+                <Button x:Name="PrintRight" Grid.Column="6" Text="&#xf02f;" Style="{StaticResource IconButtonPrint}" FontSize="12"
                         Command="{Binding PrintOrdersCommand}"
                         ToolTipProperties.Text="Print order list" />
             </Grid>

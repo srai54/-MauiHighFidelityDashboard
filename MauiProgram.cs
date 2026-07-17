@@ -25,6 +25,21 @@ public static class MauiProgram
                 fonts.AddFont("fa-solid-900.ttf", "FontAwesome");
             });
 
+#if ANDROID
+        // Android's Material Entry draws an underline in every state; remove it so
+        // search/form fields match the flat design (they sit in their own Borders).
+        Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
+        {
+            handler.PlatformView.BackgroundTintList =
+                Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        });
+        Microsoft.Maui.Handlers.PickerHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
+        {
+            handler.PlatformView.BackgroundTintList =
+                Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        });
+#endif
+
 #if WINDOWS
         // WinUI paints an accent-blue underline on focused text boxes; the app-level
         // theme overrides in Platforms/Windows/App.xaml don't reach it, so override the
@@ -37,11 +52,15 @@ public static class MauiProgram
             {
                 try
                 {
+                    var transparent = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+                    // Rest state too — otherwise the underline shows until the pointer hovers.
+                    textBox.Resources["TextControlBorderThemeThickness"] = new Microsoft.UI.Xaml.Thickness(0);
                     textBox.Resources["TextControlBorderThemeThicknessFocused"] = new Microsoft.UI.Xaml.Thickness(0);
-                    textBox.Resources["TextControlBorderBrushFocused"] =
-                        new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
-                    textBox.Resources["TextControlBorderBrushPointerOver"] =
-                        new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+                    textBox.Resources["TextControlBorderBrush"] = transparent;
+                    textBox.Resources["TextControlBorderBrushFocused"] = transparent;
+                    textBox.Resources["TextControlBorderBrushPointerOver"] = transparent;
+                    textBox.Resources["TextControlBorderBrushDisabled"] = transparent;
+                    textBox.BorderThickness = new Microsoft.UI.Xaml.Thickness(0);
                 }
                 catch
                 {

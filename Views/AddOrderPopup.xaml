@@ -5,11 +5,12 @@
                x:Class="MauiHighFidelityDashboard.Views.AddOrderPopup"
                CanBeDismissedByTappingOutsideOfPopup="False"
                Color="Transparent">
-    <Border BackgroundColor="White"
+    <Border x:Name="RootBorder"
+            BackgroundColor="White"
             Stroke="#E4E8F0"
             StrokeThickness="1"
-            StrokeShape="RoundRectangle 12"
-            WidthRequest="400"
+            StrokeShape="RoundRectangle 14"
+            WidthRequest="430"
             Padding="0">
         <Grid RowDefinitions="Auto,1,Auto,1,Auto">
             <!-- Header -->
@@ -28,11 +29,12 @@
                            VerticalOptions="Center" />
                 </Border>
                 <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                    <Label Text="Add New Order"
+                    <Label Text="Add Order"
                            FontSize="16"
                            FontAttributes="Bold"
                            TextColor="{StaticResource TextPrimary}" />
-                    <Label Text="It will be appended at the end of the order list"
+                    <Label x:Name="HeaderSubtitle"
+                           Text="Choose how you want to add it"
                            FontSize="11"
                            TextColor="{StaticResource TextLight}" />
                 </VerticalStackLayout>
@@ -51,8 +53,100 @@
             </Grid>
             <BoxView Grid.Row="1" HeightRequest="1" Color="{StaticResource DividerColor}" />
 
-            <!-- Form fields -->
-            <VerticalStackLayout Grid.Row="2" Padding="24,16,24,16" Spacing="13">
+            <!-- Middle content scrolls if the window is short, so the footer
+                 buttons can never be pushed off screen (max height set in code-behind) -->
+            <ScrollView x:Name="ContentScroll"
+                        Grid.Row="2"
+                        VerticalScrollBarVisibility="Default">
+            <Grid>
+            <!-- Step 1: choose Quick Add or Manual Entry -->
+            <Grid x:Name="ChoicePanel"
+                  Padding="24,20,24,20"
+                  ColumnDefinitions="*,*"
+                  ColumnSpacing="14">
+                <Border BackgroundColor="#FFFAF6"
+                        Stroke="#F6D9C8"
+                        StrokeThickness="1.2"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="16,18"
+                        ToolTipProperties.Text="Adds a ready-made sample order instantly">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnQuickAddTapped" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="10">
+                        <Border WidthRequest="42"
+                                HeightRequest="42"
+                                StrokeShape="RoundRectangle 21"
+                                Stroke="Transparent"
+                                BackgroundColor="#FFE9DB"
+                                HorizontalOptions="Start">
+                            <Label Text="&#xf0e7;"
+                                   FontFamily="FontAwesome"
+                                   FontSize="16"
+                                   TextColor="{StaticResource PrimaryOrange}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="Quick Add"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="One click — a sample order with realistic values is added for you."
+                               FontSize="11"
+                               LineHeight="1.25"
+                               TextColor="{StaticResource TextSecondary}" />
+                        <Label Text="Add instantly &#x2192;"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource PrimaryOrange}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="1"
+                        BackgroundColor="#F8FAFE"
+                        Stroke="#D8E4F8"
+                        StrokeThickness="1.2"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="16,18"
+                        ToolTipProperties.Text="Type the order details yourself">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnManualTapped" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="10">
+                        <Border WidthRequest="42"
+                                HeightRequest="42"
+                                StrokeShape="RoundRectangle 21"
+                                Stroke="Transparent"
+                                BackgroundColor="#E3EDFD"
+                                HorizontalOptions="Start">
+                            <Label Text="&#xf044;"
+                                   FontFamily="FontAwesome"
+                                   FontSize="15"
+                                   TextColor="#2E7CF6"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="Manual Entry"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="Fill in the customer, country, price and status yourself."
+                               FontSize="11"
+                               LineHeight="1.25"
+                               TextColor="{StaticResource TextSecondary}" />
+                        <Label Text="Open the form &#x2192;"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               TextColor="#2E7CF6" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Step 2: manual form (hidden until Manual Entry is chosen) -->
+            <VerticalStackLayout x:Name="FormPanel"
+                                 Padding="24,14,24,14"
+                                 Spacing="11"
+                                 IsVisible="False">
                 <!-- Customer Name -->
                 <VerticalStackLayout Spacing="5">
                     <Label Text="Customer Name"
@@ -62,7 +156,7 @@
                     <Border BackgroundColor="#F8F9FB"
                             Stroke="#E4E8F0"
                             StrokeThickness="1"
-                            StrokeShape="RoundRectangle 6"
+                            StrokeShape="RoundRectangle 8"
                             Padding="12,7">
                         <Entry x:Name="CustomerEntry"
                                Placeholder="e.g. John Smith"
@@ -82,7 +176,7 @@
                     <Border BackgroundColor="#F8F9FB"
                             Stroke="#E4E8F0"
                             StrokeThickness="1"
-                            StrokeShape="RoundRectangle 6"
+                            StrokeShape="RoundRectangle 8"
                             Padding="12,7">
                         <Entry x:Name="CountryEntry"
                                Placeholder="e.g. India"
@@ -103,7 +197,7 @@
                         <Border BackgroundColor="#F8F9FB"
                                 Stroke="#E4E8F0"
                                 StrokeThickness="1"
-                                StrokeShape="RoundRectangle 6"
+                                StrokeShape="RoundRectangle 8"
                                 Padding="12,7">
                             <Entry x:Name="PriceEntry"
                                    Placeholder="e.g. 499"
@@ -122,7 +216,7 @@
                         <Border BackgroundColor="#F8F9FB"
                                 Stroke="#E4E8F0"
                                 StrokeThickness="1"
-                                StrokeShape="RoundRectangle 6"
+                                StrokeShape="RoundRectangle 8"
                                 Padding="12,2">
                             <Picker x:Name="StatusPicker"
                                     FontSize="13"
@@ -141,28 +235,41 @@
                     </VerticalStackLayout>
                 </Grid>
             </VerticalStackLayout>
+            </Grid>
+            </ScrollView>
 
             <BoxView Grid.Row="3" HeightRequest="1" Color="{StaticResource DividerColor}" />
 
-            <!-- Footer: grid keeps both buttons inside the card -->
-            <Grid Grid.Row="4" Padding="24,14,24,18" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-                <Button Grid.Column="1"
+            <!-- Footer: Back appears only on the form step -->
+            <Grid Grid.Row="4" Padding="24,14,24,18" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+                <Button x:Name="BackButton"
+                        Text="&#x2190;  Back"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource TextSecondary}"
+                        FontSize="12"
+                        Padding="6,0"
+                        HeightRequest="36"
+                        IsVisible="False"
+                        Clicked="OnBackClicked"
+                        ToolTipProperties.Text="Back to the two add options" />
+                <Button Grid.Column="2"
                         Text="Cancel"
                         BackgroundColor="#F1F3F6"
                         TextColor="{StaticResource TextSecondary}"
                         FontSize="12"
                         Padding="16,0"
                         HeightRequest="36"
-                        CornerRadius="6"
+                        CornerRadius="8"
                         Clicked="OnCancelClicked" />
                 <Button x:Name="AddButton"
-                        Grid.Column="2"
+                        Grid.Column="3"
                         Text="Save Order"
                         Style="{StaticResource PrimaryButton}"
                         FontSize="12"
                         Padding="18,0"
                         HeightRequest="36"
-                        CornerRadius="6"
+                        CornerRadius="8"
+                        IsVisible="False"
                         Clicked="OnAddClicked" />
             </Grid>
         </Grid>

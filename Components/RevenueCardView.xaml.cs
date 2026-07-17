@@ -1,3 +1,6 @@
+using CommunityToolkit.Maui.Views;
+using MauiHighFidelityDashboard.Views;
+
 namespace MauiHighFidelityDashboard.Components;
 
 public partial class RevenueCardView : ContentView
@@ -24,13 +27,14 @@ public partial class RevenueCardView : ContentView
     public Color AccentColor { get => (Color)GetValue(AccentColorProperty); set => SetValue(AccentColorProperty, value); }
     public string ChartType { get => (string)GetValue(ChartTypeProperty); set => SetValue(ChartTypeProperty, value); }
 
-    // Dummy bounce-rate curve per period, selectable from the chip dropdown.
-    private static readonly Dictionary<string, float[]> PeriodLineData = new()
+    // Dummy bounce-rate data per period: curve + headline value stay in sync,
+    // so picking a period updates the whole card, not just the mini chart.
+    private static readonly Dictionary<string, (float[] Curve, string Value)> PeriodData = new()
     {
-        ["Daily"] = [0.3f, 0.9f, 0.25f, 0.7f, 0.2f, 0.85f, 0.35f, 0.6f],
-        ["Weekly"] = [0.6f, 0.4f, 0.75f, 0.3f, 0.8f, 0.5f, 0.65f, 0.35f],
-        ["Monthly"] = [0.5f, 0.8f, 0.35f, 0.85f, 0.3f, 0.7f, 0.4f, 0.75f],
-        ["Yearly"] = [0.2f, 0.35f, 0.5f, 0.45f, 0.65f, 0.6f, 0.8f, 0.9f],
+        ["Daily"] = ([0.30f, 0.70f, 0.25f, 0.80f, 0.35f, 0.60f, 0.20f], "$118"),
+        ["Weekly"] = ([0.55f, 0.20f, 0.70f, 0.30f, 0.75f, 0.40f, 0.65f], "$267"),
+        ["Monthly"] = ([0.40f, 0.78f, 0.22f, 0.58f, 0.18f, 0.48f, 0.08f], "$432"),
+        ["Yearly"] = ([0.15f, 0.35f, 0.28f, 0.55f, 0.45f, 0.75f, 0.90f], "$5,184"),
     };
 
     private string _selectedPeriod = "Monthly";
@@ -43,12 +47,17 @@ public partial class RevenueCardView : ContentView
 
     private async void OnPeriodChipTapped(object? sender, TappedEventArgs e)
     {
-        var choice = await Shell.Current.DisplayActionSheetAsync(
-            "Bounce Rate period", "Cancel", null, "Daily", "Weekly", "Monthly", "Yearly");
-        if (choice is null or "Cancel") return;
+        var page = Shell.Current.CurrentPage;
+        if (page is null) return;
+
+        var result = await page.ShowPopupAsync(new PeriodPickerPopup(_selectedPeriod));
+        if (result is not string choice || choice == _selectedPeriod) return;
 
         _selectedPeriod = choice;
-        PeriodLabel.Text = $"{choice} ▾";
+        PeriodLabel.Text = choice;
+        CardValue = PeriodData[choice].Value;
+        ToolTipProperties.SetText(PeriodChip,
+            $"Bounce rate for the {choice.ToLowerInvariant()} period — click to change");
         UpdateChart();
     }
 
@@ -75,7 +84,7 @@ public partial class RevenueCardView : ContentView
                 AreaCanvas.Invalidate();
                 break;
             case "Line":
-                LineCanvas.Drawable = new MiniLineChartDrawable(AccentColor, PeriodLineData[_selectedPeriod]);
+                LineCanvas.Drawable = new MiniLineChartDrawable(AccentColor, PeriodData[_selectedPeriod].Curve);
                 LineCanvas.Invalidate();
                 break;
         }
@@ -84,7 +93,9 @@ public partial class RevenueCardView : ContentView
 
 public class MiniBarChartDrawable : IDrawable
 {
-    private static readonly float[] Values = [0.55f, 0.9f, 0.4f, 1f, 0.7f, 0.3f, 0.6f];
+    // Valley profile from the reference card: tall start, dip to almost nothing,
+    // then a climb that ends on the tallest bar.
+    private static readonly float[] Values = [0.85f, 0.50f, 0.56f, 0.10f, 0.24f, 0.42f, 1f];
     private readonly Color _color;
 
     public MiniBarChartDrawable(Color color) => _color = color;
@@ -93,7 +104,7 @@ public class MiniBarChartDrawable : IDrawable
     {
         int n = Values.Length;
         float slot = dirtyRect.Width / n;
-        float barWidth = slot * 0.55f;
+        float barWidth = slot * 0.6f;
 
         canvas.FillColor = _color;
         for (int i = 0; i < n; i++)
@@ -109,9 +120,10 @@ public class MiniBarChartDrawable : IDrawable
 
 public class MiniAreaChartDrawable : IDrawable
 {
-    // Angular peaks-and-valleys profile matching the reference Page View card,
-    // drawn with straight segments (not a smooth spline).
-    private static readonly float[] Values = [0.30f, 0.62f, 0.38f, 0.88f, 0.42f, 0.60f, 0.28f, 0.48f];
+    // Angular peaks-and-valleys profile matching the reference Page View card:
+    // stepped foothills, one dominant peak at ~70% width, then a steep drop.
+    private static readonly float[] Values =
+        [0.08f, 0.36f, 0.22f, 0.44f, 0.28f, 0.52f, 0.40f, 0.80f, 0.62f, 0.18f, 0.05f];
     private readonly Color _color;
 
     public MiniAreaChartDrawable(Color color) => _color = color;
@@ -124,7 +136,7 @@ public class MiniAreaChartDrawable : IDrawable
         path.LineTo(points[0].X, dirtyRect.Height);
         path.Close();
 
-        canvas.FillColor = _color.WithAlpha(0.35f);
+        canvas.FillColor = _color.WithAlpha(0.4f);
         canvas.FillPath(path);
 
         canvas.StrokeColor = _color;
@@ -153,12 +165,7 @@ public class MiniLineChartDrawable : IDrawable
         canvas.StrokeLineCap = LineCap.Round;
         canvas.DrawPath(MiniChartGeometry.BuildSpline(points));
 
-        // Marker dot on the highest peak, like the reference chart.
-        int peak = 0;
-        for (int i = 1; i < _values.Length; i++)
-            if (_values[i] > _values[peak]) peak = i;
-
-        // Circular dots at every data point
+        // Circular markers at every data point, like the reference squiggle
         canvas.FillColor = _color;
         canvas.StrokeColor = Colors.White;
         canvas.StrokeSize = 1.5f;
