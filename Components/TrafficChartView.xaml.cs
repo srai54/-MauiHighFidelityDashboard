@@ -1,83 +1,53 @@
+using System.Collections.Specialized;
+using MauiHighFidelityDashboard.Charts.Drawables;
+using MauiHighFidelityDashboard.Models;
+
 namespace MauiHighFidelityDashboard.Components;
 
+/// <summary>
+/// Donut chart + legend, fully data-driven: bind <see cref="ItemsSource"/> to a
+/// collection of <see cref="TrafficModel"/> and both stay in sync with it.
+/// </summary>
 public partial class TrafficChartView : ContentView
 {
+    public static readonly BindableProperty ItemsSourceProperty =
+        BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable<TrafficModel>), typeof(TrafficChartView),
+            propertyChanged: (bindable, oldValue, newValue) => ((TrafficChartView)bindable)
+                .OnItemsSourceChanged(oldValue as IEnumerable<TrafficModel>, newValue as IEnumerable<TrafficModel>));
+
+    public IEnumerable<TrafficModel>? ItemsSource
+    {
+        get => (IEnumerable<TrafficModel>?)GetValue(ItemsSourceProperty);
+        set => SetValue(ItemsSourceProperty, value);
+    }
+
     public TrafficChartView()
     {
         InitializeComponent();
-
-        // Clockwise from 12 o'clock: yellow sliver, large orange arc, blue arc — as in the reference.
-        DonutCanvas.Drawable = new DonutDrawable
-        {
-            Segments =
-            [
-                new DonutSegment { Percentage = 11, Color = Color.FromArgb("#FFC107") },
-                new DonutSegment { Percentage = 55, Color = Color.FromArgb("#FF5722") },
-                new DonutSegment { Percentage = 34, Color = Color.FromArgb("#2196F3") },
-            ]
-        };
     }
-}
 
-public class DonutSegment
-{
-    public float Percentage { get; set; }
-    public Color Color { get; set; } = Colors.Grey;
-}
-
-public class DonutDrawable : IDrawable
-{
-    public List<DonutSegment> Segments { get; set; } = [];
-
-    public void Draw(ICanvas canvas, RectF dirtyRect)
+    private void OnItemsSourceChanged(IEnumerable<TrafficModel>? oldItems, IEnumerable<TrafficModel>? newItems)
     {
-        var center = new PointF(dirtyRect.Width / 2, dirtyRect.Height / 2);
-        float radius = Math.Min(dirtyRect.Width, dirtyRect.Height) / 2f - 6f;
-        float innerRadius = radius * 0.60f;
-        float startAngle = -90;
+        // Observable sources (the usual case) redraw the donut as items load in.
+        if (oldItems is INotifyCollectionChanged oldObservable)
+            oldObservable.CollectionChanged -= OnItemsChanged;
+        if (newItems is INotifyCollectionChanged newObservable)
+            newObservable.CollectionChanged += OnItemsChanged;
 
-        foreach (var segment in Segments)
+        RenderDonut();
+    }
+
+    private void OnItemsChanged(object? sender, NotifyCollectionChangedEventArgs e) => RenderDonut();
+
+    // Segments render in reverse list order so the smallest source starts the ring
+    // clockwise from 12 o'clock (yellow sliver, orange arc, blue arc — as in the reference).
+    private void RenderDonut()
+    {
+        var items = ItemsSource?.Reverse() ?? [];
+        DonutCanvas.Drawable = new DonutChartDrawable
         {
-            float sweepAngle = segment.Percentage / 100f * 360f;
-            int steps = Math.Max(12, (int)(Math.Abs(sweepAngle) / 2));
-
-            var path = new PathF();
-            float startRad = startAngle * MathF.PI / 180f;
-
-            path.MoveTo(
-                center.X + innerRadius * MathF.Cos(startRad),
-                center.Y + innerRadius * MathF.Sin(startRad));
-
-            path.LineTo(
-                center.X + radius * MathF.Cos(startRad),
-                center.Y + radius * MathF.Sin(startRad));
-
-            for (int i = 1; i <= steps; i++)
-            {
-                float angle = (startAngle + sweepAngle * i / steps) * MathF.PI / 180f;
-                path.LineTo(
-                    center.X + radius * MathF.Cos(angle),
-                    center.Y + radius * MathF.Sin(angle));
-            }
-
-            float endRad = (startAngle + sweepAngle) * MathF.PI / 180f;
-            path.LineTo(
-                center.X + innerRadius * MathF.Cos(endRad),
-                center.Y + innerRadius * MathF.Sin(endRad));
-
-            for (int i = steps; i >= 0; i--)
-            {
-                float angle = (startAngle + sweepAngle * i / steps) * MathF.PI / 180f;
-                path.LineTo(
-                    center.X + innerRadius * MathF.Cos(angle),
-                    center.Y + innerRadius * MathF.Sin(angle));
-            }
-
-            path.Close();
-            canvas.FillColor = segment.Color;
-            canvas.FillPath(path);
-
-            startAngle += sweepAngle;
-        }
+            Segments = [.. items.Select(t => new DonutSegment((float)t.Percentage, Color.FromArgb(t.SegmentColorHex)))]
+        };
+        DonutCanvas.Invalidate();
     }
 }

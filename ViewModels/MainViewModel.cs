@@ -22,7 +22,6 @@ public partial class MainViewModel : BaseViewModel
     public ObservableCollection<OrderModel> Orders { get; } = [];
     public ObservableCollection<PageItem> PageNumbers { get; } = [];
     public ObservableCollection<TrafficModel> TrafficSources { get; } = [];
-    public ObservableCollection<SalesData> SalesDataPoints { get; } = [];
 
     public DashboardCard? WalletCard => DashboardCards.ElementAtOrDefault(0);
     public DashboardCard? ReferralCard => DashboardCards.ElementAtOrDefault(1);
@@ -76,8 +75,7 @@ public partial class MainViewModel : BaseViewModel
             LoadRevenueCardsAsync(),
             LoadActivitiesAsync(),
             LoadOrdersAsync(),
-            LoadTrafficSourcesAsync(),
-            LoadSalesDataAsync()
+            LoadTrafficSourcesAsync()
         );
 
         IsBusy = false;
@@ -276,51 +274,19 @@ public partial class MainViewModel : BaseViewModel
         OnPropertyChanged(nameof(EarningCard));
     }
 
-    private Task LoadRevenueCardsAsync()
+    private async Task LoadRevenueCardsAsync()
     {
-        RevenueCards.Clear();
+        var result = await _dataService.GetRevenueCardsAsync();
+        if (result.IsFailure) return;
 
-        RevenueCards.Add(new RevenueCardItem
-        {
-            Title = "Revinue Status",
-            Value = "$432",
-            Subtitle = "Jan 01 - Jan 10",
-            ChartType = "Bar",
-            BackgroundHex = "#E1F0FF",
-            AccentHex = "#2196F3",
-        });
-        RevenueCards.Add(new RevenueCardItem
-        {
-            Title = "Page View",
-            Value = "$432",
-            ChartType = "Area",
-            BackgroundHex = "#FFF8E1",
-            AccentHex = "#FFB822",
-        });
-        RevenueCards.Add(new RevenueCardItem
-        {
-            Title = "Bounce Rate",
-            Value = "$432",
-            ChartType = "Line",
-            BackgroundHex = "#FBE4D7",
-            AccentHex = "#ED5520",
-        });
-        RevenueCards.Add(new RevenueCardItem
-        {
-            Title = "Revinue Status",
-            Value = "$432",
-            Subtitle = "Jan 01 - Jan 10",
-            ChartType = "Bar",
-            BackgroundHex = "#F0DEFE",
-            AccentHex = "#8214E8",
-        });
+        RevenueCards.Clear();
+        foreach (var card in result.Data!)
+            RevenueCards.Add(card);
 
         OnPropertyChanged(nameof(RevenueStatusCard));
         OnPropertyChanged(nameof(PageViewCard));
         OnPropertyChanged(nameof(BounceRateCard));
         OnPropertyChanged(nameof(RevenueStatusAltCard));
-
-        return Task.CompletedTask;
     }
 
     private async Task LoadActivitiesAsync()
@@ -352,15 +318,5 @@ public partial class MainViewModel : BaseViewModel
         TrafficSources.Clear();
         foreach (var source in result.Data!)
             TrafficSources.Add(source);
-    }
-
-    private async Task LoadSalesDataAsync()
-    {
-        var result = await _dataService.GetSalesDataAsync();
-        if (result.IsFailure) return;
-
-        SalesDataPoints.Clear();
-        foreach (var dataPoint in result.Data!)
-            SalesDataPoints.Add(dataPoint);
     }
 }

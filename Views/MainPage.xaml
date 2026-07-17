@@ -39,7 +39,7 @@
                             </Grid>
                         </Grid>
                     </Border>
-                    <components:TrafficChartView x:Name="TrafficChart" Grid.Column="1" />
+                    <components:TrafficChartView x:Name="TrafficChart" Grid.Column="1" ItemsSource="{Binding TrafficSources}" />
                 </Grid>
 
                 <!-- Row 2: analytics cards. Columns mirror the top row (0.85*3 = 2.55) so the

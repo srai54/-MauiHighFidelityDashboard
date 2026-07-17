@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:charts="clr-namespace:MauiHighFidelityDashboard.Charts"
              x:Class="MauiHighFidelityDashboard.Components.SalesChartView">
     <Grid RowDefinitions="Auto,*" RowSpacing="6">
         <!-- Row 0: Tabs + Legend (wraps on narrow screens instead of clipping) -->
@@ -27,12 +28,12 @@
             <HorizontalStackLayout Spacing="14" VerticalOptions="Start">
                 <HorizontalStackLayout x:Name="LegendOnlineRow" Spacing="5"
                                        ToolTipProperties.Text="Show only Online sales">
-                    <BoxView WidthRequest="8" HeightRequest="8" Color="{StaticResource ChartOnline}" CornerRadius="4" VerticalOptions="Center" />
+                    <BoxView WidthRequest="8" HeightRequest="8" Color="{x:Static charts:ChartTheme.SalesOnline}" CornerRadius="4" VerticalOptions="Center" />
                     <Label Text="Online" FontSize="10" TextColor="{StaticResource TextLight}" VerticalOptions="Center" x:Name="LegendOnline" />
                 </HorizontalStackLayout>
                 <HorizontalStackLayout x:Name="LegendStoreRow" Spacing="5"
                                        ToolTipProperties.Text="Show only Store sales">
-                    <BoxView WidthRequest="8" HeightRequest="8" Color="{StaticResource ChartStore}" CornerRadius="4" VerticalOptions="Center" />
+                    <BoxView WidthRequest="8" HeightRequest="8" Color="{x:Static charts:ChartTheme.SalesStore}" CornerRadius="4" VerticalOptions="Center" />
                     <Label Text="Store" FontSize="10" TextColor="{StaticResource TextLight}" VerticalOptions="Center" x:Name="LegendStore" />
                 </HorizontalStackLayout>
             </HorizontalStackLayout>

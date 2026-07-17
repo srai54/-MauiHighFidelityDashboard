@@ -13,68 +13,31 @@ public class ApiDashboardDataService : IDashboardDataService
         _httpClient = httpClient;
     }
 
-    public async Task<Result<IReadOnlyList<DashboardCard>>> GetDashboardCardsAsync()
-    {
-        try
-        {
-            var data = await _httpClient.GetFromJsonAsync<List<DashboardCard>>("api/dashboard/cards");
-            return Result<IReadOnlyList<DashboardCard>>.Success(data ?? []);
-        }
-        catch (Exception ex)
-        {
-            return Result<IReadOnlyList<DashboardCard>>.Failure($"Failed to load dashboard cards: {ex.Message}");
-        }
-    }
+    public Task<Result<IReadOnlyList<DashboardCard>>> GetDashboardCardsAsync() =>
+        GetListAsync<DashboardCard>("api/dashboard/cards", "dashboard cards");
 
-    public async Task<Result<IReadOnlyList<ActivityModel>>> GetActivitiesAsync()
-    {
-        try
-        {
-            var data = await _httpClient.GetFromJsonAsync<List<ActivityModel>>("api/dashboard/activities");
-            return Result<IReadOnlyList<ActivityModel>>.Success(data ?? []);
-        }
-        catch (Exception ex)
-        {
-            return Result<IReadOnlyList<ActivityModel>>.Failure($"Failed to load activities: {ex.Message}");
-        }
-    }
+    public Task<Result<IReadOnlyList<RevenueCardItem>>> GetRevenueCardsAsync() =>
+        GetListAsync<RevenueCardItem>("api/dashboard/revenue-cards", "revenue cards");
 
-    public async Task<Result<IReadOnlyList<OrderModel>>> GetOrdersAsync()
-    {
-        try
-        {
-            var data = await _httpClient.GetFromJsonAsync<List<OrderModel>>("api/dashboard/orders");
-            return Result<IReadOnlyList<OrderModel>>.Success(data ?? []);
-        }
-        catch (Exception ex)
-        {
-            return Result<IReadOnlyList<OrderModel>>.Failure($"Failed to load orders: {ex.Message}");
-        }
-    }
+    public Task<Result<IReadOnlyList<ActivityModel>>> GetActivitiesAsync() =>
+        GetListAsync<ActivityModel>("api/dashboard/activities", "activities");
 
-    public async Task<Result<IReadOnlyList<TrafficModel>>> GetTrafficSourcesAsync()
-    {
-        try
-        {
-            var data = await _httpClient.GetFromJsonAsync<List<TrafficModel>>("api/dashboard/traffic");
-            return Result<IReadOnlyList<TrafficModel>>.Success(data ?? []);
-        }
-        catch (Exception ex)
-        {
-            return Result<IReadOnlyList<TrafficModel>>.Failure($"Failed to load traffic sources: {ex.Message}");
-        }
-    }
+    public Task<Result<IReadOnlyList<OrderModel>>> GetOrdersAsync() =>
+        GetListAsync<OrderModel>("api/dashboard/orders", "orders");
 
-    public async Task<Result<IReadOnlyList<SalesData>>> GetSalesDataAsync()
+    public Task<Result<IReadOnlyList<TrafficModel>>> GetTrafficSourcesAsync() =>
+        GetListAsync<TrafficModel>("api/dashboard/traffic", "traffic sources");
+
+    private async Task<Result<IReadOnlyList<T>>> GetListAsync<T>(string endpoint, string resourceName)
     {
         try
         {
-            var data = await _httpClient.GetFromJsonAsync<List<SalesData>>("api/dashboard/sales");
-            return Result<IReadOnlyList<SalesData>>.Success(data ?? []);
+            var data = await _httpClient.GetFromJsonAsync<List<T>>(endpoint);
+            return Result<IReadOnlyList<T>>.Success(data ?? []);
         }
         catch (Exception ex)
         {
-            return Result<IReadOnlyList<SalesData>>.Failure($"Failed to load sales data: {ex.Message}");
+            return Result<IReadOnlyList<T>>.Failure($"Failed to load {resourceName}: {ex.Message}");
         }
     }
 }

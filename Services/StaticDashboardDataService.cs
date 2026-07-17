@@ -15,6 +15,16 @@ public class StaticDashboardDataService : IDashboardDataService
             new() { Title = "Earning", Amount = 52567.53m, AmountDisplay = "$52,567.53", Icon = "", ThemeColorHex = "#FF5E9D" }         // dollar-sign
         ]));
 
+    public Task<Result<IReadOnlyList<RevenueCardItem>>> GetRevenueCardsAsync() =>
+        Task.FromResult(Result<IReadOnlyList<RevenueCardItem>>.Success(
+        [
+            // "Revinue" typo is intentional — it matches the reference template.
+            new() { Title = "Revinue Status", Value = "$432", Subtitle = "Jan 01 - Jan 10", ChartType = "Bar", BackgroundHex = "#E1F0FF", AccentHex = "#2196F3" },
+            new() { Title = "Page View", Value = "$432", ChartType = "Area", BackgroundHex = "#FFF8E1", AccentHex = "#FFB822" },
+            new() { Title = "Bounce Rate", Value = "$432", ChartType = "Line", BackgroundHex = "#FBE4D7", AccentHex = "#ED5520" },
+            new() { Title = "Revinue Status", Value = "$432", Subtitle = "Jan 01 - Jan 10", ChartType = "Bar", BackgroundHex = "#F0DEFE", AccentHex = "#8214E8" }
+        ]));
+
     public Task<Result<IReadOnlyList<ActivityModel>>> GetActivitiesAsync() =>
         Task.FromResult(Result<IReadOnlyList<ActivityModel>>.Success(
         [
@@ -67,16 +77,5 @@ public class StaticDashboardDataService : IDashboardDataService
             new() { Source = "Facebook", Percentage = 34, SegmentColorHex = "#2196F3" },
             new() { Source = "Youtube", Percentage = 55, SegmentColorHex = "#FF5722" },
             new() { Source = "Direct Search", Percentage = 11, SegmentColorHex = "#FFC107" }
-        ]));
-
-    public Task<Result<IReadOnlyList<SalesData>>> GetSalesDataAsync() =>
-        Task.FromResult(Result<IReadOnlyList<SalesData>>.Success(
-        [
-            new() { Day = 1, Online = 2, Store = 3 },
-            new() { Day = 2, Online = 13, Store = 12 },
-            new() { Day = 3, Online = 3, Store = 5 },
-            new() { Day = 4, Online = 6, Store = 14 },
-            new() { Day = 5, Online = 12, Store = 10 },
-            new() { Day = 6, Online = 27, Store = 17 }
         ]));
 }
