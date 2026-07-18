@@ -18,11 +18,11 @@ public class StaticDashboardDataService : IDashboardDataService
     public Task<Result<IReadOnlyList<RevenueCardItem>>> GetRevenueCardsAsync() =>
         Task.FromResult(Result<IReadOnlyList<RevenueCardItem>>.Success(
         [
-            // "Revinue" typo is intentional — it matches the reference template.
-            new() { Title = "Revinue Status", Value = "$432", Subtitle = "Jan 01 - Jan 10", ChartType = "Bar", BackgroundHex = "#E1F0FF", AccentHex = "#2196F3" },
+            // The reference template spells this "Revinue"; corrected to "Revenue" per client request.
+            new() { Title = "Revenue Status", Value = "$432", Subtitle = "Jan 01 - Jan 10", ChartType = "Bar", BackgroundHex = "#E1F0FF", AccentHex = "#2196F3" },
             new() { Title = "Page View", Value = "$432", ChartType = "Area", BackgroundHex = "#FFF8E1", AccentHex = "#FFB822" },
             new() { Title = "Bounce Rate", Value = "$432", ChartType = "Line", BackgroundHex = "#FBE4D7", AccentHex = "#ED5520" },
-            new() { Title = "Revinue Status", Value = "$432", Subtitle = "Jan 01 - Jan 10", ChartType = "Bar", BackgroundHex = "#F0DEFE", AccentHex = "#8214E8" }
+            new() { Title = "Revenue Status", Value = "$432", Subtitle = "Jan 01 - Jan 10", ChartType = "Bar", BackgroundHex = "#F0DEFE", AccentHex = "#8214E8" }
         ]));
 
     public Task<Result<IReadOnlyList<ActivityModel>>> GetActivitiesAsync() =>

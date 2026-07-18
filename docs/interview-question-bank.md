@@ -355,8 +355,8 @@ Questions grounded in this repository's real code — file names cited so you ca
 ### 106. How do you add a brand-new chart to this app tomorrow?
 **A:** 1) Declare its values in `Charts/ChartData.cs`; 2) in the view, assign an existing drawable, e.g. `MyCanvas.Drawable = new MiniLineChartDrawable(color, ChartData.MyNewValues);` — theme, geometry, and rendering are already there.
 
-### 107. Why keep the deliberate "Revinue Status" typo (`StaticDashboardDataService.cs`)?
-**A:** The assignment is a high-fidelity replication of a reference template screenshot; matching it exactly — including its typos — is the acceptance criterion, so correctness here means visual fidelity, not spelling.
+### 107. The reference template spells a card title "Revinue Status" — copy the typo or fix it?
+**A:** A classic fidelity-vs-correctness call: pixel-fidelity argues for copying the template exactly, but a real product shouldn't ship a misspelling. This project first replicated the typo for fidelity, then corrected it to "Revenue Status" (`StaticDashboardDataService.cs`) once the client confirmed — the right process: replicate, flag the defect, fix on approval.
 
 ### 108. Why are chart datasets in a static class instead of the data service?
 **A:** They're presentation demo-data tied to chart shape (normalized 0–1 curves, per-tab series), not business entities; `ChartData` gives all views one import with zero async ceremony, while true business data (orders, cards) still flows through the service.

@@ -48,7 +48,6 @@ public partial class MainViewModel : BaseViewModel
 #pragma warning restore MVVMTK0045
 
     private int _currentPage = 1;
-    private OrderModel? _selectedOrder;
 
     public MainViewModel(IDashboardDataService dataService, IPrintService printService)
     {
@@ -173,14 +172,14 @@ public partial class MainViewModel : BaseViewModel
         RefreshOrdersView();
     }
 
+    // Each tap toggles that row independently, so several orders can be
+    // selected at once (bulk selection) — across pages, since the flag
+    // lives on the model.
     [RelayCommand]
     private void SelectOrder(OrderModel? order)
     {
         if (order is null) return;
-        bool select = !order.IsSelected;
-        foreach (var o in _allOrders) o.IsSelected = false;
-        order.IsSelected = select;
-        _selectedOrder = select ? order : null;
+        order.IsSelected = !order.IsSelected;
     }
 
     [RelayCommand]
@@ -214,22 +213,24 @@ public partial class MainViewModel : BaseViewModel
         RefreshOrdersView();
     }
 
+    // Deletes every selected order (bulk delete) after a single confirmation.
     [RelayCommand]
     private async Task DeleteOrderAsync()
     {
-        if (_selectedOrder is null)
+        var selected = _allOrders.Where(o => o.IsSelected).ToList();
+        if (selected.Count == 0)
         {
-            await Shell.Current.DisplayAlertAsync("Delete Order", "Tap a row to select the order you want to delete.", "OK");
+            await Shell.Current.DisplayAlertAsync("Delete Orders", "Tap one or more rows to select the orders you want to delete.", "OK");
             return;
         }
 
         var page = Shell.Current.CurrentPage;
         if (page is null) return;
-        var result = await page.ShowPopupAsync(new ConfirmDeletePopup(_selectedOrder));
+        var result = await page.ShowPopupAsync(new ConfirmDeletePopup(selected));
         if (result is not true) return;
 
-        _allOrders.Remove(_selectedOrder);
-        _selectedOrder = null;
+        foreach (var order in selected)
+            _allOrders.Remove(order);
         RefreshOrdersView();
     }
 

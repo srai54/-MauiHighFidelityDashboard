@@ -28,7 +28,8 @@
                            VerticalOptions="Center" />
                 </Border>
                 <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                    <Label Text="Delete Order"
+                    <Label x:Name="TitleLabel"
+                           Text="Delete Order"
                            FontSize="16"
                            FontAttributes="Bold"
                            TextColor="{StaticResource TextPrimary}" />
@@ -60,7 +61,8 @@
                         HeightRequest="36"
                         CornerRadius="6"
                         Clicked="OnCancelClicked" />
-                <Button Grid.Column="2"
+                <Button x:Name="DeleteButton"
+                        Grid.Column="2"
                         Text="Delete Order"
                         BackgroundColor="{StaticResource StatusProcess}"
                         TextColor="White"
