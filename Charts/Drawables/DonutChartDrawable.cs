@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Charts.Drawables;
+namespace HighFidelity.Ui.Charts.Drawables;
 
 /// <summary>One slice of a donut chart.</summary>
 public sealed record DonutSegment(float Percentage, Color Color);

@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Models;
+namespace HighFidelity.Ui.Models;
 
 public class TrafficModel
 {

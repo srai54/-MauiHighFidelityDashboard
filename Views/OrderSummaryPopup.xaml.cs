@@ -1,6 +1,6 @@
 using CommunityToolkit.Maui.Views;
 
-namespace MauiHighFidelityDashboard.Views;
+namespace HighFidelity.Ui.Views;
 
 /// <summary>
 /// Styled replacement for the old "Order Summary" OS alert: totals as hero

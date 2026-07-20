@@ -1,7 +1,7 @@
 @echo off
 setlocal
 rem ------------------------------------------------------------------
-rem  MauiHighFidelityDashboard launcher
+rem  HighFidelity.Ui launcher
 rem  "dotnet run" can only target ONE framework at a time, so this
 rem  script asks which platform you want and runs the right command.
 rem ------------------------------------------------------------------

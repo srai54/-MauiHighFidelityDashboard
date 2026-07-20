@@ -2,11 +2,11 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MauiHighFidelityDashboard.Services.Interfaces;
-using MauiHighFidelityDashboard.Models;
-using MauiHighFidelityDashboard.Views;
+using HighFidelity.Ui.Services.Interfaces;
+using HighFidelity.Ui.Models;
+using HighFidelity.Ui.Views;
 
-namespace MauiHighFidelityDashboard.ViewModels;
+namespace HighFidelity.Ui.ViewModels;
 
 public partial class MainViewModel : BaseViewModel
 {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:charts="clr-namespace:MauiHighFidelityDashboard.Charts"
-             x:Class="MauiHighFidelityDashboard.Components.SalesChartView">
+             xmlns:charts="clr-namespace:HighFidelity.Ui.Charts"
+             x:Class="HighFidelity.Ui.Components.SalesChartView">
     <Grid RowDefinitions="Auto,*" RowSpacing="6">
         <!-- Row 0: Tabs + Legend (wraps on narrow screens instead of clipping) -->
         <FlexLayout Wrap="Wrap" JustifyContent="SpaceBetween" AlignItems="Start">

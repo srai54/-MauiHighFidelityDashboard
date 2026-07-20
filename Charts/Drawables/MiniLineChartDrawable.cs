@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Charts.Drawables;
+namespace HighFidelity.Ui.Charts.Drawables;
 
 /// <summary>Compact smooth line chart for analytics cards, with a circular marker at every point.</summary>
 public class MiniLineChartDrawable : IDrawable

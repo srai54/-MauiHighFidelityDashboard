@@ -1,14 +1,14 @@
 ﻿using CommunityToolkit.Maui;
-using MauiHighFidelityDashboard.ViewModels;
-using MauiHighFidelityDashboard.Services.Interfaces;
-using MauiHighFidelityDashboard.Services;
-using MauiHighFidelityDashboard.Views;
+using HighFidelity.Ui.ViewModels;
+using HighFidelity.Ui.Services.Interfaces;
+using HighFidelity.Ui.Services;
+using HighFidelity.Ui.Views;
 using Microsoft.Extensions.Logging;
 #if WINDOWS
 using Microsoft.Maui.LifecycleEvents;
 #endif
 
-namespace MauiHighFidelityDashboard;
+namespace HighFidelity.Ui;
 
 public static class MauiProgram
 {

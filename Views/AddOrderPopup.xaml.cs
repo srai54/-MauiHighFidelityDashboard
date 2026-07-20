@@ -1,6 +1,6 @@
 using CommunityToolkit.Maui.Views;
 
-namespace MauiHighFidelityDashboard.Views;
+namespace HighFidelity.Ui.Views;
 
 /// <summary>
 /// Two-step add-order popup: a chooser (Quick Add with generated sample values,

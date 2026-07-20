@@ -1,6 +1,6 @@
-﻿using MauiHighFidelityDashboard.Views;
+﻿using HighFidelity.Ui.Views;
 
-namespace MauiHighFidelityDashboard;
+namespace HighFidelity.Ui;
 
 public partial class AppShell : Shell
 {

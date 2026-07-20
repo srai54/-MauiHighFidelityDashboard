@@ -1,9 +1,9 @@
 <maui:MauiWinUIApplication
-    x:Class="MauiHighFidelityDashboard.WinUI.App"
+    x:Class="HighFidelity.Ui.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
-    xmlns:local="using:MauiHighFidelityDashboard.WinUI">
+    xmlns:local="using:HighFidelity.Ui.WinUI">
 
     <maui:MauiWinUIApplication.Resources>
         <ResourceDictionary>

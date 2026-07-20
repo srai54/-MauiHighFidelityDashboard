@@ -1,4 +1,4 @@
-# MauiHighFidelityDashboard — Frontend Architecture
+# HighFidelity.Ui — Frontend Architecture
 
 Single reference doc for this repo (FE only — the backend is a separate repo, [HighFidelity-Api](https://github.com/srai54/HighFidelity-Api)). Covers folder structure, what every piece is for, the MVVM/Observable pattern, and a top-30 interview Q&A.
 
@@ -7,7 +7,7 @@ Single reference doc for this repo (FE only — the backend is a separate repo, 
 ## 1. Folder structure
 
 ```
-MauiHighFidelityDashboard/
+HighFidelity.Ui/
 ├── Views/            Pages and popups (full screens / modal overlays)
 ├── Components/        Reusable ContentViews embedded inside Views
 ├── ViewModels/         Presentation logic — state + commands, no UI types
@@ -99,7 +99,7 @@ Plain classes with **no logic and no UI knowledge**. Every other layer shares th
 | `MauiProgram.cs` | **Composition root.** Registers fonts, DI services (`IDashboardDataService`, `IPrintService`, ViewModels, Pages), platform handler tweaks. The single place deciding "what implementation backs each interface." |
 | `App.xaml(.cs)` | Merges resource dictionaries, creates the root window with `AppShell` |
 | `AppShell.xaml(.cs)` | Shell navigation host — registers the `"detail"` route so `Shell.Current.GoToAsync("detail?title=...")` works |
-| `MauiHighFidelityDashboard.csproj` | Multi-targets `net10.0-windows10.0.19041.0` + `net10.0-android` (+ iOS/MacCatalyst when built on macOS) |
+| `HighFidelity.Ui.csproj` | Multi-targets `net10.0-windows10.0.19041.0` + `net10.0-android` (+ iOS/MacCatalyst when built on macOS) |
 | `run.cmd` | Interactive picker: builds+runs Windows, or boots the Android emulator (if needed) and deploys |
 
 ---

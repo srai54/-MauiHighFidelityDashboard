@@ -1,4 +1,4 @@
-﻿namespace MauiHighFidelityDashboard;
+﻿namespace HighFidelity.Ui;
 
 public partial class App : Application
 {

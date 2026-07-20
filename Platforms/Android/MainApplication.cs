@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace MauiHighFidelityDashboard;
+namespace HighFidelity.Ui;
 
 [Application]
 public class MainApplication : MauiApplication

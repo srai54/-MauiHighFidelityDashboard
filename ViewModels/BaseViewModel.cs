@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace MauiHighFidelityDashboard.ViewModels;
+namespace HighFidelity.Ui.ViewModels;
 
 public partial class BaseViewModel : ObservableObject
 {

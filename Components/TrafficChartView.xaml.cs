@@ -1,8 +1,8 @@
 using System.Collections.Specialized;
-using MauiHighFidelityDashboard.Charts.Drawables;
-using MauiHighFidelityDashboard.Models;
+using HighFidelity.Ui.Charts.Drawables;
+using HighFidelity.Ui.Models;
 
-namespace MauiHighFidelityDashboard.Components;
+namespace HighFidelity.Ui.Components;
 
 /// <summary>
 /// Donut chart + legend, fully data-driven: bind <see cref="ItemsSource"/> to a

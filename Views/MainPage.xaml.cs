@@ -1,6 +1,6 @@
-using MauiHighFidelityDashboard.ViewModels;
+using HighFidelity.Ui.ViewModels;
 
-namespace MauiHighFidelityDashboard.Views;
+namespace HighFidelity.Ui.Views;
 
 public partial class MainPage : ContentPage
 {

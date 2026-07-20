@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Charts;
+namespace HighFidelity.Ui.Charts;
 
 /// <summary>
 /// Single source of truth for chart colors and series styling.

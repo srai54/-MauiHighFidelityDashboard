@@ -1,8 +1,8 @@
 using System.Net.Http.Json;
-using MauiHighFidelityDashboard.Models;
-using MauiHighFidelityDashboard.Services.Interfaces;
+using HighFidelity.Ui.Models;
+using HighFidelity.Ui.Services.Interfaces;
 
-namespace MauiHighFidelityDashboard.Services;
+namespace HighFidelity.Ui.Services;
 
 public class ApiDashboardDataService : IDashboardDataService
 {

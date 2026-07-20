@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Charts.Drawables;
+namespace HighFidelity.Ui.Charts.Drawables;
 
 /// <summary>Compact bar chart for analytics cards: normalized values (0..1), one rounded bar each.</summary>
 public class MiniBarChartDrawable : IDrawable

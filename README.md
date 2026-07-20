@@ -1,4 +1,4 @@
-# MauiHighFidelityDashboard
+# HighFidelity.Ui
 
 A **.NET MAUI** dashboard that recreates the assignment screenshot with high visual fidelity, following the assignment's **MVVM folder structure**, with **Dependency Injection**, service interfaces, real cross-platform **printing**, and a **responsive layout** that adapts from desktop to phone (and 100%→400% zoom).
 
@@ -9,7 +9,7 @@ Runs on **Windows** and **Android** (iOS/macCatalyst targets included).
 ## Project Structure (per assignment)
 
 ```
-MauiHighFidelityDashboard/
+HighFidelity.Ui/
 ├── Views/                          # Pages
 │   ├── MainPage.xaml               # Dashboard + responsive breakpoint logic
 │   ├── DetailPage.xaml             # Sidebar navigation detail page

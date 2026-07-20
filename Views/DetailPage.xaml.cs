@@ -1,6 +1,6 @@
-using MauiHighFidelityDashboard.ViewModels;
+using HighFidelity.Ui.ViewModels;
 
-namespace MauiHighFidelityDashboard.Views;
+namespace HighFidelity.Ui.Views;
 
 [QueryProperty(nameof(SectionTitle), "title")]
 public partial class DetailPage : ContentPage

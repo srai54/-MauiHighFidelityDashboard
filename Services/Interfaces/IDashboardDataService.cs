@@ -1,6 +1,6 @@
-using MauiHighFidelityDashboard.Models;
+using HighFidelity.Ui.Models;
 
-namespace MauiHighFidelityDashboard.Services.Interfaces;
+namespace HighFidelity.Ui.Services.Interfaces;
 
 public interface IDashboardDataService
 {

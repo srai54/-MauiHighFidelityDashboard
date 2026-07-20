@@ -1,7 +1,7 @@
-using MauiHighFidelityDashboard.Charts;
-using MauiHighFidelityDashboard.Charts.Drawables;
+using HighFidelity.Ui.Charts;
+using HighFidelity.Ui.Charts.Drawables;
 
-namespace MauiHighFidelityDashboard.Components;
+namespace HighFidelity.Ui.Components;
 
 public partial class SalesChartView : ContentView
 {

@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Charts;
+namespace HighFidelity.Ui.Charts;
 
 /// <summary>One dataset of the sales spline chart: two series plus the x-axis labels.</summary>
 public sealed record SalesSeries(float[] Online, float[] Store, string[] XLabels);

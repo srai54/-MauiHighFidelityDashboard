@@ -1,3 +1,3 @@
-namespace MauiHighFidelityDashboard.Models;
+namespace HighFidelity.Ui.Models;
 
 public sealed record PageItem(int Number, bool IsCurrent);

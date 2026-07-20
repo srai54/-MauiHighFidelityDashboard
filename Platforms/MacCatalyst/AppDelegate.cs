@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace MauiHighFidelityDashboard;
+namespace HighFidelity.Ui;
 
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate

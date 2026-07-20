@@ -2,7 +2,7 @@ using System;
 using Microsoft.Maui;
 using Microsoft.Maui.Hosting;
 
-namespace MauiHighFidelityDashboard;
+namespace HighFidelity.Ui;
 
 class Program : MauiApplication
 {

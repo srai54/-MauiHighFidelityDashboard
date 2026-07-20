@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Services;
+namespace HighFidelity.Ui.Services;
 
 /// <summary>
 /// Frontend-side configuration for reaching the HighFidelity.Api backend,

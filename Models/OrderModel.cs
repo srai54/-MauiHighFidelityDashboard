@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace MauiHighFidelityDashboard.Models;
+namespace HighFidelity.Ui.Models;
 
 public class OrderModel : INotifyPropertyChanged
 {

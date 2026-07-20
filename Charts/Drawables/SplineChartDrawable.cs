@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Charts.Drawables;
+namespace HighFidelity.Ui.Charts.Drawables;
 
 /// <summary>One line of a spline chart: its values, stroke color, and area-fill opacity.</summary>
 public sealed record SplineSeries(float[] Values, Color Color, float FillAlpha);

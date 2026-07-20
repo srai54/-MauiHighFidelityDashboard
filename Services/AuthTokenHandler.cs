@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
-namespace MauiHighFidelityDashboard.Services;
+namespace HighFidelity.Ui.Services;
 
 /// <summary>
 /// Logs in against HighFidelity.Api's demo account and attaches the resulting

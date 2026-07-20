@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Components;
+namespace HighFidelity.Ui.Components;
 
 public partial class DashboardHeaderView : ContentView
 {

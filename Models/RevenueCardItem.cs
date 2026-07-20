@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Models;
+namespace HighFidelity.Ui.Models;
 
 /// <summary>
 /// Data model for a revenue card displayed in the dashboard analytics row.

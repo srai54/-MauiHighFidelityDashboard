@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Charts;
+namespace HighFidelity.Ui.Charts;
 
 /// <summary>Point and path builders shared by every chart drawable.</summary>
 public static class ChartGeometry

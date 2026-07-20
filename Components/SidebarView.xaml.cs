@@ -1,7 +1,7 @@
 using System.Windows.Input;
-using MauiHighFidelityDashboard.Models;
+using HighFidelity.Ui.Models;
 
-namespace MauiHighFidelityDashboard.Components;
+namespace HighFidelity.Ui.Components;
 
 public partial class SidebarView : ContentView
 {

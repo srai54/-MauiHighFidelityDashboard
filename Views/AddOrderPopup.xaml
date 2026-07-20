@@ -2,7 +2,7 @@
 <toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-               x:Class="MauiHighFidelityDashboard.Views.AddOrderPopup"
+               x:Class="HighFidelity.Ui.Views.AddOrderPopup"
                CanBeDismissedByTappingOutsideOfPopup="False"
                Color="Transparent">
     <Border x:Name="RootBorder"

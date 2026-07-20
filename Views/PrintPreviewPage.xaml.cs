@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Views;
+namespace HighFidelity.Ui.Views;
 
 public partial class PrintPreviewPage : ContentPage
 {

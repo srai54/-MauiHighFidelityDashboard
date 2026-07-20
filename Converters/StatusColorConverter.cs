@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace MauiHighFidelityDashboard.Converters;
+namespace HighFidelity.Ui.Converters;
 
 public class StatusColorConverter : IValueConverter
 {

@@ -1,4 +1,4 @@
-namespace MauiHighFidelityDashboard.Charts.Drawables;
+namespace HighFidelity.Ui.Charts.Drawables;
 
 /// <summary>Compact angular area chart for analytics cards: filled wave with a stroked top edge.</summary>
 public class MiniAreaChartDrawable : IDrawable

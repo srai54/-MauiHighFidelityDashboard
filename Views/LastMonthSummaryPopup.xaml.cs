@@ -1,7 +1,7 @@
 using CommunityToolkit.Maui.Views;
-using MauiHighFidelityDashboard.Models;
+using HighFidelity.Ui.Models;
 
-namespace MauiHighFidelityDashboard.Views;
+namespace HighFidelity.Ui.Views;
 
 public partial class LastMonthSummaryPopup : Popup
 {

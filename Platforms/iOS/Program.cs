@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace MauiHighFidelityDashboard;
+namespace HighFidelity.Ui;
 
 public class Program
 {

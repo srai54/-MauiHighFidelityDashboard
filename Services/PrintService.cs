@@ -1,10 +1,10 @@
 using System.Net;
 using System.Text;
-using MauiHighFidelityDashboard.Models;
-using MauiHighFidelityDashboard.Services.Interfaces;
-using MauiHighFidelityDashboard.Views;
+using HighFidelity.Ui.Models;
+using HighFidelity.Ui.Services.Interfaces;
+using HighFidelity.Ui.Views;
 
-namespace MauiHighFidelityDashboard.Services;
+namespace HighFidelity.Ui.Services;
 
 public class PrintService : IPrintService
 {

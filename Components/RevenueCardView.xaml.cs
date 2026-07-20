@@ -1,9 +1,9 @@
 using CommunityToolkit.Maui.Views;
-using MauiHighFidelityDashboard.Charts;
-using MauiHighFidelityDashboard.Charts.Drawables;
-using MauiHighFidelityDashboard.Views;
+using HighFidelity.Ui.Charts;
+using HighFidelity.Ui.Charts.Drawables;
+using HighFidelity.Ui.Views;
 
-namespace MauiHighFidelityDashboard.Components;
+namespace HighFidelity.Ui.Components;
 
 public partial class RevenueCardView : ContentView
 {

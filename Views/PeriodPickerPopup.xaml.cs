@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Maui.Views;
 
-namespace MauiHighFidelityDashboard.Views;
+namespace HighFidelity.Ui.Views;
 
 /// <summary>
 /// Modern replacement for the OS action sheet: a compact list of periods with
