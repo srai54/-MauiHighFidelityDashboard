@@ -17,4 +17,10 @@ public static class ApiSettings
 #endif
 
     public static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(10);
+
+    // Matches the "DemoUser" section in HighFidelity.Api/appsettings.json.
+    // Stand-in for real user login until the backend has a Users table — see
+    // HighFidelity-Api/docs/ARCHITECTURE.md.
+    public const string DemoUsername = "admin";
+    public const string DemoPassword = "ChangeMe123!";
 }

@@ -89,8 +89,17 @@ public static class MauiProgram
         // This branch has no embedded/static data — the app has nothing to show
         // until the API is running. See Services/ApiSettings.cs for the base
         // address the FE resolves per platform.
+        //
+        // The API now requires a JWT (see HighFidelity-Api/docs/ARCHITECTURE.md),
+        // so requests go through a plain client used only to log in, and a second
+        // client whose AuthTokenHandler attaches the resulting Bearer token.
+        var authHttpClient = new HttpClient
+        {
+            BaseAddress = new Uri(ApiSettings.BaseAddress),
+            Timeout = ApiSettings.RequestTimeout
+        };
         builder.Services.AddSingleton<IDashboardDataService>(_ =>
-            new ApiDashboardDataService(new HttpClient
+            new ApiDashboardDataService(new HttpClient(new AuthTokenHandler(authHttpClient))
             {
                 BaseAddress = new Uri(ApiSettings.BaseAddress),
                 Timeout = ApiSettings.RequestTimeout
