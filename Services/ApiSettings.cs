@@ -1,7 +1,8 @@
 namespace MauiHighFidelityDashboard.Services;
 
 /// <summary>
-/// Frontend-side configuration for reaching the HighFidelity.Api backend.
+/// Frontend-side configuration for reaching the HighFidelity.Api backend,
+/// which lives in its own repo: https://github.com/srai54/HighFidelity-Api
 /// Kept as its own file (rather than inline in MauiProgram) so the FE's
 /// "where's the backend" concern is visually separate from DI wiring.
 /// </summary>

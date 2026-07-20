@@ -83,8 +83,9 @@ public static class MauiProgram
         });
 #endif
 
-        // Data Services — backed by HighFidelity.Api (Api/HighFidelity.Api, SQL Server).
-        // Start the API first: dotnet run --project Api/HighFidelity.Api
+        // Data Services — backed by HighFidelity.Api, a separate repo/deployable:
+        // https://github.com/srai54/HighFidelity-Api
+        // Clone it alongside this repo and run: dotnet run --project HighFidelity.Api
         // See Services/ApiSettings.cs for the base address the FE resolves per platform.
         builder.Services.AddSingleton<IDashboardDataService>(_ =>
             new ApiDashboardDataService(new HttpClient

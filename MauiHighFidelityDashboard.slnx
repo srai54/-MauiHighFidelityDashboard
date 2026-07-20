@@ -1,6 +1,3 @@
 <Solution>
-  <Folder Name="/Api/">
-    <Project Path="Api/HighFidelity.Api/HighFidelity.Api.csproj" />
-  </Folder>
   <Project Path="MauiHighFidelityDashboard.csproj" />
 </Solution>

@@ -2,46 +2,33 @@
 
 This document explains **what** was built, **why** it was built that way, and **what changes** it brings to the app. It ends with interview questions & answers on the topic.
 
-> **Revision note:** the API started as a Dapper-based Minimal API (read-only). It has since been rebuilt as a layered enterprise-style service — Controllers → Services → Repositories → EF Core → SQL Server — with full CRUD (add/delete orders), input validation, transient-fault retry, centralized error handling, and a real DB-connectivity health check.
+> **Revision history:** the API started as a Dapper-based Minimal API (read-only) living in this repo's `Api/` folder. It was rebuilt as a layered enterprise-style service — Controllers → Services → Repositories → EF Core → SQL Server — with full CRUD, validation, retry, centralized error handling, and a real DB-connectivity health check. It has now been **split into its own repository**, [srai54/HighFidelity-Api](https://github.com/srai54/HighFidelity-Api), with full git history preserved via `git subtree split`. This repo (the MAUI app) no longer contains any backend source.
 
 ---
 
-## 1. Three-tier separation
-
-The solution is one Visual Studio solution with three clearly separated concerns, each free to evolve independently as long as the HTTP contract between them holds:
+## 1. Three-tier separation — now across two repos
 
 | Tier | Location | Responsibility |
 |---|---|---|
-| **Frontend (FE)** | repo root (`MauiHighFidelityDashboard.csproj`) | .NET MAUI UI, ViewModels, `IDashboardDataService` consumer. Knows nothing about SQL or EF — only HTTP + JSON via `ApiDashboardDataService`. |
-| **Backend (BE)** | `Api/HighFidelity.Api/` | ASP.NET Core Web API. Owns HTTP routing, validation, and business rules. Knows nothing about MAUI, XAML, or the FE's view models. |
+| **Frontend (FE)** | *this repo* — `MauiHighFidelityDashboard.csproj` | .NET MAUI UI, ViewModels, `IDashboardDataService` consumer. Knows nothing about SQL or EF — only HTTP + JSON via `ApiDashboardDataService`. |
+| **Backend (BE)** | separate repo — [srai54/HighFidelity-Api](https://github.com/srai54/HighFidelity-Api) | ASP.NET Core Web API. Owns HTTP routing, validation, and business rules. Knows nothing about MAUI, XAML, or the FE's view models. |
 | **Database (DB)** | SQL Server `HighFidelity` (LocalDB in dev) | Owns the schema and data. Reached only through EF Core from the BE — the FE never touches SQL directly. |
 
 ```
-┌────────────── FE ──────────────┐   ┌──────────────────── BE (Api/HighFidelity.Api) ────────────────────┐   ┌── DB ──┐
-│ MainViewModel                  │   │ Controllers/DashboardController   ← HTTP in/out, thin              │   │        │
-│   ↓ IDashboardDataService       │   │        ↓                                                           │   │ SQL    │
-│ Services/ApiDashboardDataService│──▶│ Services/DashboardService         ← validation, business rules      │──▶│ Server │
-│   (HttpClient, JSON)            │   │        ↓                                                           │   │        │
-│ Services/ApiSettings            │   │ Repositories/DashboardRepository  ← EF Core queries                │   │        │
-│   (which base URL to hit)       │   │        ↓                                                           │   │        │
-└─────────────────────────────────┘   │ Data/AppDbContext → DbSet<T> → SQL Server                          │   └────────┘
-                                       └─────────────────────────────────────────────────────────────────────┘
+┌────────────── FE (this repo) ──┐   ┌──────── BE (github.com/srai54/HighFidelity-Api) ─────────┐   ┌── DB ──┐
+│ MainViewModel                  │   │ Controllers/DashboardController   ← HTTP in/out, thin     │   │        │
+│   ↓ IDashboardDataService       │   │        ↓                                                  │   │ SQL    │
+│ Services/ApiDashboardDataService│──▶│ Services/DashboardService         ← validation, rules      │──▶│ Server │
+│   (HttpClient, JSON, over the   │   │        ↓                                                  │   │        │
+│    network — no shared source)  │   │ Repositories/DashboardRepository  ← EF Core queries        │   │        │
+│ Services/ApiSettings            │   │        ↓                                                  │   │        │
+│   (which base URL to hit)       │   │ Data/AppDbContext → DbSet<T> → SQL Server                 │   │        │
+└─────────────────────────────────┘   └────────────────────────────────────────────────────────────┘   └────────┘
 ```
 
-Each arrow is an interface (`IDashboardDataService` on the FE side, `IDashboardService`/`IDashboardRepository` on the BE side), so any layer can be swapped or unit-tested with a fake in place of its neighbor.
+Each arrow is an interface (`IDashboardDataService` on the FE side, `IDashboardService`/`IDashboardRepository` on the BE side), so any layer can be swapped or unit-tested with a fake in place of its neighbor. Crossing the repo boundary is now a hard requirement, not just a convention — the only thing connecting them is the HTTP contract in §2.
 
-### Backend folder layout
-
-| Folder | Contents | Layer |
-|---|---|---|
-| `Controllers/` | `DashboardController`, `HealthController` | Presentation — parses HTTP, calls the service, formats the response |
-| `Services/` | `IDashboardService` / `DashboardService` | Business logic — input validation, orchestration |
-| `Repositories/` | `IDashboardRepository` / `DashboardRepository` | Data access — EF Core queries, nothing else |
-| `Data/` | `AppDbContext` | EF Core model configuration (table names, keys, column constraints) |
-| `Models/` | `DashboardCard`, `Order`, etc. | EF Core entities — mirror the SQL tables |
-| `DTOs/` | `DashboardCardDto`, `OrderDto`, etc. | Wire contracts returned to the client — never expose entities directly |
-| `Mappings/` | `EntityMappings` | Manual entity → DTO conversion (no AutoMapper — see §3) |
-| `Migrations/` | `InitialCreate` + snapshot | EF Core's view of schema history |
+For the backend's internal folder layout (Controllers/Services/Repositories/Data/Models/DTOs/Mappings/Migrations), see the [HighFidelity-Api README](https://github.com/srai54/HighFidelity-Api#architecture).
 
 ---
 
@@ -133,4 +120,10 @@ The reference UI screenshot the app is pixel-matching repeats invoice `12386` ac
 HTTPS with a real certificate; JWT bearer authentication; move the connection string to environment variables/Key Vault instead of `appsettings.json`; paging on `/orders`; response caching for the read endpoints; `IHttpClientFactory` + Polly on the FE instead of a single long-lived `HttpClient`; structured logging/telemetry (Serilog + Application Insights); real EF Core migrations going forward instead of the one-time no-op baseline.
 
 **Q12. Why is the `InitialCreate` migration's `Up()` empty?**
-The schema already existed from `Api/database/seed.sql` before EF Core migrations were introduced. Rather than have EF try to (re)create tables that are already there, the baseline migration is a deliberate no-op — it just registers the migration in `__EFMigrationsHistory` so future schema changes produce normal, incremental migrations from a known starting point.
+The schema already existed from `database/seed.sql` before EF Core migrations were introduced. Rather than have EF try to (re)create tables that are already there, the baseline migration is a deliberate no-op — it just registers the migration in `__EFMigrationsHistory` so future schema changes produce normal, incremental migrations from a known starting point.
+
+**Q13. Why split the backend into its own repository instead of keeping it in a subfolder here?**
+A subfolder (monorepo) is the right call while one person owns both sides and they change together in lockstep — which is how this project started. A separate repo earns its place once the backend becomes its own concern: it can be versioned, deployed, and released on its own schedule independent of the mobile app's build; it can be consumed by more than one client in the future (a web dashboard, another mobile app) without dragging MAUI/XAML into an unrelated checkout; and access control can differ (backend infra secrets vs. mobile app signing keys). The split preserved full git history for the `Api/` folder via `git subtree split`, so [HighFidelity-Api](https://github.com/srai54/HighFidelity-Api)'s log still shows the real Dapper → EF Core evolution rather than starting from a single flattened commit.
+
+**Q14. What was *not* chosen, and why?**
+Putting the two projects on separate **branches** of the same repo was considered and rejected — branches are mutually exclusive checkouts of one codebase over time (feature/release branches), but the FE and BE need to run *simultaneously* as two independent processes talking over HTTP. Branches can't model "two things that coexist," only "two versions of one thing," so that structure would have made it impossible to have both checked out at once.
