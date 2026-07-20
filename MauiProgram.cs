@@ -83,15 +83,24 @@ public static class MauiProgram
         });
 #endif
 
-        // Data Services — swap StaticDashboardDataService for ApiDashboardDataService
-        // when a backend API is available
-        builder.Services.AddSingleton<IDashboardDataService, StaticDashboardDataService>();
+        // Data Services — backed by HighFidelity.Api (Api/HighFidelity.Api, SQL LocalDB).
+        // Start the API first: dotnet run --project Api/HighFidelity.Api
+        // The Android emulator can't see the host's "localhost"; 10.0.2.2 is its
+        // loopback alias to the host machine.
+#if ANDROID
+        const string apiBaseAddress = "http://10.0.2.2:5199/";
+#else
+        const string apiBaseAddress = "http://localhost:5199/";
+#endif
+        builder.Services.AddSingleton<IDashboardDataService>(_ =>
+            new ApiDashboardDataService(new HttpClient
+            {
+                BaseAddress = new Uri(apiBaseAddress),
+                Timeout = TimeSpan.FromSeconds(10)
+            }));
         builder.Services.AddSingleton<IPrintService, PrintService>();
-        // builder.Services.AddSingleton<IDashboardDataService>(sp =>
-        // {
-        //     var client = new HttpClient { BaseAddress = new Uri("https://api.example.com/") };
-        //     return new ApiDashboardDataService(client);
-        // });
+        // Offline/demo fallback (no API needed):
+        // builder.Services.AddSingleton<IDashboardDataService, StaticDashboardDataService>();
 
         builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddSingleton<MainPage>();

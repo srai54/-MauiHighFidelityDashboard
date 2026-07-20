@@ -41,6 +41,13 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<!-- The backend API lives in a subfolder; keep its sources out of the MAUI compile glob -->
+	<ItemGroup>
+		<Compile Remove="Api\**" />
+		<Content Remove="Api\**" />
+		<None Remove="Api\**" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
