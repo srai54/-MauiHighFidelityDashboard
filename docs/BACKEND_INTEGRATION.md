@@ -1,148 +1,136 @@
-# Backend Integration — HighFidelity.Api + SQL LocalDB
+# Backend Integration — HighFidelity.Api (EF Core, layered) + SQL Server
 
 This document explains **what** was built, **why** it was built that way, and **what changes** it brings to the app. It ends with interview questions & answers on the topic.
 
+> **Revision note:** the API started as a Dapper-based Minimal API (read-only). It has since been rebuilt as a layered enterprise-style service — Controllers → Services → Repositories → EF Core → SQL Server — with full CRUD (add/delete orders), input validation, transient-fault retry, centralized error handling, and a real DB-connectivity health check.
+
 ---
 
-## 1. What was done
+## 1. Three-tier separation
 
-| Piece | Location | Purpose |
+The solution is one Visual Studio solution with three clearly separated concerns, each free to evolve independently as long as the HTTP contract between them holds:
+
+| Tier | Location | Responsibility |
 |---|---|---|
-| ASP.NET Core Minimal Web API | `Api/HighFidelity.Api/` | Serves dashboard data as JSON over HTTP |
-| SQL schema + dummy data script | `Api/database/seed.sql` | Creates 5 tables in the `HighFidelity` LocalDB database and inserts sample rows |
-| Frontend switch to API | `MauiProgram.cs` | DI now registers `ApiDashboardDataService` (HTTP) instead of `StaticDashboardDataService` (hard-coded) |
-| Android cleartext permission | `Platforms/Android/AndroidManifest.xml` | Allows the emulator to call the dev API over plain HTTP |
-
-### Architecture (data flow)
+| **Frontend (FE)** | repo root (`MauiHighFidelityDashboard.csproj`) | .NET MAUI UI, ViewModels, `IDashboardDataService` consumer. Knows nothing about SQL or EF — only HTTP + JSON via `ApiDashboardDataService`. |
+| **Backend (BE)** | `Api/HighFidelity.Api/` | ASP.NET Core Web API. Owns HTTP routing, validation, and business rules. Knows nothing about MAUI, XAML, or the FE's view models. |
+| **Database (DB)** | SQL Server `HighFidelity` (LocalDB in dev) | Owns the schema and data. Reached only through EF Core from the BE — the FE never touches SQL directly. |
 
 ```
-SQL LocalDB (HighFidelity)          ASP.NET Core Minimal API              .NET MAUI app
-┌────────────────────┐   Dapper    ┌──────────────────────────┐   HTTP   ┌─────────────────────────┐
-│ DashboardCards     │ ──────────▶ │ GET /api/dashboard/cards │ ───────▶ │ ApiDashboardDataService │
-│ RevenueCards       │             │ .../revenue-cards        │  JSON    │  → Result<T>            │
-│ Activities         │             │ .../activities           │          │  → MainViewModel        │
-│ Orders             │             │ .../orders               │          │  → XAML bindings        │
-│ TrafficSources     │             │ .../traffic              │          └─────────────────────────┘
-└────────────────────┘             └──────────────────────────┘
+┌────────────── FE ──────────────┐   ┌──────────────────── BE (Api/HighFidelity.Api) ────────────────────┐   ┌── DB ──┐
+│ MainViewModel                  │   │ Controllers/DashboardController   ← HTTP in/out, thin              │   │        │
+│   ↓ IDashboardDataService       │   │        ↓                                                           │   │ SQL    │
+│ Services/ApiDashboardDataService│──▶│ Services/DashboardService         ← validation, business rules      │──▶│ Server │
+│   (HttpClient, JSON)            │   │        ↓                                                           │   │        │
+│ Services/ApiSettings            │   │ Repositories/DashboardRepository  ← EF Core queries                │   │        │
+│   (which base URL to hit)       │   │        ↓                                                           │   │        │
+└─────────────────────────────────┘   │ Data/AppDbContext → DbSet<T> → SQL Server                          │   └────────┘
+                                       └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### API endpoints
+Each arrow is an interface (`IDashboardDataService` on the FE side, `IDashboardService`/`IDashboardRepository` on the BE side), so any layer can be swapped or unit-tested with a fake in place of its neighbor.
+
+### Backend folder layout
+
+| Folder | Contents | Layer |
+|---|---|---|
+| `Controllers/` | `DashboardController`, `HealthController` | Presentation — parses HTTP, calls the service, formats the response |
+| `Services/` | `IDashboardService` / `DashboardService` | Business logic — input validation, orchestration |
+| `Repositories/` | `IDashboardRepository` / `DashboardRepository` | Data access — EF Core queries, nothing else |
+| `Data/` | `AppDbContext` | EF Core model configuration (table names, keys, column constraints) |
+| `Models/` | `DashboardCard`, `Order`, etc. | EF Core entities — mirror the SQL tables |
+| `DTOs/` | `DashboardCardDto`, `OrderDto`, etc. | Wire contracts returned to the client — never expose entities directly |
+| `Mappings/` | `EntityMappings` | Manual entity → DTO conversion (no AutoMapper — see §3) |
+| `Migrations/` | `InitialCreate` + snapshot | EF Core's view of schema history |
+
+---
+
+## 2. API endpoints
 
 | Endpoint | Table | Returns |
 |---|---|---|
 | `GET /api/dashboard/cards` | `DashboardCards` | 4 summary cards (wallet, referral, sales, earning) |
 | `GET /api/dashboard/revenue-cards` | `RevenueCards` | 4 analytics cards (bar/area/line mini-charts) |
 | `GET /api/dashboard/activities` | `Activities` | 5 timeline entries |
-| `GET /api/dashboard/orders` | `Orders` | 30 orders (invoice, customer, country, price, status) |
+| `GET /api/dashboard/orders` | `Orders` | All orders (invoice, customer, country, price, status) |
 | `GET /api/dashboard/traffic` | `TrafficSources` | 3 donut-chart segments |
-| `POST /api/dashboard/orders` | `Orders` | Inserts an order; the **database** assigns `Id` (identity) and `Invoice` (`MAX+1`); returns the created row (`201 Created`) |
+| `POST /api/dashboard/orders` | `Orders` | Validates input, inserts a row; the **database** assigns `Id` (identity) and `Invoice` (`MAX+1`); returns `201 Created` with the new row |
 | `DELETE /api/dashboard/orders?ids=3&ids=17` | `Orders` | Bulk delete by primary key; returns `{"deleted": n}` |
-| `GET /health` | — | Liveness probe `{"status":"ok"}` |
+| `GET /health` | — | **Readiness** probe — actually calls `Database.CanConnectAsync()`; `200` + `{"status":"ok","database":"connected"}`, or `503` + `"degraded"/"unreachable"` if SQL Server can't be reached |
 
 ### Write path (Instant Add / Bulk Delete)
-
-UI actions persist to the database first, and only update the screen after the API confirms:
 
 ```
 Add button → AddOrderPopup → MainViewModel.AppendOrderAsync
   → IDashboardDataService.AddOrderAsync
-  → POST /api/dashboard/orders → Dapper INSERT ... OUTPUT INSERTED.*
-  → created row (with DB-assigned Id + Invoice) returned → added to the list → last page shown
+  → POST /api/dashboard/orders
+      → DashboardController.AddOrder            (parses request, maps exceptions to 400)
+      → DashboardService.AddOrderAsync          (validates: non-empty customer/country, price > 0)
+      → DashboardRepository.AddOrderAsync       (MAX(Invoice)+1, EF Core Add + SaveChangesAsync)
+  → created row (DB-assigned Id + Invoice) returned → appended to the list → last page shown
 ```
 
-If the API call fails, the ViewModel shows the error and the UI stays unchanged — the list can never drift out of sync with the database. Bulk delete follows the same pattern, keyed on `Id` (not `Invoice`, which the reference screenshot intentionally repeats and so is not unique).
+If any layer fails — validation, or the database being unreachable — the ViewModel shows the error and the on-screen list stays untouched. It can never drift from what's actually in SQL Server. Bulk delete follows the same path, keyed on `Id` (not `Invoice`, which the reference screenshot intentionally repeats across rows and so is not unique).
 
-### Insert commands (dummy data)
-
-The full script is [`Api/database/seed.sql`](../Api/database/seed.sql) — it is **idempotent** (`DROP TABLE IF EXISTS` + `CREATE` + `INSERT`), so it can be re-run any time to reset data. Example insert:
-
-```sql
-INSERT INTO dbo.Orders (Invoice, Customer, Country, Price, Status) VALUES
-(12386, N'Charly Dues', N'Brazil', 299, N'Process'),
-(12386, N'Marko',       N'Italy', 2642, N'Open');
-```
-
-Font Awesome icons are stored as Unicode codepoints so the app renders them directly:
-
-```sql
-INSERT INTO dbo.DashboardCards (Title, Amount, AmountDisplay, Icon, ThemeColorHex)
-VALUES (N'Wallet Ballance', 4567.53, N'$4,567.53', NCHAR(0xF521), '#F7284A');  -- crown glyph
-```
-
-Run it with:
-
-```powershell
-sqlcmd -S "(localdb)\MSSQLLocalDB" -d HighFidelity -i Api\database\seed.sql
-```
-
-## 2. How to run everything
-
-```powershell
-# 1. Seed the database (once, or to reset data)
-sqlcmd -S "(localdb)\MSSQLLocalDB" -d HighFidelity -i Api\database\seed.sql
-
-# 2. Start the API (stays running on http://localhost:5199)
-dotnet run --project Api\HighFidelity.Api
-
-# 3. Run the MAUI app (separate terminal)
-dotnet build MauiHighFidelityDashboard.csproj -f net10.0-windows10.0.19041.0 -t:Run
-```
-
-Android emulator: the app automatically uses `http://10.0.2.2:5199/` (the emulator's alias for the host's localhost).
+---
 
 ## 3. Why it was done this way
 
-1. **The frontend was already prepared for this.** `IDashboardDataService` existed with two implementations — static and API. The API's routes were designed to match `ApiDashboardDataService`'s expected endpoints exactly (`api/dashboard/cards`, etc.), so **zero ViewModel/XAML changes** were needed. This is the payoff of coding against an interface.
-2. **Minimal API instead of MVC controllers** — five read-only endpoints don't justify controller classes, attribute routing, and filters. Minimal APIs are the modern ASP.NET Core default for small services: less ceremony, same middleware pipeline.
-3. **Dapper instead of EF Core** — the queries are five flat `SELECT`s with no relationships, no change-tracking, no migrations story needed (the schema lives in one SQL file). Dapper maps rows to DTOs in one line and is faster to set up and execute. EF Core would earn its place once writes/relationships appear.
-4. **DTOs duplicated in the API instead of sharing the Models project** — the MAUI csproj multi-targets `net10.0-windows/android`; referencing it from a plain `net10.0` web project would fail. Records mirroring the model property names keep the contract explicit, and System.Text.Json's case-insensitive binding on the client links them.
-5. **Connection-per-request with `SqlConnection`** — ADO.NET connection pooling makes opening a connection per request cheap and safe under concurrency (a shared singleton connection would serialize requests and break).
-6. **`Result<T>` failure path untouched** — if the API is down, `ApiDashboardDataService` catches the exception and returns `Result.Failure`, which the ViewModel already surfaces. The app degrades gracefully rather than crashing.
-7. **Fixed port 5199 in `appsettings.json`** — a deterministic port means the MAUI base address never drifts after a `dotnet new`-style relaunch.
+1. **Controllers + layered architecture over a flat Minimal API.** Once the API grew real business rules (order validation, DB-assigned invoice numbers, bulk delete with confirmation), a flat `Program.cs` full of `app.MapGet(...)` lambdas would mix HTTP concerns with business rules in the same place. Splitting into **Controller → Service → Repository** means: the controller only translates HTTP ↔ calls; the service is where validation and future rules (credit checks, audit logging, permissions) belong; the repository is the only place that knows EF Core exists. Each is independently unit-testable behind its interface.
+2. **EF Core over Dapper.** The API is no longer read-only — it has real writes (`AddOrderAsync`, `DeleteOrdersAsync`) with a business rule (server-assigned invoice number) and will likely grow more relationships over time. EF Core's `DbContext`/`DbSet<T>` gives change tracking, `SaveChangesAsync` transactions, and a migrations story for free — Dapper would mean hand-writing all of that. `AsNoTracking()` is applied to every read-only `Get*Async` query specifically because those rows are never updated in the same context — it skips EF's change-tracking snapshot for a straightforward perf win with no behavior change.
+3. **Manual DTO mapping (`EntityMappings`), no AutoMapper.** Five entities, one property renaming apart (none, actually — they're identical shapes). A reflection-based mapper adds a dependency, a convention to learn, and a debugging step (“why didn’t this field map?”) for zero benefit at this scale. Explicit `ToDto()` extension methods are a one-line, compiler-checked, greppable alternative.
+4. **DTOs are a separate type from EF entities.** Controllers never return `Order` (the EF entity) directly — they return `OrderDto`. This avoids ever accidentally serializing an EF Core proxy object (which can carry lazy-loading references) and keeps the wire contract stable even if the entity's internal shape changes.
+5. **`EnableRetryOnFailure()` on the SQL Server connection.** Transient errors (a momentary network blip, SQL Server briefly recycling a connection) are common enough in real deployments that retrying 2-3 times before failing is standard practice — it costs one line and turns "occasional 500 for no visible reason" into "occasionally 200ms slower."
+6. **Centralized exception handling (`UseExceptionHandler`).** Without it, an unhandled exception (e.g., the database is down) returns a raw ASP.NET Core error page or an abrupt connection reset — not something a client should have to parse. Now every unexpected failure returns the same JSON shape (`{"error": "...", "detail": "..." }`), with `detail` only populated in Development so production never leaks internals.
+7. **A health check that actually checks something.** The original `/health` returned a hardcoded `{"status":"ok"}` regardless of whether SQL Server was reachable — a liveness probe, not a readiness probe. It now calls `Database.CanConnectAsync()` so an orchestrator (or a person debugging "why is the dashboard blank") gets a real answer.
+8. **FE-side `ApiSettings.cs`.** The platform-specific base URL (`10.0.2.2` for the Android emulator vs `localhost` elsewhere) used to live inline inside `MauiProgram.cs`'s DI registration. It's now its own file so "which backend am I talking to" is a one-file answer, separate from "how is DI wired" — the FE's equivalent of the BE's `appsettings.json`.
+9. **`IDashboardDataService` on the FE is unchanged.** Because the FE was always coded against an interface rather than concrete HTTP calls, this entire backend rewrite — Dapper → EF Core, Minimal API → Controllers — required **zero FE changes** beyond the config extraction in point 8. That's the payoff of the original abstraction.
+
+---
 
 ## 4. What changes this brings
 
-- **Before:** all dashboard data was hard-coded in `StaticDashboardDataService.cs`; changing a number meant recompiling the app.
-- **After:** data lives in SQL tables. Update a row in SSMS, restart/refresh the app, and the UI reflects it — no rebuild. The app is now a real 3-tier system (UI → API → DB).
-- The static service is **still in the codebase** as an offline/demo fallback — swap one DI line in `MauiProgram.cs` to go back.
-- New requirement: the API must be running for the dashboard to show data; otherwise the existing error-handling path shows the failure message.
+- **Before this revision:** the API was a flat Dapper Minimal API, read-only for writes (Instant Add/Bulk Delete only touched an in-memory list).
+- **Now:** full CRUD persists to SQL Server through a layered, testable architecture with input validation, transient-fault retry, and centralized error handling — the shape a real production team would recognize and extend.
+- **Still unchanged:** the FE→BE HTTP contract (`api/dashboard/...` routes and JSON shapes), so the app didn't need touching except for the `ApiSettings` extraction.
+- **New operational behavior:** `/health` now genuinely reflects DB connectivity; a 500 from any endpoint returns structured JSON instead of a raw error page; transient SQL blips retry instead of failing the request outright.
 
 ---
 
 ## 5. Interview Questions & Answers
 
-**Q1. Why does the MAUI app talk to an interface (`IDashboardDataService`) instead of the API client directly?**
-Dependency inversion. ViewModels depend on the abstraction, so the data source can be swapped (static → HTTP → cached) in one DI registration without touching ViewModels or XAML. It also makes ViewModels unit-testable with a fake service.
+**Q1. Why Controllers instead of Minimal API routes here?**
+Once the API has real business logic (validation, server-assigned invoice numbers) and multiple responsibilities per resource (5 reads + create + delete on Orders), grouping them in a controller class with attribute routing keeps related actions together and gives a natural home for layering (constructor-injected service) versus a growing pile of `app.MapGet` lambdas in `Program.cs`.
 
-**Q2. Why `10.0.2.2` on Android instead of `localhost`?**
-Inside the Android emulator, `localhost` is the emulator's own loopback, not the host PC's. Google reserves `10.0.2.2` as an alias for the host machine's loopback interface. (Physical devices need the PC's LAN IP instead.)
+**Q2. Walk through the layers for `POST /api/dashboard/orders`.**
+`DashboardController.AddOrder` deserializes the body and catches `ArgumentException` → 400. It calls `DashboardService.AddOrderAsync`, which validates (non-empty customer/country, price > 0) and would host any future business rule (credit limits, audit logging). That calls `DashboardRepository.AddOrderAsync`, which computes `MAX(Invoice)+1`, adds the entity via `AppDbContext`, and calls `SaveChangesAsync()` — the only place that talks EF Core.
 
-**Q3. Why did HTTP calls need `android:usesCleartextTraffic="true"`?**
-Since Android 9 (API 28), cleartext (non-HTTPS) traffic is blocked by default. The dev API runs on plain HTTP, so the manifest opts in. In production you'd use HTTPS and remove the flag (or use a network security config scoped to debug builds).
+**Q3. Why does the repository return EF entities but the controller returns DTOs?**
+Separation of "what the database looks like" from "what the wire contract looks like." `EntityMappings.ToDto()` converts between them in the service layer. This means the JSON contract stays stable even if the entity shape changes, and an EF Core change-tracking proxy is never accidentally serialized.
 
-**Q4. Minimal API vs. controllers — when would you pick each?**
-Minimal APIs: small services, few endpoints, low ceremony — routes and handlers in `Program.cs`. Controllers: large surface areas that benefit from grouping, model binding conventions, filters, and inheritance. Both share the same middleware/DI/hosting.
+**Q4. Why `AsNoTracking()` specifically on the five `Get*Async` methods?**
+EF Core builds a change-tracking snapshot of every entity it loads by default, so it can detect modifications for a future `SaveChangesAsync()`. These queries are pure reads — the results are mapped to DTOs and returned; nothing is ever mutated on them in the same `DbContext` — so tracking is pure overhead. `AsNoTracking()` skips it.
 
-**Q5. Dapper vs. EF Core — why Dapper here?**
-Read-only, flat queries with no navigation properties. Dapper is a micro-ORM: you write SQL, it maps rows to objects — minimal overhead, no migrations/change-tracker to configure. EF Core pays off with complex object graphs, LINQ, migrations, and unit-of-work writes.
+**Q5. What does `EnableRetryOnFailure()` protect against, and what doesn't it protect against?**
+It retries a query automatically (with backoff, capped at 3 attempts / 5s max delay here) when EF Core's SQL Server provider classifies the failure as transient — a dropped connection, a brief unavailability. It does **not** retry on business errors like a constraint violation or bad SQL — those are deterministic and would just fail the same way three times.
 
-**Q6. Is opening a new `SqlConnection` per request expensive?**
-No — ADO.NET pools connections per connection string. `new SqlConnection` + `Open` typically grabs an already-open pooled connection. The anti-pattern is the opposite: a shared long-lived connection, which isn't thread-safe under concurrent requests.
+**Q6. Why does `/health` call the database instead of just returning 200?**
+A process that's running but can't reach SQL Server is not actually healthy from the caller's point of view — the dashboard would load and show nothing. `Database.CanConnectAsync()` gives a true readiness signal; the endpoint returns `503` if it fails, which a real deployment's orchestrator (or load balancer) would use to pull the instance out of rotation.
 
-**Q7. How does JSON casing work between the API and the app?**
-ASP.NET Core serializes to camelCase by default (`title`, `amountDisplay`). `HttpClient.GetFromJsonAsync` uses `JsonSerializerDefaults.Web`, which is case-insensitive on deserialization, so camelCase JSON binds to the PascalCase C# properties without attributes.
+**Q7. What does the centralized exception handler protect against that a try/catch in each controller action wouldn't?**
+Any *unexpected* exception — one nobody thought to catch locally, like the DB connection dropping mid-query — still needs a sane HTTP response instead of an ASP.NET Core default error page (which can leak stack traces) or a raw connection reset. `UseExceptionHandler` is the single backstop; expected errors (like `ArgumentException` from validation) are still caught locally in the controller because *that* response should be `400`, not a generic `500`.
 
-**Q8. What happens in the UI if the API is down?**
-`ApiDashboardDataService` wraps every call in try/catch and returns `Result<T>.Failure(message)` instead of throwing. The ViewModel checks `IsFailure` and surfaces the error state — the app never crashes on network failure.
+**Q8. Why manual mapping instead of AutoMapper?**
+At five 1:1-shaped entity/DTO pairs, AutoMapper's convention-based reflection mapping adds a dependency and a "magic" step that's harder to debug than a compiler-checked one-line `new(...)` extension method. AutoMapper earns its place when there are dozens of mappings or non-trivial transformations — not here.
 
-**Q9. Why store Font Awesome icons as `NCHAR(0xF521)` in the database?**
-The glyphs are Unicode private-use-area characters. Storing the actual character in an `NVARCHAR` column means the API returns it in JSON as a normal string, and the MAUI `Label` with `FontFamily="FontAwesome"` renders it directly — no mapping table needed on the client.
+**Q9. Why does `IDashboardDataService` on the MAUI side need zero changes when the whole backend was rewritten?**
+Because the FE was always coded against an interface abstraction, not concrete HTTP/Dapper details. As long as the *HTTP contract* (routes, JSON shapes) stays the same, the backend's internal implementation — Dapper vs EF Core, Minimal API vs Controllers — is invisible to the client. This is the core payoff of programming to an interface.
 
-**Q10. How would you take this to production?**
-HTTPS with a real certificate; authentication (JWT bearer); move the connection string to environment variables/Key Vault; EF Core migrations or DbUp for schema versioning; paging on `/orders`; response caching; health checks wired to the orchestrator; retry policy (Polly) + `IHttpClientFactory` on the client instead of a raw `HttpClient`.
+**Q10. Why does `Order.Invoice` allow duplicates, and why is deletion keyed on `Id` instead?**
+The reference UI screenshot the app is pixel-matching repeats invoice `12386` across five rows on purpose (template data). `Id` is the EF Core-managed identity primary key and is always unique, so all mutation (delete, and any future update) is keyed on it — never on `Invoice`.
 
-**Q11. Why `IHttpClientFactory` over `new HttpClient` in real apps?**
-Long-lived `HttpClient` instances avoid socket exhaustion but pin DNS results; `IHttpClientFactory` recycles the underlying handlers, solving both, and adds named/typed clients plus Polly integration points. Here a single singleton `HttpClient` for the app's lifetime is acceptable, but the factory is the production answer.
+**Q11. How would you take this further toward production?**
+HTTPS with a real certificate; JWT bearer authentication; move the connection string to environment variables/Key Vault instead of `appsettings.json`; paging on `/orders`; response caching for the read endpoints; `IHttpClientFactory` + Polly on the FE instead of a single long-lived `HttpClient`; structured logging/telemetry (Serilog + Application Insights); real EF Core migrations going forward instead of the one-time no-op baseline.
 
-**Q12. Why is the seed script idempotent, and what's the trade-off?**
-`DROP TABLE IF EXISTS` + recreate means anyone can reset to a known state with one command — ideal for demos/tests. The trade-off: it destroys data, so it's a dev-only pattern; production uses incremental migrations instead.
+**Q12. Why is the `InitialCreate` migration's `Up()` empty?**
+The schema already existed from `Api/database/seed.sql` before EF Core migrations were introduced. Rather than have EF try to (re)create tables that are already there, the baseline migration is a deliberate no-op — it just registers the migration in `__EFMigrationsHistory` so future schema changes produce normal, incremental migrations from a known starting point.

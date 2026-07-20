@@ -83,20 +83,14 @@ public static class MauiProgram
         });
 #endif
 
-        // Data Services — backed by HighFidelity.Api (Api/HighFidelity.Api, SQL LocalDB).
+        // Data Services — backed by HighFidelity.Api (Api/HighFidelity.Api, SQL Server).
         // Start the API first: dotnet run --project Api/HighFidelity.Api
-        // The Android emulator can't see the host's "localhost"; 10.0.2.2 is its
-        // loopback alias to the host machine.
-#if ANDROID
-        const string apiBaseAddress = "http://10.0.2.2:5199/";
-#else
-        const string apiBaseAddress = "http://localhost:5199/";
-#endif
+        // See Services/ApiSettings.cs for the base address the FE resolves per platform.
         builder.Services.AddSingleton<IDashboardDataService>(_ =>
             new ApiDashboardDataService(new HttpClient
             {
-                BaseAddress = new Uri(apiBaseAddress),
-                Timeout = TimeSpan.FromSeconds(10)
+                BaseAddress = new Uri(ApiSettings.BaseAddress),
+                Timeout = ApiSettings.RequestTimeout
             }));
         builder.Services.AddSingleton<IPrintService, PrintService>();
         // Offline/demo fallback (no API needed):
