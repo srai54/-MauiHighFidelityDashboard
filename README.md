@@ -31,8 +31,8 @@ MauiHighFidelityDashboard/
 ├── Models/                         # POCO models + Result<T> + SummaryStat
 ├── Services/
 │   ├── Interfaces/                 # IDashboardDataService, IPrintService
-│   ├── StaticDashboardDataService.cs   # In-memory data (default)
-│   ├── ApiDashboardDataService.cs      # HttpClient implementation (swap-in ready)
+│   ├── ApiDashboardDataService.cs      # HttpClient implementation (only data source on this branch)
+│   ├── ApiSettings.cs                  # Backend base address (per-platform)
 │   └── PrintService.cs             # HTML report + print preview flow
 ├── Converters/                     # 4 IValueConverters
 ├── Resources/Styles/               # Colors.xaml, Styles.xaml, Fonts.xaml
@@ -45,6 +45,14 @@ MauiHighFidelityDashboard/
 ---
 
 ## How to Run
+
+> **This branch is pure frontend — it has no embedded/static data.** The app has nothing to show until [HighFidelity.Api](https://github.com/srai54/HighFidelity-Api) is running. Clone it as a sibling folder and start it first:
+> ```powershell
+> git clone https://github.com/srai54/HighFidelity-Api.git
+> sqlcmd -S "(localdb)\MSSQLLocalDB" -d HighFidelity -i HighFidelity-Api\database\seed.sql
+> dotnet run --project HighFidelity-Api\HighFidelity.Api
+> ```
+> (Want to run the FE standalone with no backend at all, e.g. for a quick demo? Use the `feature/offline-demo-fallback` branch instead, which keeps an in-memory data source.)
 
 ### Interactive picker (Windows or Android)
 ```bat
@@ -85,18 +93,20 @@ Open the solution, pick the **framework** (`net10.0-windows…` or `net10.0-andr
 - **DI:** everything is registered in `MauiProgram.cs`; ViewModels/pages get dependencies via constructor.
 - **`Result<T>`:** every service call returns `Success(data)` or `Failure(error)` — explicit error handling, no exception-driven flow.
 - **Parallel loading:** `MainViewModel.InitializeAsync` fetches all five data sets with `Task.WhenAll`.
-- **Swappable data source:** switch `StaticDashboardDataService` → `ApiDashboardDataService` with one line in `MauiProgram.cs`:
+- **Swappable data source, backed by an interface:** `IDashboardDataService` has exactly one implementation on this branch — `ApiDashboardDataService`, registered in `MauiProgram.cs`:
 
 ```csharp
-// builder.Services.AddSingleton<IDashboardDataService, StaticDashboardDataService>();
-builder.Services.AddSingleton<IDashboardDataService>(sp =>
-{
-    var client = new HttpClient { BaseAddress = new Uri("https://api.example.com/") };
-    return new ApiDashboardDataService(client);
-});
+builder.Services.AddSingleton<IDashboardDataService>(_ =>
+    new ApiDashboardDataService(new HttpClient
+    {
+        BaseAddress = new Uri(ApiSettings.BaseAddress),
+        Timeout = ApiSettings.RequestTimeout
+    }));
 ```
 
-Expected endpoints: `GET /api/dashboard/{cards|activities|orders|traffic|sales}`.
+Because ViewModels only depend on the interface, an alternate implementation (in-memory, cached, a different backend) is a one-line DI swap away without touching a single ViewModel or XAML file — see the `feature/offline-demo-fallback` branch for a working example (`StaticDashboardDataService`).
+
+Endpoints consumed: `GET/POST/DELETE /api/dashboard/{cards|revenue-cards|activities|orders|traffic}`, `GET /health` — see [HighFidelity-Api](https://github.com/srai54/HighFidelity-Api) for the backend implementation.
 
 ---
 

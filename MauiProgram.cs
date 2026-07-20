@@ -83,10 +83,12 @@ public static class MauiProgram
         });
 #endif
 
-        // Data Services — backed by HighFidelity.Api, a separate repo/deployable:
+        // Data Service — backed by HighFidelity.Api, a separate repo/deployable:
         // https://github.com/srai54/HighFidelity-Api
-        // Clone it alongside this repo and run: dotnet run --project HighFidelity.Api
-        // See Services/ApiSettings.cs for the base address the FE resolves per platform.
+        // Clone it alongside this repo and run it first: dotnet run --project HighFidelity.Api
+        // This branch has no embedded/static data — the app has nothing to show
+        // until the API is running. See Services/ApiSettings.cs for the base
+        // address the FE resolves per platform.
         builder.Services.AddSingleton<IDashboardDataService>(_ =>
             new ApiDashboardDataService(new HttpClient
             {
@@ -94,8 +96,6 @@ public static class MauiProgram
                 Timeout = ApiSettings.RequestTimeout
             }));
         builder.Services.AddSingleton<IPrintService, PrintService>();
-        // Offline/demo fallback (no API needed):
-        // builder.Services.AddSingleton<IDashboardDataService, StaticDashboardDataService>();
 
         builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddSingleton<MainPage>();
