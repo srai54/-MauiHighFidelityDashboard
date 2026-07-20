@@ -18,9 +18,8 @@ public static class ApiSettings
 
     public static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(10);
 
-    // Matches the "DemoUser" section in HighFidelity.Api/appsettings.json.
-    // Stand-in for real user login until the backend has a Users table — see
-    // HighFidelity-Api/docs/ARCHITECTURE.md.
+    // Matches the seeded row in HighFidelity.Api's dbo.Users table
+    // (database/seed.sql) — see HighFidelity-Api/docs/ARCHITECTURE.md.
     public const string DemoUsername = "admin";
     public const string DemoPassword = "ChangeMe123!";
 }
