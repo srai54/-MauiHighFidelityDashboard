@@ -4,6 +4,9 @@ namespace MauiHighFidelityDashboard.Models;
 
 public class OrderModel : INotifyPropertyChanged
 {
+    // Database primary key. Invoice is NOT unique (the reference screenshot
+    // repeats 12386), so deletes must key on Id.
+    public int Id { get; init; }
     public int Invoice { get; init; }
     public string Customer { get; init; } = string.Empty;
     public string Country { get; init; } = string.Empty;

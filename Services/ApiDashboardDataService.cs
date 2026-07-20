@@ -28,6 +28,42 @@ public class ApiDashboardDataService : IDashboardDataService
     public Task<Result<IReadOnlyList<TrafficModel>>> GetTrafficSourcesAsync() =>
         GetListAsync<TrafficModel>("api/dashboard/traffic", "traffic sources");
 
+    public async Task<Result<OrderModel>> AddOrderAsync(string customer, string country, decimal price, string status)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/dashboard/orders",
+                new { customer, country, price, status });
+            response.EnsureSuccessStatusCode();
+            var created = await response.Content.ReadFromJsonAsync<OrderModel>();
+            return created is null
+                ? Result<OrderModel>.Failure("Server returned an empty order.")
+                : Result<OrderModel>.Success(created);
+        }
+        catch (Exception ex)
+        {
+            return Result<OrderModel>.Failure($"Failed to add order: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<int>> DeleteOrdersAsync(IReadOnlyList<int> orderIds)
+    {
+        try
+        {
+            var query = string.Join("&", orderIds.Select(id => $"ids={id}"));
+            var response = await _httpClient.DeleteAsync($"api/dashboard/orders?{query}");
+            response.EnsureSuccessStatusCode();
+            var body = await response.Content.ReadFromJsonAsync<DeleteResponse>();
+            return Result<int>.Success(body?.Deleted ?? orderIds.Count);
+        }
+        catch (Exception ex)
+        {
+            return Result<int>.Failure($"Failed to delete orders: {ex.Message}");
+        }
+    }
+
+    private sealed record DeleteResponse(int Deleted);
+
     private async Task<Result<IReadOnlyList<T>>> GetListAsync<T>(string endpoint, string resourceName)
     {
         try

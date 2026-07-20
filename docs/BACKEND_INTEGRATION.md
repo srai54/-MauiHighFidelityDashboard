@@ -35,7 +35,22 @@ SQL LocalDB (HighFidelity)          ASP.NET Core Minimal API              .NET M
 | `GET /api/dashboard/activities` | `Activities` | 5 timeline entries |
 | `GET /api/dashboard/orders` | `Orders` | 30 orders (invoice, customer, country, price, status) |
 | `GET /api/dashboard/traffic` | `TrafficSources` | 3 donut-chart segments |
+| `POST /api/dashboard/orders` | `Orders` | Inserts an order; the **database** assigns `Id` (identity) and `Invoice` (`MAX+1`); returns the created row (`201 Created`) |
+| `DELETE /api/dashboard/orders?ids=3&ids=17` | `Orders` | Bulk delete by primary key; returns `{"deleted": n}` |
 | `GET /health` | — | Liveness probe `{"status":"ok"}` |
+
+### Write path (Instant Add / Bulk Delete)
+
+UI actions persist to the database first, and only update the screen after the API confirms:
+
+```
+Add button → AddOrderPopup → MainViewModel.AppendOrderAsync
+  → IDashboardDataService.AddOrderAsync
+  → POST /api/dashboard/orders → Dapper INSERT ... OUTPUT INSERTED.*
+  → created row (with DB-assigned Id + Invoice) returned → added to the list → last page shown
+```
+
+If the API call fails, the ViewModel shows the error and the UI stays unchanged — the list can never drift out of sync with the database. Bulk delete follows the same pattern, keyed on `Id` (not `Invoice`, which the reference screenshot intentionally repeats and so is not unique).
 
 ### Insert commands (dummy data)
 

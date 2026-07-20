@@ -9,10 +9,10 @@ public class StaticDashboardDataService : IDashboardDataService
         Task.FromResult(Result<IReadOnlyList<DashboardCard>>.Success(
         [
             // Icons are Font Awesome solid glyphs (family "FontAwesome")
-            new() { Title = "Wallet Ballance", Amount = 4567.53m, AmountDisplay = "$4,567.53", Icon = "", ThemeColorHex = "#F7284A" },  // crown
-            new() { Title = "Referral Earning", Amount = 1689.53m, AmountDisplay = "$1689.53", Icon = "", ThemeColorHex = "#7C60FA" },  // heart
-            new() { Title = "Estimate Sales", Amount = 2851.53m, AmountDisplay = "$2851.53", Icon = "", ThemeColorHex = "#2BC155" },    // bullseye
-            new() { Title = "Earning", Amount = 52567.53m, AmountDisplay = "$52,567.53", Icon = "", ThemeColorHex = "#FF5E9D" }         // dollar-sign
+            new() { Title = "Wallet Ballance", Amount = 4567.53m, AmountDisplay = "$4,567.53", Icon = "", ThemeColorHex = "#F7284A" },  // crown
+            new() { Title = "Referral Earning", Amount = 1689.53m, AmountDisplay = "$1689.53", Icon = "", ThemeColorHex = "#7C60FA" },  // heart
+            new() { Title = "Estimate Sales", Amount = 2851.53m, AmountDisplay = "$2851.53", Icon = "", ThemeColorHex = "#2BC155" },    // bullseye
+            new() { Title = "Earning", Amount = 52567.53m, AmountDisplay = "$52,567.53", Icon = "", ThemeColorHex = "#FF5E9D" }         // dollar-sign
         ]));
 
     public Task<Result<IReadOnlyList<RevenueCardItem>>> GetRevenueCardsAsync() =>
@@ -28,48 +28,82 @@ public class StaticDashboardDataService : IDashboardDataService
     public Task<Result<IReadOnlyList<ActivityModel>>> GetActivitiesAsync() =>
         Task.FromResult(Result<IReadOnlyList<ActivityModel>>.Success(
         [
-            new() { Title = "Task Updated", Actor = "Nikolai", Action = "Updated a Task", Time = "42 Mins Ago", Icon = "", IconColorHex = "#6259CE" },        // list
-            new() { Title = "Deal Added", Actor = "Panshi", Action = "Updated a Task", Time = "1 Day Ago", Icon = "", IconColorHex = "#EC407A" },            // plus
-            new() { Title = "Published Article", Actor = "Rasel", Action = "Published a Article", Time = "42 Mins Ago", Icon = "", IconColorHex = "#29B6F6" }, // file-lines
-            new() { Title = "Dock Updated", Actor = "Reshmi", Action = "Updated a Dock", Time = "1 Day Ago", Icon = "", IconColorHex = "#FFB822" },          // pen
-            new() { Title = "Replyed Comment", Actor = "Jenathon", Action = "Added a Comment", Time = "1 Day Ago", Icon = "", IconColorHex = "#2BC155" }     // reply
+            new() { Title = "Task Updated", Actor = "Nikolai", Action = "Updated a Task", Time = "42 Mins Ago", Icon = "", IconColorHex = "#6259CE" },        // list
+            new() { Title = "Deal Added", Actor = "Panshi", Action = "Updated a Task", Time = "1 Day Ago", Icon = "", IconColorHex = "#EC407A" },            // plus
+            new() { Title = "Published Article", Actor = "Rasel", Action = "Published a Article", Time = "42 Mins Ago", Icon = "", IconColorHex = "#29B6F6" }, // file-lines
+            new() { Title = "Dock Updated", Actor = "Reshmi", Action = "Updated a Dock", Time = "1 Day Ago", Icon = "", IconColorHex = "#FFB822" },          // pen
+            new() { Title = "Replyed Comment", Actor = "Jenathon", Action = "Added a Comment", Time = "1 Day Ago", Icon = "", IconColorHex = "#2BC155" }     // reply
         ]));
 
+    // Held as instance state so Add/Delete behave like a real backend while offline.
+    private readonly List<OrderModel> _orders = new (int Invoice, string Customer, string Country, decimal Price, string Status)[]
+    {
+        // Page 1 mirrors the reference screenshot
+        (12386, "Charly Dues", "Brazil", 299m, "Process"),
+        (12386, "Marko", "Italy", 2642m, "Open"),
+        (12386, "Deniyel Onak", "Russia", 981m, "On Hold"),
+        (12386, "Belgiri Bastana", "Korea", 369m, "Process"),
+        (12386, "Sarti Gnuska", "Japan", 1240m, "Open"),
+        (12387, "Amara Okafor", "Nigeria", 754m, "Open"),
+        (12388, "Liam Carter", "USA", 1899m, "Process"),
+        (12389, "Sofia Reyes", "Mexico", 432m, "On Hold"),
+        (12390, "Hans Meyer", "Germany", 3110m, "Open"),
+        (12391, "Yuki Tanaka", "Japan", 587m, "Process"),
+        (12392, "Priya Sharma", "India", 1456m, "Open"),
+        (12393, "Lucas Silva", "Brazil", 823m, "On Hold"),
+        (12394, "Emma Wilson", "UK", 2075m, "Open"),
+        (12395, "Omar Haddad", "Egypt", 640m, "Process"),
+        (12396, "Chen Wei", "China", 1785m, "Open"),
+        (12397, "Anna Kowalski", "Poland", 912m, "On Hold"),
+        (12398, "Pierre Dubois", "France", 1330m, "Process"),
+        (12399, "Elena Petrova", "Russia", 468m, "Open"),
+        (12400, "Marco Rossi", "Italy", 2210m, "Open"),
+        (12401, "Kim Min-jun", "Korea", 795m, "Process"),
+        (12402, "Sara Lindqvist", "Sweden", 1120m, "On Hold"),
+        (12403, "David Cohen", "Israel", 356m, "Open"),
+        (12404, "Fatima Zahra", "Morocco", 1670m, "Process"),
+        (12405, "Jack Thompson", "Australia", 940m, "Open"),
+        (12406, "Isabella Cruz", "Spain", 2380m, "On Hold"),
+        (12407, "Noah Brown", "Canada", 515m, "Open"),
+        (12408, "Aisha Bello", "Ghana", 1245m, "Process"),
+        (12409, "Mateus Costa", "Portugal", 860m, "Open"),
+        (12410, "Olga Ivanova", "Ukraine", 1990m, "On Hold"),
+        (12411, "Tom Becker", "Austria", 730m, "Process")
+    }
+    .Select(static (o, i) => new OrderModel
+    {
+        Id = i + 1,
+        Invoice = o.Invoice,
+        Customer = o.Customer,
+        Country = o.Country,
+        Price = o.Price,
+        Status = o.Status
+    })
+    .ToList();
+
     public Task<Result<IReadOnlyList<OrderModel>>> GetOrdersAsync() =>
-        Task.FromResult(Result<IReadOnlyList<OrderModel>>.Success(
-        [
-            // Page 1 mirrors the reference screenshot
-            new() { Invoice = 12386, Customer = "Charly Dues", Country = "Brazil", Price = 299m, Status = "Process" },
-            new() { Invoice = 12386, Customer = "Marko", Country = "Italy", Price = 2642m, Status = "Open" },
-            new() { Invoice = 12386, Customer = "Deniyel Onak", Country = "Russia", Price = 981m, Status = "On Hold" },
-            new() { Invoice = 12386, Customer = "Belgiri Bastana", Country = "Korea", Price = 369m, Status = "Process" },
-            new() { Invoice = 12386, Customer = "Sarti Gnuska", Country = "Japan", Price = 1240m, Status = "Open" },
-            new() { Invoice = 12387, Customer = "Amara Okafor", Country = "Nigeria", Price = 754m, Status = "Open" },
-            new() { Invoice = 12388, Customer = "Liam Carter", Country = "USA", Price = 1899m, Status = "Process" },
-            new() { Invoice = 12389, Customer = "Sofia Reyes", Country = "Mexico", Price = 432m, Status = "On Hold" },
-            new() { Invoice = 12390, Customer = "Hans Meyer", Country = "Germany", Price = 3110m, Status = "Open" },
-            new() { Invoice = 12391, Customer = "Yuki Tanaka", Country = "Japan", Price = 587m, Status = "Process" },
-            new() { Invoice = 12392, Customer = "Priya Sharma", Country = "India", Price = 1456m, Status = "Open" },
-            new() { Invoice = 12393, Customer = "Lucas Silva", Country = "Brazil", Price = 823m, Status = "On Hold" },
-            new() { Invoice = 12394, Customer = "Emma Wilson", Country = "UK", Price = 2075m, Status = "Open" },
-            new() { Invoice = 12395, Customer = "Omar Haddad", Country = "Egypt", Price = 640m, Status = "Process" },
-            new() { Invoice = 12396, Customer = "Chen Wei", Country = "China", Price = 1785m, Status = "Open" },
-            new() { Invoice = 12397, Customer = "Anna Kowalski", Country = "Poland", Price = 912m, Status = "On Hold" },
-            new() { Invoice = 12398, Customer = "Pierre Dubois", Country = "France", Price = 1330m, Status = "Process" },
-            new() { Invoice = 12399, Customer = "Elena Petrova", Country = "Russia", Price = 468m, Status = "Open" },
-            new() { Invoice = 12400, Customer = "Marco Rossi", Country = "Italy", Price = 2210m, Status = "Open" },
-            new() { Invoice = 12401, Customer = "Kim Min-jun", Country = "Korea", Price = 795m, Status = "Process" },
-            new() { Invoice = 12402, Customer = "Sara Lindqvist", Country = "Sweden", Price = 1120m, Status = "On Hold" },
-            new() { Invoice = 12403, Customer = "David Cohen", Country = "Israel", Price = 356m, Status = "Open" },
-            new() { Invoice = 12404, Customer = "Fatima Zahra", Country = "Morocco", Price = 1670m, Status = "Process" },
-            new() { Invoice = 12405, Customer = "Jack Thompson", Country = "Australia", Price = 940m, Status = "Open" },
-            new() { Invoice = 12406, Customer = "Isabella Cruz", Country = "Spain", Price = 2380m, Status = "On Hold" },
-            new() { Invoice = 12407, Customer = "Noah Brown", Country = "Canada", Price = 515m, Status = "Open" },
-            new() { Invoice = 12408, Customer = "Aisha Bello", Country = "Ghana", Price = 1245m, Status = "Process" },
-            new() { Invoice = 12409, Customer = "Mateus Costa", Country = "Portugal", Price = 860m, Status = "Open" },
-            new() { Invoice = 12410, Customer = "Olga Ivanova", Country = "Ukraine", Price = 1990m, Status = "On Hold" },
-            new() { Invoice = 12411, Customer = "Tom Becker", Country = "Austria", Price = 730m, Status = "Process" }
-        ]));
+        Task.FromResult(Result<IReadOnlyList<OrderModel>>.Success(_orders.ToList()));
+
+    public Task<Result<OrderModel>> AddOrderAsync(string customer, string country, decimal price, string status)
+    {
+        var order = new OrderModel
+        {
+            Id = _orders.Count == 0 ? 1 : _orders.Max(o => o.Id) + 1,
+            Invoice = _orders.Count == 0 ? 12412 : _orders.Max(o => o.Invoice) + 1,
+            Customer = customer,
+            Country = country,
+            Price = price,
+            Status = status
+        };
+        _orders.Add(order);
+        return Task.FromResult(Result<OrderModel>.Success(order));
+    }
+
+    public Task<Result<int>> DeleteOrdersAsync(IReadOnlyList<int> orderIds)
+    {
+        int removed = _orders.RemoveAll(o => orderIds.Contains(o.Id));
+        return Task.FromResult(Result<int>.Success(removed));
+    }
 
     public Task<Result<IReadOnlyList<TrafficModel>>> GetTrafficSourcesAsync() =>
         Task.FromResult(Result<IReadOnlyList<TrafficModel>>.Success(

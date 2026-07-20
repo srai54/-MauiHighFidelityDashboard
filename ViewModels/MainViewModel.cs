@@ -190,23 +190,23 @@ public partial class MainViewModel : BaseViewModel
         var result = await page.ShowPopupAsync(new AddOrderPopup());
         if (result is (string customer, string country, decimal price, string status))
         {
-            AppendOrder(customer, country, price, status);
+            await AppendOrderAsync(customer, country, price, status);
         }
     }
 
-    // Appends the new order at the end of the list and jumps to the last page,
-    // so the values the user just typed are visible immediately.
-    private void AppendOrder(string customer, string country, decimal price, string status)
+    // Persists the order through the data service (the backend assigns Id and
+    // Invoice), then appends it and jumps to the last page so the values the
+    // user just typed are visible immediately.
+    private async Task AppendOrderAsync(string customer, string country, decimal price, string status)
     {
-        int nextInvoice = _allOrders.Count == 0 ? 12412 : _allOrders.Max(o => o.Invoice) + 1;
-        _allOrders.Add(new OrderModel
+        var result = await _dataService.AddOrderAsync(customer, country, price, status);
+        if (result.IsFailure)
         {
-            Invoice = nextInvoice,
-            Customer = customer,
-            Country = country,
-            Price = price,
-            Status = status
-        });
+            await Shell.Current.DisplayAlertAsync("Add Order", result.ErrorMessage, "OK");
+            return;
+        }
+
+        _allOrders.Add(result.Data!);
 
         SearchText = string.Empty;
         _currentPage = int.MaxValue; // clamped to the last page by RefreshOrdersView
@@ -228,6 +228,14 @@ public partial class MainViewModel : BaseViewModel
         if (page is null) return;
         var result = await page.ShowPopupAsync(new ConfirmDeletePopup(selected));
         if (result is not true) return;
+
+        // Delete in the database first; only mirror in the UI on success.
+        var deleteResult = await _dataService.DeleteOrdersAsync(selected.Select(o => o.Id).ToList());
+        if (deleteResult.IsFailure)
+        {
+            await Shell.Current.DisplayAlertAsync("Delete Orders", deleteResult.ErrorMessage, "OK");
+            return;
+        }
 
         foreach (var order in selected)
             _allOrders.Remove(order);
