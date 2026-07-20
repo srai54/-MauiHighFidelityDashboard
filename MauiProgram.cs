@@ -98,8 +98,15 @@ public static class MauiProgram
             BaseAddress = new Uri(ApiSettings.BaseAddress),
             Timeout = ApiSettings.RequestTimeout
         };
+        // DelegatingHandler requires an InnerHandler to actually send the request
+        // after its own logic runs — HttpClient's constructor does NOT wire this
+        // up automatically, so without it every real call throws
+        // "The inner handler has not been assigned" (caught and swallowed by
+        // ApiDashboardDataService's try/catch, which is why this failed silently
+        // with blank data instead of a visible error).
+        var authTokenHandler = new AuthTokenHandler(authHttpClient) { InnerHandler = new HttpClientHandler() };
         builder.Services.AddSingleton<IDashboardDataService>(_ =>
-            new ApiDashboardDataService(new HttpClient(new AuthTokenHandler(authHttpClient))
+            new ApiDashboardDataService(new HttpClient(authTokenHandler)
             {
                 BaseAddress = new Uri(ApiSettings.BaseAddress),
                 Timeout = ApiSettings.RequestTimeout
