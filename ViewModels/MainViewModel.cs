@@ -22,6 +22,7 @@ public partial class MainViewModel : BaseViewModel
     public ObservableCollection<OrderModel> Orders { get; } = [];
     public ObservableCollection<PageItem> PageNumbers { get; } = [];
     public ObservableCollection<TrafficModel> TrafficSources { get; } = [];
+    public ObservableCollection<DocumentModel> Documents { get; } = [];
 
     public DashboardCard? WalletCard => DashboardCards.ElementAtOrDefault(0);
     public DashboardCard? ReferralCard => DashboardCards.ElementAtOrDefault(1);
@@ -74,7 +75,8 @@ public partial class MainViewModel : BaseViewModel
             LoadRevenueCardsAsync(),
             LoadActivitiesAsync(),
             LoadOrdersAsync(),
-            LoadTrafficSourcesAsync()
+            LoadTrafficSourcesAsync(),
+            LoadDocumentsAsync()
         );
 
         IsBusy = false;
@@ -257,6 +259,52 @@ public partial class MainViewModel : BaseViewModel
         await page.ShowPopupAsync(new OrderSummaryPopup(
             filtered.Count, open, process, onHold, totalValue,
             SearchText, _allOrders.Count));
+    }
+
+    [RelayCommand]
+    private async Task UploadDocumentAsync()
+    {
+        try
+        {
+            var fileResult = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle = "Select a document to upload"
+            });
+
+            if (fileResult is null) return;
+
+            using var stream = await fileResult.OpenReadAsync();
+            var result = await _dataService.UploadDocumentAsync(
+                fileResult.FileName, stream, fileResult.ContentType ?? "application/octet-stream");
+
+            if (result.IsFailure)
+            {
+                await Shell.Current.DisplayAlertAsync("Upload Failed", result.ErrorMessage, "OK");
+                return;
+            }
+
+            Documents.Insert(0, result.Data!);
+
+            await Shell.Current.DisplayAlertAsync(
+                "Upload Successful",
+                $"\"{fileResult.FileName}\" uploaded successfully.",
+                "OK");
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlertAsync("Upload Error", ex.Message, "OK");
+        }
+    }
+
+    [RelayCommand]
+    private async Task LoadDocumentsAsync()
+    {
+        var result = await _dataService.GetDocumentsAsync();
+        if (result.IsFailure) return;
+
+        Documents.Clear();
+        foreach (var doc in result.Data!)
+            Documents.Add(doc);
     }
 
     [RelayCommand]

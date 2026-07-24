@@ -15,4 +15,10 @@ public interface IDashboardDataService
 
     /// <summary>Deletes orders by database Id. Returns the number deleted.</summary>
     Task<Result<int>> DeleteOrdersAsync(IReadOnlyList<int> orderIds);
+
+    /// <summary>Uploads a file to Azure Blob Storage.</summary>
+    Task<Result<DocumentModel>> UploadDocumentAsync(string fileName, Stream content, string contentType);
+
+    /// <summary>Gets all uploaded documents metadata.</summary>
+    Task<Result<IReadOnlyList<DocumentModel>>> GetDocumentsAsync();
 }

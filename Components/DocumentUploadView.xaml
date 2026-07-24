@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:HighFidelity.Ui.Models"
+             x:Class="HighFidelity.Ui.Components.DocumentUploadView"
+             x:Name="DocumentSelf">
+    <Border Style="{StaticResource CardBorderStyle}" Padding="16">
+        <VerticalStackLayout Spacing="12">
+            <Label Text="Documents"
+                   Style="{StaticResource SectionTitle}" />
+
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="&#xf0c7; Upload Document"
+                        FontFamily="FontAwesome"
+                        Style="{StaticResource PrimaryButton}"
+                        FontSize="12"
+                        Padding="14,8"
+                        Command="{Binding UploadDocumentCommand, Source={x:Reference DocumentSelf}}" />
+                <Label x:Name="StatusLabel"
+                       Text="Ready"
+                       FontSize="11"
+                       TextColor="{StaticResource TextSecondary}"
+                       VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <CollectionView ItemsSource="{Binding Documents, Source={x:Reference DocumentSelf}}"
+                            HeightRequest="200"
+                            SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Label Text="No documents uploaded yet."
+                           FontSize="12"
+                           TextColor="{StaticResource TextSecondary}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Margin="0,20" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:DocumentModel">
+                        <Border BackgroundColor="{StaticResource PageBackground}"
+                                Padding="10,8"
+                                Margin="0,2"
+                                StrokeThickness="0">
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                <Label Text="{Binding FileName}"
+                                       FontSize="12"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Grid.Row="1"
+                                       FontSize="10"
+                                       TextColor="{StaticResource TextSecondary}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding FileSizeDisplay}" />
+                                            <Span Text=" · " />
+                                            <Span Text="{Binding UploadedDateDisplay}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

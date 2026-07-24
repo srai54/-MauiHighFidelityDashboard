@@ -38,6 +38,7 @@ public partial class SidebarView : ContentView
         new() { Label = "Todo List",      Icon = "", Route = "todolist" },       // list-check
         new() { Label = "Gallery",        Icon = "", Route = "gallery" },        // images
         new() { Label = "Documentation",  Icon = "", Route = "documentation" },  // book
+        new() { Label = "Documents",      Icon = "", Route = "documents" },      // paperclip
     ];
 
     public SidebarView()

@@ -54,7 +54,6 @@ public partial class OrderTableView : ContentView
 
         if (narrow)
         {
-            PrintRight.IsVisible = false;   // duplicate of the toolbar print button
             Grid.SetRow(SearchEntry, 1);
             Grid.SetColumn(SearchEntry, 0);
             Grid.SetColumnSpan(SearchEntry, 7);
@@ -63,7 +62,6 @@ public partial class OrderTableView : ContentView
         }
         else
         {
-            PrintRight.IsVisible = true;
             Grid.SetRow(SearchEntry, 0);
             Grid.SetColumn(SearchEntry, 5);
             Grid.SetColumnSpan(SearchEntry, 1);

@@ -18,7 +18,7 @@ if errorlevel 2 goto android
 :windows
 echo.
 echo  Starting Windows app...
-dotnet build -t:Run -f net10.0-windows10.0.19041.0
+dotnet build -t:Run -f net10.0-windows10.0.19041.0 HighFidelity.Ui.csproj
 goto :eof
 
 :android
@@ -41,5 +41,5 @@ echo  Emulator booted.
 
 :deploy
 echo  Building and deploying to Android...
-dotnet build -t:Run -f net10.0-android
+dotnet build -t:Run -f net10.0-android HighFidelity.Ui.csproj
 goto :eof

@@ -62,6 +62,41 @@ public class ApiDashboardDataService : IDashboardDataService
         }
     }
 
+    public async Task<Result<DocumentModel>> UploadDocumentAsync(string fileName, Stream content, string contentType)
+    {
+        try
+        {
+            using var formData = new MultipartFormDataContent();
+            var streamContent = new StreamContent(content);
+            streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+            formData.Add(streamContent, "file", fileName);
+
+            var response = await _httpClient.PostAsync("api/documents/upload", formData);
+            response.EnsureSuccessStatusCode();
+            var document = await response.Content.ReadFromJsonAsync<DocumentModel>();
+            return document is null
+                ? Result<DocumentModel>.Failure("Server returned empty response.")
+                : Result<DocumentModel>.Success(document);
+        }
+        catch (Exception ex)
+        {
+            return Result<DocumentModel>.Failure($"Failed to upload document: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<IReadOnlyList<DocumentModel>>> GetDocumentsAsync()
+    {
+        try
+        {
+            var data = await _httpClient.GetFromJsonAsync<List<DocumentModel>>("api/documents");
+            return Result<IReadOnlyList<DocumentModel>>.Success(data ?? []);
+        }
+        catch (Exception ex)
+        {
+            return Result<IReadOnlyList<DocumentModel>>.Failure($"Failed to load documents: {ex.Message}");
+        }
+    }
+
     private sealed record DeleteResponse(int Deleted);
 
     private async Task<Result<IReadOnlyList<T>>> GetListAsync<T>(string endpoint, string resourceName)

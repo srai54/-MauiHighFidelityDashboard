@@ -59,9 +59,13 @@
                        HeightRequest="32"
                        VerticalOptions="Center"
                        ToolTipProperties.Text="Filter by invoice, customer, country or status" />
-                <Button x:Name="PrintRight" Grid.Column="6" Text="&#xf02f;" Style="{StaticResource IconButtonPrint}" FontSize="12"
-                        Command="{Binding PrintOrdersCommand}"
-                        ToolTipProperties.Text="Print order list" />
+                <Button Grid.Column="6" Text="&#xf0c7;" Style="{StaticResource PrimaryButton}" FontSize="11" Padding="12,0" HeightRequest="32"
+                        Command="{Binding UploadDocumentCommand}"
+                        ToolTipProperties.Text="Upload a document to Azure Blob Storage">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="FontAwesome" Glyph="&#xf0c7;" Color="White" Size="10" />
+                    </Button.ImageSource>
+                </Button>
             </Grid>
 
             <!-- Swipe hint: only shown when the table is wider than the screen -->
