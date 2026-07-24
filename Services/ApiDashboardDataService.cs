@@ -72,7 +72,12 @@ public class ApiDashboardDataService : IDashboardDataService
             formData.Add(streamContent, "file", fileName);
 
             var response = await _httpClient.PostAsync("api/documents/upload", formData);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                return Result<DocumentModel>.Failure(
+                    $"Upload failed ({response.StatusCode}): {errorBody}");
+            }
             var document = await response.Content.ReadFromJsonAsync<DocumentModel>();
             return document is null
                 ? Result<DocumentModel>.Failure("Server returned empty response.")
